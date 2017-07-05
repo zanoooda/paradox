@@ -28,7 +28,8 @@
         ctx.lineTo(3/4*x, 0);
         ctx.lineTo(x/4, 0);
         ctx.stroke();
-
+        
+        // Wrap it into some loop
         createCell(x/4 + x/16, x/8);
         createCell(3*x/8 + x/16, x/8);
         createCell(x/2 + x/16, x/8);
@@ -72,13 +73,21 @@
         createCell(3*x/8 + x/16, 7*x/8);
         createCell(x/2 + x/16, 7*x/8);
         createCell(5*x/8 + x/16, 7*x/8);
-        
 
         function createCell(x, y) {
             ctx.beginPath();
-            ctx.arc(x, y, 20, 0, 2*Math.PI);
+            ctx.arc(x, y, 33, 0, 2*Math.PI);
             ctx.stroke();
         }
+
+        // Here continue...
+        var gameState = [[{ x: 0, y: 0, color: 0},{ x: 0, y: 1, color: 0},{ x: 0, y: 2, color: 0},{ x: 0, y: 3, color: 0}],
+                         [{},{},{},{},{}],
+                         [{},{},{},{},{},{}],
+                         [{},{},{},{},{},{},{}],
+                         [{},{},{},{},{},{}],
+                         [{},{},{},{},{}],
+                         [{},{},{},{}]];
     </script>
 
 </body>
