@@ -16,78 +16,116 @@
 
     <script>
         var c = document.getElementById("paradux");
-        var ctx = c.getContext("2d");
+        var context = c.getContext("2d");
 
         var x = 600;
 
-        ctx.moveTo(x/4, 0);
-        ctx.lineTo(0, x/2);
-        ctx.lineTo(x/4, x);
-        ctx.lineTo(3/4*x, x);
-        ctx.lineTo(x, x/2);
-        ctx.lineTo(3/4*x, 0);
-        ctx.lineTo(x/4, 0);
-        ctx.stroke();
+        context.moveTo(x/4, 0);
+        context.lineTo(0, x/2);
+        context.lineTo(x/4, x);
+        context.lineTo(3/4*x, x);
+        context.lineTo(x, x/2);
+        context.lineTo(3/4*x, 0);
+        context.lineTo(x/4, 0);
+        context.stroke();
         
-        // Wrap it into some loop
-        createCell(x/4 + x/16, x/8);
-        createCell(3*x/8 + x/16, x/8);
-        createCell(x/2 + x/16, x/8);
-        createCell(5*x/8 + x/16, x/8);
+        // // Wrap it into some loop
+        // createCell(x/4 + x/16, x/8);
+        // createCell(3*x/8 + x/16, x/8);
+        // createCell(x/2 + x/16, x/8);
+        // createCell(5*x/8 + x/16, x/8);
 
-        createCell(x/4, x/4);
-        createCell(3*x/8, x/4);
-        createCell(x/2, x/4);
-        createCell(5*x/8, x/4);
-        createCell(3*x/4, x/4);
+        // createCell(x/4, x/4);
+        // createCell(3*x/8, x/4);
+        // createCell(x/2, x/4);
+        // createCell(5*x/8, x/4);
+        // createCell(3*x/4, x/4);
 
-        createCell(x/8 + x/16, 3*x/8);
-        createCell(2*x/8 + x/16, 3*x/8);
-        createCell(3*x/8 + x/16, 3*x/8);
-        createCell(4*x/8 + x/16, 3*x/8);
-        createCell(5*x/8 + x/16, 3*x/8);
-        createCell(6*x/8 + x/16, 3*x/8);
+        // createCell(x/8 + x/16, 3*x/8);
+        // createCell(2*x/8 + x/16, 3*x/8);
+        // createCell(3*x/8 + x/16, 3*x/8);
+        // createCell(4*x/8 + x/16, 3*x/8);
+        // createCell(5*x/8 + x/16, 3*x/8);
+        // createCell(6*x/8 + x/16, 3*x/8);
 
-        createCell(x/8, x/2);
-        createCell(2*x/8, x/2);
-        createCell(3*x/8, x/2);
-        createCell(4*x/8, x/2);
-        createCell(5*x/8, x/2);
-        createCell(6*x/8, x/2);
-        createCell(7*x/8, x/2);
+        // createCell(x/8, x/2);
+        // createCell(2*x/8, x/2);
+        // createCell(3*x/8, x/2);
+        // createCell(4*x/8, x/2);
+        // createCell(5*x/8, x/2);
+        // createCell(6*x/8, x/2);
+        // createCell(7*x/8, x/2);
 
-        createCell(x/8 + x/16, 5*x/8);
-        createCell(2*x/8 + x/16, 5*x/8);
-        createCell(3*x/8 + x/16, 5*x/8);
-        createCell(4*x/8 + x/16, 5*x/8);
-        createCell(5*x/8 + x/16, 5*x/8);
-        createCell(6*x/8 + x/16, 5*x/8);
+        // createCell(x/8 + x/16, 5*x/8);
+        // createCell(2*x/8 + x/16, 5*x/8);
+        // createCell(3*x/8 + x/16, 5*x/8);
+        // createCell(4*x/8 + x/16, 5*x/8);
+        // createCell(5*x/8 + x/16, 5*x/8);
+        // createCell(6*x/8 + x/16, 5*x/8);
 
-        createCell(x/4, 3*x/4);
-        createCell(3*x/8, 3*x/4);
-        createCell(x/2, 3*x/4);
-        createCell(5*x/8, 3*x/4);
-        createCell(3*x/4, 3*x/4);
+        // createCell(x/4, 3*x/4);
+        // createCell(3*x/8, 3*x/4);
+        // createCell(x/2, 3*x/4);
+        // createCell(5*x/8, 3*x/4);
+        // createCell(3*x/4, 3*x/4);
 
-        createCell(x/4 + x/16, 7*x/8);
-        createCell(3*x/8 + x/16, 7*x/8);
-        createCell(x/2 + x/16, 7*x/8);
-        createCell(5*x/8 + x/16, 7*x/8);
+        // createCell(x/4 + x/16, 7*x/8);
+        // createCell(3*x/8 + x/16, 7*x/8);
+        // createCell(x/2 + x/16, 7*x/8);
+        // createCell(5*x/8 + x/16, 7*x/8);
 
-        function createCell(x, y) {
-            ctx.beginPath();
-            ctx.arc(x, y, 33, 0, 2*Math.PI);
-            ctx.stroke();
-        }
+        // function createCell(x, y) {
+        //     ctx.beginPath();
+        //     ctx.arc(x, y, 33, 0, 2*Math.PI);
+        //     ctx.stroke();
+        // }
 
         // Here continue...
-        var gameState = [[{ x: 0, y: 0, color: 0},{ x: 0, y: 1, color: 0},{ x: 0, y: 2, color: 0},{ x: 0, y: 3, color: 0}],
-                         [{ x: 1, y: 0, color: 0},{ x: 1, y: 1, color: 0},{ x: 1, y: 2, color: 0},{ x: 1, y: 3, color: 0},{ x: 1, y: 4, color: 0}],
-                         [{ x: 2, y: 0, color: 0},{ x: 2, y: 1, color: 0},{ x: 2, y: 2, color: 0},{ x: 2, y: 3, color: 0},{ x: 2, y: 4, color: 0},{ x: 2, y: 5, color: 0}],
-                         [{ x: 3, y: 0, color: 0},{ x: 3, y: 1, color: 0},{ x: 3, y: 2, color: 0},{ x: 3, y: 3, color: 0},{ x: 3, y: 4, color: 0},{ x: 3, y: 5, color: 0},{ x: 3, y: 6, color: 0}],
-                         [{ x: 4, y: 0, color: 0},{ x: 4, y: 1, color: 0},{ x: 4, y: 2, color: 0},{ x: 4, y: 3, color: 0},{ x: 4, y: 4, color: 0},{ x: 4, y: 5, color: 0}],
-                         [{ x: 5, y: 0, color: 0},{ x: 5, y: 1, color: 0},{ x: 5, y: 2, color: 0},{ x: 5, y: 3, color: 0},{ x: 5, y: 4, color: 0}],
-                         [{ x: 6, y: 0, color: 0},{ x: 6, y: 1, color: 0},{ x: 6, y: 2, color: 0},{ x: 6, y: 3, color: 0}]];
+        var state = [[{ x: 0, y: 0, color: 1},{ x: 0, y: 1, color: 2},{ x: 0, y: 2, color: 1},{ x: 0, y: 3, color: 2}],
+                     [{ x: 1, y: 0, color: 2},{ x: 1, y: 1, color: 0},{ x: 1, y: 2, color: 0},{ x: 1, y: 3, color: 0},{ x: 1, y: 4, color: 1}],
+                     [{ x: 2, y: 0, color: 1},{ x: 2, y: 1, color: 0},{ x: 2, y: 2, color: 0},{ x: 2, y: 3, color: 0},{ x: 2, y: 4, color: 0},{ x: 2, y: 5, color: 2}],
+                     [{ x: 3, y: 0, color: 2},{ x: 3, y: 1, color: 0},{ x: 3, y: 2, color: 1},{ x: 3, y: 3, color: 0},{ x: 3, y: 4, color: 2},{ x: 3, y: 5, color: 0},{ x: 3, y: 6, color: 1}],
+                     [{ x: 4, y: 0, color: 1},{ x: 4, y: 1, color: 0},{ x: 4, y: 2, color: 0},{ x: 4, y: 3, color: 0},{ x: 4, y: 4, color: 0},{ x: 4, y: 5, color: 2}],
+                     [{ x: 5, y: 0, color: 2},{ x: 5, y: 1, color: 0},{ x: 5, y: 2, color: 0},{ x: 5, y: 3, color: 0},{ x: 5, y: 4, color: 1}],
+                     [{ x: 6, y: 0, color: 1},{ x: 6, y: 1, color: 2},{ x: 6, y: 2, color: 1},{ x: 6, y: 3, color: 2}]];
+        
+        function render(state) {
+            // Must be expressed comparatively in width
+            var start = { x: 150 + 37.5, y: 75};
+            for(var x = 0; x < state.length; x++) {
+                for(var y = 0; y <state[x].length; y++) {
+                    //var cell =state[x][y];
+                    context.beginPath();
+                    context.arc(start.x + (75 * y), start.y, 33, 0, 2 * Math.PI, false);
+
+                    switch (state[x][y].color) {
+                        case 1:
+                            context.fillStyle = 'blue';
+                            break;
+                        case 2:
+                            context.fillStyle = 'red';
+                            break
+                    
+                        default:
+                            context.fillStyle = 'white';
+                            break;
+                    }
+                    //context.fillStyle = 'gray';
+
+                    context.fill();
+                    context.lineWidth = 1;
+                    context.strokeStyle = 'black';
+                    context.stroke();
+                }
+                // change start object
+                if(x < 3)
+                    start.x = start.x - 37.5;
+                else
+                    start.x = start.x + 37.5;
+                start.y =start.y + 75;
+            }
+        }
+        render(state);
     </script>
 
 </body>
