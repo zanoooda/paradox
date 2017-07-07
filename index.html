@@ -33,11 +33,20 @@
         canvas.width = l;
         canvas.height = l;
 
-        // TODO: Add touch/click listeners
+        // TODO: Add touch/click/onmouse listeners
+        canvas.addEventListener('click', function(e) {
+            var rect = canvas.getBoundingClientRect();
+            var point = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            alert(point.x + ", " + point.y);
+        }, false);
 
         var context = canvas.getContext("2d");
 
         // TODO: Save last movie or better all the history of the movies
+        //       After it you will be able to create undo/redo button
         // TODO: Change hardcoded object to object with constructor
         var state = [[{ x: 0, y: 0, color: 1},{ x: 0, y: 1, color: 2},{ x: 0, y: 2, color: 1},{ x: 0, y: 3, color: 2}],
                      [{ x: 1, y: 0, color: 2},{ x: 1, y: 1, color: 0},{ x: 1, y: 2, color: 0},{ x: 1, y: 3, color: 0},{ x: 1, y: 4, color: 1}],
