@@ -4,51 +4,39 @@
 <head>
     <meta charset="utf-8">
     <title>Paradux</title>
-
     <style>
-        .paradux-container {
+        #container {
             position: absolute;
             margin: auto;
             top: 0;
             right: 0;
             bottom: 0;
             left: 0;
-
-            width: 600px;
-            height: 600px;
         }
     </style>
-
 </head>
 
 <body>
-    <div class="paradux-container">
-        <canvas id="paradux" width="600" height="600"></canvas>
+    <div id="container">
+        <canvas id="paradux"></canvas>
     </div>
 
     <script>
-        var c = document.getElementById("paradux");
-        c.addEventListener("touchstart", function(e) {
-            e.preventDefault();
-            alert(JSON.stringify(e));
-        }, false);
-        c.addEventListener("click", function(e) {
-            alert(JSON.stringify(e));
-        }, false);
-        var context = c.getContext("2d");
+        var l = Math.floor((window.innerHeight >= window.innerWidth ? window.innerWidth : window.innerHeight) * 0.9);
 
-        var x = 600;
+        var container = document.getElementById("container");
+        container.style.width = l + "px";
+        container.style.height = l + "px";
 
-        context.moveTo(x/4, 0);
-        context.lineTo(0, x/2);
-        context.lineTo(x/4, x);
-        context.lineTo(3/4*x, x);
-        context.lineTo(x, x/2);
-        context.lineTo(3/4*x, 0);
-        context.lineTo(x/4, 0);
-        context.stroke();
+        var canvas = document.getElementById("paradux");
 
-        // Here continue...
+        canvas.width = l;
+        canvas.height = l;
+
+        // TODO: Add touch/click listeners
+
+        var context = canvas.getContext("2d");
+
         var state = [[{ x: 0, y: 0, color: 1},{ x: 0, y: 1, color: 2},{ x: 0, y: 2, color: 1},{ x: 0, y: 3, color: 2}],
                      [{ x: 1, y: 0, color: 2},{ x: 1, y: 1, color: 0},{ x: 1, y: 2, color: 0},{ x: 1, y: 3, color: 0},{ x: 1, y: 4, color: 1}],
                      [{ x: 2, y: 0, color: 1},{ x: 2, y: 1, color: 0},{ x: 2, y: 2, color: 0},{ x: 2, y: 3, color: 0},{ x: 2, y: 4, color: 0},{ x: 2, y: 5, color: 2}],
@@ -58,40 +46,43 @@
                      [{ x: 6, y: 0, color: 1},{ x: 6, y: 1, color: 2},{ x: 6, y: 2, color: 1},{ x: 6, y: 3, color: 2}]];
         
         function render(state) {
-            // Must be expressed comparatively in width
-            var start = { x: 150 + 37.5, y: 75};
+            var start = { x: l/4 + l/16, y: l/8};
             for(var x = 0; x < state.length; x++) {
                 for(var y = 0; y <state[x].length; y++) {
-                    //var cell =state[x][y];
                     context.beginPath();
-                    context.arc(start.x + (75 * y), start.y, 33, 0, 2 * Math.PI, false);
+                    context.arc(start.x + (l / 8 * y), start.y, (l / 16) * 0.8, 0, 2 * Math.PI, false);
 
                     switch (state[x][y].color) {
                         case 1:
                             context.fillStyle = 'blue';
+                            context.strokeStyle = 'darkblue';
+                            context.lineWidth = 5;
                             break;
                         case 2:
                             context.fillStyle = 'red';
+                            context.strokeStyle = 'darkred';
+                            context.lineWidth = 5;
                             break
                     
                         default:
                             context.fillStyle = 'white';
+                            context.strokeStyle = 'gray';
+                            context.lineWidth = 1;
                             break;
                     }
 
                     context.fill();
-                    context.lineWidth = 1;
-                    context.strokeStyle = 'black';
                     context.stroke();
                 }
-                // change start object
+                // Change start object. start object describe where next row starts
                 if(x < 3)
-                    start.x = start.x - 37.5;
+                    start.x = start.x - l/16;
                 else
-                    start.x = start.x + 37.5;
-                start.y =start.y + 75;
+                    start.x = start.x + l/16;
+                start.y =start.y + l/8;
             }
         }
+
         render(state);
     </script>
 
