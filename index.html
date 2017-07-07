@@ -37,6 +37,8 @@
 
         var context = canvas.getContext("2d");
 
+        // TODO: Save last movie or better all the history of the movies
+        // TODO: Change hardcoded object to object with constructor
         var state = [[{ x: 0, y: 0, color: 1},{ x: 0, y: 1, color: 2},{ x: 0, y: 2, color: 1},{ x: 0, y: 3, color: 2}],
                      [{ x: 1, y: 0, color: 2},{ x: 1, y: 1, color: 0},{ x: 1, y: 2, color: 0},{ x: 1, y: 3, color: 0},{ x: 1, y: 4, color: 1}],
                      [{ x: 2, y: 0, color: 1},{ x: 2, y: 1, color: 0},{ x: 2, y: 2, color: 0},{ x: 2, y: 3, color: 0},{ x: 2, y: 4, color: 0},{ x: 2, y: 5, color: 2}],
@@ -46,6 +48,7 @@
                      [{ x: 6, y: 0, color: 1},{ x: 6, y: 1, color: 2},{ x: 6, y: 2, color: 1},{ x: 6, y: 3, color: 2}]];
         
         function render(state) {
+            // TODO: Add options to highlight circles
             var start = { x: l/4 + l/16, y: l/8};
             for(var x = 0; x < state.length; x++) {
                 for(var y = 0; y <state[x].length; y++) {
@@ -62,7 +65,7 @@
                             context.fillStyle = 'red';
                             context.strokeStyle = 'darkred';
                             context.lineWidth = 5;
-                            break
+                            break;
                     
                         default:
                             context.fillStyle = 'white';
@@ -83,6 +86,7 @@
             }
         }
 
+        // Here a magic starts
         render(state);
     </script>
 
