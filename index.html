@@ -16,6 +16,13 @@
 
     <script>
         var c = document.getElementById("paradux");
+        c.addEventListener("touchstart", function(e) {
+            e.preventDefault();
+            alert(JSON.stringify(e));
+        }, false);
+        c.addEventListener("click", function(e) {
+            alert(JSON.stringify(e));
+        }, false);
         var context = c.getContext("2d");
 
         var x = 600;
@@ -28,57 +35,6 @@
         context.lineTo(3/4*x, 0);
         context.lineTo(x/4, 0);
         context.stroke();
-        
-        // // Wrap it into some loop
-        // createCell(x/4 + x/16, x/8);
-        // createCell(3*x/8 + x/16, x/8);
-        // createCell(x/2 + x/16, x/8);
-        // createCell(5*x/8 + x/16, x/8);
-
-        // createCell(x/4, x/4);
-        // createCell(3*x/8, x/4);
-        // createCell(x/2, x/4);
-        // createCell(5*x/8, x/4);
-        // createCell(3*x/4, x/4);
-
-        // createCell(x/8 + x/16, 3*x/8);
-        // createCell(2*x/8 + x/16, 3*x/8);
-        // createCell(3*x/8 + x/16, 3*x/8);
-        // createCell(4*x/8 + x/16, 3*x/8);
-        // createCell(5*x/8 + x/16, 3*x/8);
-        // createCell(6*x/8 + x/16, 3*x/8);
-
-        // createCell(x/8, x/2);
-        // createCell(2*x/8, x/2);
-        // createCell(3*x/8, x/2);
-        // createCell(4*x/8, x/2);
-        // createCell(5*x/8, x/2);
-        // createCell(6*x/8, x/2);
-        // createCell(7*x/8, x/2);
-
-        // createCell(x/8 + x/16, 5*x/8);
-        // createCell(2*x/8 + x/16, 5*x/8);
-        // createCell(3*x/8 + x/16, 5*x/8);
-        // createCell(4*x/8 + x/16, 5*x/8);
-        // createCell(5*x/8 + x/16, 5*x/8);
-        // createCell(6*x/8 + x/16, 5*x/8);
-
-        // createCell(x/4, 3*x/4);
-        // createCell(3*x/8, 3*x/4);
-        // createCell(x/2, 3*x/4);
-        // createCell(5*x/8, 3*x/4);
-        // createCell(3*x/4, 3*x/4);
-
-        // createCell(x/4 + x/16, 7*x/8);
-        // createCell(3*x/8 + x/16, 7*x/8);
-        // createCell(x/2 + x/16, 7*x/8);
-        // createCell(5*x/8 + x/16, 7*x/8);
-
-        // function createCell(x, y) {
-        //     ctx.beginPath();
-        //     ctx.arc(x, y, 33, 0, 2*Math.PI);
-        //     ctx.stroke();
-        // }
 
         // Here continue...
         var state = [[{ x: 0, y: 0, color: 1},{ x: 0, y: 1, color: 2},{ x: 0, y: 2, color: 1},{ x: 0, y: 3, color: 2}],
@@ -110,7 +66,6 @@
                             context.fillStyle = 'white';
                             break;
                     }
-                    //context.fillStyle = 'gray';
 
                     context.fill();
                     context.lineWidth = 1;
