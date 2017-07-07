@@ -33,13 +33,32 @@
         canvas.width = l;
         canvas.height = l;
 
-        // TODO: Add touch/click/onmouse listeners
+        // 
+        canvas.addEventListener('mousemove', function(e) {
+            var rect = canvas.getBoundingClientRect();
+            var point = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            console.log(point.x + ", " + point.y);
+        }, false);
+
         canvas.addEventListener('click', function(e) {
             var rect = canvas.getBoundingClientRect();
             var point = {
                 x: e.clientX - rect.left,
                 y: e.clientY - rect.top
             };
+            alert(point.x + ", " + point.y);
+        }, false);
+
+        canvas.addEventListener('touchstart', function(e) {
+            var rect = canvas.getBoundingClientRect();
+            var point = {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+            // Nan, NaN!
             alert(point.x + ", " + point.y);
         }, false);
 
