@@ -46,13 +46,15 @@ canvas.addEventListener('click', function (e) {
 }, false);
 
 canvas.addEventListener('touchstart', function (e) {
+
     var rect = canvas.getBoundingClientRect();
     var point = {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top
     };
-    // Nan, NaN!
-    alert(point.x + ", " + point.y);
+
+    alert(point.x + ", " + point.y); // Nan, NaN!
+
 }, false);
 
 var context = canvas.getContext("2d");
@@ -74,31 +76,48 @@ var options = [];
 
 // Functions
 
+function getM(first, second) {
+    return {
+        x: (first.xPx + second.xPx) / 2,
+        y: (first.yPx + second.yPx) / 2
+    };
+}
+
 function findPairs(state) {
     var pairs = [];
     var oArr = [{ x: 1, y: 0},{ x: 1, y: 1},{ x: 0, y: 1},{ x: -1, y: 0},{ x: -1, y: -1},{ x: 0, y: -1}];
 
-    alert(state[0][-1]);
-
     for (var x = 0; x < state.length; x++) {
         for (var y = 0; y < state[x].length; y++) {
-            // I'am here
-
             // find all with dublications
 
             if(state[x][y].color != 0) {
                 console.log(state[x][y].x + ", " + state[x][y].y)
 
                 for (var oArrIndex = 0; oArrIndex < oArr.length; oArrIndex++) {
-                    console.log("..." + (x + oArr[oArrIndex].x) + ", " + (y + oArr[oArrIndex].y)); 
+                    if(
+                        state[x + oArr[oArrIndex].x] !== undefined && 
+                        state[x + oArr[oArrIndex].x][y + oArr[oArrIndex].y] !== undefined && 
+                        state[x + oArr[oArrIndex].x][y + oArr[oArrIndex].y].color != 0 &&
+                        state[x][y].color != state[x + oArr[oArrIndex].x][y + oArr[oArrIndex].y].color
+                    ) {
+                        console.log("..." + (x + oArr[oArrIndex].x) + ", " + (y + oArr[oArrIndex].y) + " " + state[x + oArr[oArrIndex].x][y + oArr[oArrIndex].y]);
 
-                    // if cell exists
+                        pairs.push({
+                            first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArr[oArrIndex].x, y: y + oArr[oArrIndex].y},
+                            second: state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArr[oArrIndex].x, y: y + oArr[oArrIndex].y}
+                        });
+                    }
                 }
             }
         }
     }
 
     // remove dublicatons
+
+    var uniq = new Set();
+    pairs.forEach(e => uniq.add(JSON.stringify(e)));
+    pairs = Array.from(uniq).map(e => JSON.parse(e));
 
     return pairs;
 }
@@ -115,6 +134,10 @@ function render(state) {
 
             context.beginPath();
             context.arc(start.x + (l / 8 * y), start.y, (l / 16) * 0.8, 0, 2 * Math.PI, false);
+
+            // write point to state
+            state[x][y].xPx = start.x + (l / 8 * y);
+            state[x][y].yPx = start.y;
 
             switch (state[x][y].color) {
                 case 1:
@@ -146,15 +169,22 @@ function render(state) {
         start.y = start.y + l / 8;
     }
 
+    pairs = findPairs(state);
+
+    for (var pairIndex = 0; pairIndex < pairs.length; pairIndex++) {
+        pairs[pairIndex].m = getM(state[pairs[pairIndex].first.x][pairs[pairIndex].first.y], state[pairs[pairIndex].second.x][pairs[pairIndex].second.y]);
+    }
+
     // I'am here
 
-    pairs = findPairs(state);
-    
-    // foreach pairs
-    // make line between two circles
-    // get center point of the line
-    // make circle around this point
-    // save circle to an array. may be to the pairs array. This array must be visible for listeners. 
+    for (var i = 0; i < pairs.length; i++) {
+        var element = pairs[i];
+        context.beginPath();
+        context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.8, 0, 2 * Math.PI, false);
+        context.strokeStyle = 'yellow';
+        context.lineWidth = 1;
+        context.stroke();
+    }
 }
 
 // Here a magic starts
