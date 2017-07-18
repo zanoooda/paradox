@@ -85,7 +85,10 @@ function getM(first, second) {
 
 function findPairs(state) {
     var pairs = [];
-    var oArr = [{ x: 1, y: 0},{ x: 1, y: 1},{ x: 0, y: 1},{ x: -1, y: 0},{ x: -1, y: -1},{ x: 0, y: -1}];
+    var oArrUp = [{ x: 1, y: 0},{ x: 1, y: 1},{ x: 0, y: 1},{ x: -1, y: 0},{ x: -1, y: -1},{ x: 0, y: -1}];
+    // I'am here
+    var oArrMiddle = [{ x: 1, y: -1},{ x: 1, y: 0},{ x: 0, y: 1},{ x: -1, y: 0},{ x: -1, y: -1},{ x: 0, y: -1}];
+    var oArrDown = [{ x: 1, y: -1},{ x: 1, y: 0},{ x: 0, y: 1},{ x: -1, y: 1},{ x: -1, y: 0},{ x: 0, y: -1}];
 
     for (var x = 0; x < state.length; x++) {
         for (var y = 0; y < state[x].length; y++) {
@@ -94,19 +97,50 @@ function findPairs(state) {
             if(state[x][y].color != 0) {
                 console.log(state[x][y].x + ", " + state[x][y].y)
 
-                for (var oArrIndex = 0; oArrIndex < oArr.length; oArrIndex++) {
-                    if(
-                        state[x + oArr[oArrIndex].x] !== undefined && 
-                        state[x + oArr[oArrIndex].x][y + oArr[oArrIndex].y] !== undefined && 
-                        state[x + oArr[oArrIndex].x][y + oArr[oArrIndex].y].color != 0 &&
-                        state[x][y].color != state[x + oArr[oArrIndex].x][y + oArr[oArrIndex].y].color
-                    ) {
-                        console.log("..." + (x + oArr[oArrIndex].x) + ", " + (y + oArr[oArrIndex].y) + " " + state[x + oArr[oArrIndex].x][y + oArr[oArrIndex].y]);
+                for (var oArrIndex = 0; oArrIndex < oArrUp.length; oArrIndex++) {
+                    // different whan up and down
+                    if(x < 3) {
+                        if(
+                            state[x + oArrUp[oArrIndex].x] !== undefined && 
+                            state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y] !== undefined && 
+                            state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y].color != 0 &&
+                            state[x][y].color != state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y].color
+                        ) {
+                            console.log("..." + (x + oArrUp[oArrIndex].x) + ", " + (y + oArrUp[oArrIndex].y) + " " + state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y]);
 
-                        pairs.push({
-                            first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArr[oArrIndex].x, y: y + oArr[oArrIndex].y},
-                            second: state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArr[oArrIndex].x, y: y + oArr[oArrIndex].y}
-                        });
+                            pairs.push({
+                                first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrUp[oArrIndex].x, y: y + oArrUp[oArrIndex].y},
+                                second: state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArrUp[oArrIndex].x, y: y + oArrUp[oArrIndex].y}
+                            });
+                        }
+                    } else if(x == 3) {
+                        if(
+                            state[x + oArrMiddle[oArrIndex].x] !== undefined && 
+                            state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y] !== undefined && 
+                            state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y].color != 0 &&
+                            state[x][y].color != state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y].color
+                        ) {
+                            console.log("..." + (x + oArrMiddle[oArrIndex].x) + ", " + (y + oArrMiddle[oArrIndex].y) + " " + state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y]);
+
+                            pairs.push({
+                                first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrMiddle[oArrIndex].x, y: y + oArrMiddle[oArrIndex].y},
+                                second: state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArrMiddle[oArrIndex].x, y: y + oArrMiddle[oArrIndex].y}
+                            });
+                        }
+                    } else {
+                        if(
+                            state[x + oArrDown[oArrIndex].x] !== undefined && 
+                            state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y] !== undefined && 
+                            state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y].color != 0 &&
+                            state[x][y].color != state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y].color
+                        ) {
+                            console.log("..." + (x + oArrDown[oArrIndex].x) + ", " + (y + oArrDown[oArrIndex].y) + " " + state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y]);
+
+                            pairs.push({
+                                first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrDown[oArrIndex].x, y: y + oArrDown[oArrIndex].y},
+                                second: state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArrDown[oArrIndex].x, y: y + oArrDown[oArrIndex].y}
+                            });
+                        }
                     }
                 }
             }
