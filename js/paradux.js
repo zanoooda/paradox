@@ -1,5 +1,5 @@
 // TODO: Make some better indication
-alert("Blue first!");
+//alert("Blue first!");
 
 // Variables
 
@@ -36,7 +36,40 @@ canvas.addEventListener('click', function (e) {
 
     for (var pairIndex = 0; pairIndex < pairs.length; pairIndex++) {
         if(getL(point, pairs[pairIndex].m) < ((l/16) * 0.5)) {
-            alert(pairs[pairIndex].first.x + ", " + pairs[pairIndex].first.y + " and " + pairs[pairIndex].second.x + ", " + pairs[pairIndex].second.y);
+            //alert(pairs[pairIndex].first.x + ", " + pairs[pairIndex].first.y + " and " + pairs[pairIndex].second.x + ", " + pairs[pairIndex].second.y);
+            
+
+            context.beginPath();
+            context.arc(
+                state[pairs[pairIndex].first.x][pairs[pairIndex].first.y].xPx, 
+                state[pairs[pairIndex].first.x][pairs[pairIndex].first.y].yPx,  
+                (l / 16) * 0.8, 
+                0, 
+                2 * Math.PI, 
+                false
+            );
+            context.strokeStyle = 'purple';
+            context.lineWidth = 15;
+            context.stroke();
+
+            context.beginPath();
+            context.arc(
+                state[pairs[pairIndex].second.x][pairs[pairIndex].second.y].xPx, 
+                state[pairs[pairIndex].second.x][pairs[pairIndex].second.y].yPx,  
+                (l / 16) * 0.8, 
+                0, 
+                2 * Math.PI, 
+                false
+            );
+            context.strokeStyle = 'orange';
+            context.lineWidth = 17;
+            context.stroke();
+
+            // I'am here
+
+            // fill options array
+
+            break;
         }
         
     }
@@ -226,16 +259,15 @@ function render(state) {
         pairs[pairIndex].m = getM(state[pairs[pairIndex].first.x][pairs[pairIndex].first.y], state[pairs[pairIndex].second.x][pairs[pairIndex].second.y]);
     }
 
-    // I'am here
-
-    for (var i = 0; i < pairs.length; i++) {
-        var element = pairs[i];
-        context.beginPath();
-        context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-        context.strokeStyle = 'yellow';
-        context.lineWidth = 1;
-        context.stroke();
-    }
+    // debug
+    // for (var i = 0; i < pairs.length; i++) {
+    //     var element = pairs[i];
+    //     context.beginPath();
+    //     context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+    //     context.strokeStyle = 'yellow';
+    //     context.lineWidth = 1;
+    //     context.stroke();
+    // }
 }
 
 // Here a magic starts
