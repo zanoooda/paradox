@@ -46,7 +46,17 @@ canvas.addEventListener('click', function (e) {
 
     for (var optionsIndex = 0; optionsIndex < options.length; optionsIndex++) {
         //var element = options[optionsIndex];
-        
+        //
+        // checking this
+        if(getL(point, options[optionsIndex].m) < ((l/16) * 0.5)) {
+            state[options[optionsIndex].first.x][options[optionsIndex].first.x].color = 1;
+            state[options[optionsIndex].second.x][options[optionsIndex].second.x].color = 1;
+            selected = null;
+            options = [];
+            render(state);
+
+            return;
+        }
     }
 
     for (var pairIndex = 0; pairIndex < pairs.length; pairIndex++) {
@@ -303,14 +313,14 @@ function render(state) {
     }
 
     // debug
-    for (var i = 0; i < pairs.length; i++) {
-        var element = pairs[i];
-        context.beginPath();
-        context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-        context.strokeStyle = 'yellow';
-        context.lineWidth = 1;
-        context.stroke();
-    }
+    // for (var i = 0; i < pairs.length; i++) {
+    //     var element = pairs[i];
+    //     context.beginPath();
+    //     context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+    //     context.strokeStyle = 'yellow';
+    //     context.lineWidth = 1;
+    //     context.stroke();
+    // }
 }
 
 // Here a magic starts
