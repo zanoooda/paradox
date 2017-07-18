@@ -34,6 +34,21 @@ canvas.addEventListener('click', function (e) {
         y: e.clientY - rect.top
     };
 
+    if(selected && getL(point, selected.m) < ((l/16) * 0.5)) {
+       
+        state[selected.first.x][selected.first.y].color = 2;
+        state[selected.second.x][selected.second.y].color = 1;
+        selected = null;
+        render(state);
+
+        return;
+    }
+
+    for (var optionsIndex = 0; optionsIndex < options.length; optionsIndex++) {
+        //var element = options[optionsIndex];
+        
+    }
+
     for (var pairIndex = 0; pairIndex < pairs.length; pairIndex++) {
         if(getL(point, pairs[pairIndex].m) < ((l/16) * 0.5)) {
             //alert(pairs[pairIndex].first.x + ", " + pairs[pairIndex].first.y + " and " + pairs[pairIndex].second.x + ", " + pairs[pairIndex].second.y);
@@ -43,9 +58,8 @@ canvas.addEventListener('click', function (e) {
 
             // fill options array
 
-            break;
-        }
-        
+            return;
+        } 
     }
 
     // if point in one of the circles from an array.
@@ -284,17 +298,19 @@ function render(state) {
         context.strokeStyle = 'purple';
         context.lineWidth = 17;
         context.stroke();
+
+        // for options ...
     }
 
     // debug
-    // for (var i = 0; i < pairs.length; i++) {
-    //     var element = pairs[i];
-    //     context.beginPath();
-    //     context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-    //     context.strokeStyle = 'yellow';
-    //     context.lineWidth = 1;
-    //     context.stroke();
-    // }
+    for (var i = 0; i < pairs.length; i++) {
+        var element = pairs[i];
+        context.beginPath();
+        context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+        context.strokeStyle = 'yellow';
+        context.lineWidth = 1;
+        context.stroke();
+    }
 }
 
 // Here a magic starts
