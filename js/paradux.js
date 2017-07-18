@@ -34,7 +34,12 @@ canvas.addEventListener('click', function (e) {
         y: e.clientY - rect.top
     };
 
-    alert(point.x + ", " + point.y);
+    for (var pairIndex = 0; pairIndex < pairs.length; pairIndex++) {
+        if(getL(point, pairs[pairIndex].m) < ((l/16) * 0.5)) {
+            alert(pairs[pairIndex].first.x + ", " + pairs[pairIndex].first.y + " and " + pairs[pairIndex].second.x + ", " + pairs[pairIndex].second.y);
+        }
+        
+    }
 
     // if point in one of the circles from an array.
     // getAllOptions(pair)
@@ -76,6 +81,19 @@ var options = [];
 
 // Functions
 
+function getL(point1, point2) {
+    var xs = 0;
+    var ys = 0;
+
+    xs = point2.x - point1.x;
+    xs = xs * xs;
+
+    ys = point2.y - point1.y;
+    ys = ys * ys;
+
+    return Math.sqrt( xs + ys );
+}
+
 function getM(first, second) {
     return {
         x: (first.xPx + second.xPx) / 2,
@@ -98,7 +116,6 @@ function findPairs(state) {
                 console.log(state[x][y].x + ", " + state[x][y].y)
 
                 for (var oArrIndex = 0; oArrIndex < oArrUp.length; oArrIndex++) {
-                    // different whan up and down
                     if(x < 3) {
                         if(
                             state[x + oArrUp[oArrIndex].x] !== undefined && 
@@ -214,7 +231,7 @@ function render(state) {
     for (var i = 0; i < pairs.length; i++) {
         var element = pairs[i];
         context.beginPath();
-        context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.8, 0, 2 * Math.PI, false);
+        context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
         context.strokeStyle = 'yellow';
         context.lineWidth = 1;
         context.stroke();
