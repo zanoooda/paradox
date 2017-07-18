@@ -22,7 +22,7 @@ canvas.addEventListener('mousemove', function (e) {
         y: e.clientY - rect.top
     };
 
-    console.log(point.x + ", " + point.y);
+    //console.log(point.x + ", " + point.y);
 
 }, false);
 
@@ -38,34 +38,8 @@ canvas.addEventListener('click', function (e) {
         if(getL(point, pairs[pairIndex].m) < ((l/16) * 0.5)) {
             //alert(pairs[pairIndex].first.x + ", " + pairs[pairIndex].first.y + " and " + pairs[pairIndex].second.x + ", " + pairs[pairIndex].second.y);
             
-
-            context.beginPath();
-            context.arc(
-                state[pairs[pairIndex].first.x][pairs[pairIndex].first.y].xPx, 
-                state[pairs[pairIndex].first.x][pairs[pairIndex].first.y].yPx,  
-                (l / 16) * 0.8, 
-                0, 
-                2 * Math.PI, 
-                false
-            );
-            context.strokeStyle = 'purple';
-            context.lineWidth = 15;
-            context.stroke();
-
-            context.beginPath();
-            context.arc(
-                state[pairs[pairIndex].second.x][pairs[pairIndex].second.y].xPx, 
-                state[pairs[pairIndex].second.x][pairs[pairIndex].second.y].yPx,  
-                (l / 16) * 0.8, 
-                0, 
-                2 * Math.PI, 
-                false
-            );
-            context.strokeStyle = 'orange';
-            context.lineWidth = 17;
-            context.stroke();
-
-            // I'am here
+            selected = pairs[pairIndex];
+            render(state);
 
             // fill options array
 
@@ -100,15 +74,25 @@ var context = canvas.getContext("2d");
 // TODO: Save last movie or better all the history of the movies
 //       After it you will be able to create undo/redo button
 // TODO: Change hardcoded object to object with constructor
-var state = [[{ x: 0, y: 0, color: 1 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 1 }, { x: 0, y: 3, color: 2 }],
-             [{ x: 1, y: 0, color: 2 }, { x: 1, y: 1, color: 0 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 0 }, { x: 1, y: 4, color: 1 }],
-             [{ x: 2, y: 0, color: 1 }, { x: 2, y: 1, color: 0 }, { x: 2, y: 2, color: 0 }, { x: 2, y: 3, color: 0 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
-             [{ x: 3, y: 0, color: 2 }, { x: 3, y: 1, color: 0 }, { x: 3, y: 2, color: 1 }, { x: 3, y: 3, color: 0 }, { x: 3, y: 4, color: 2 }, { x: 3, y: 5, color: 0 }, { x: 3, y: 6, color: 1 }],
-             [{ x: 4, y: 0, color: 1 }, { x: 4, y: 1, color: 0 }, { x: 4, y: 2, color: 0 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 2 }],
-             [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
-             [{ x: 6, y: 0, color: 1 }, { x: 6, y: 1, color: 2 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
+// var state = [[{ x: 0, y: 0, color: 1 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 1 }, { x: 0, y: 3, color: 2 }],
+//              [{ x: 1, y: 0, color: 2 }, { x: 1, y: 1, color: 0 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 0 }, { x: 1, y: 4, color: 1 }],
+//              [{ x: 2, y: 0, color: 1 }, { x: 2, y: 1, color: 0 }, { x: 2, y: 2, color: 0 }, { x: 2, y: 3, color: 0 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
+//              [{ x: 3, y: 0, color: 2 }, { x: 3, y: 1, color: 0 }, { x: 3, y: 2, color: 1 }, { x: 3, y: 3, color: 0 }, { x: 3, y: 4, color: 2 }, { x: 3, y: 5, color: 0 }, { x: 3, y: 6, color: 1 }],
+//              [{ x: 4, y: 0, color: 1 }, { x: 4, y: 1, color: 0 }, { x: 4, y: 2, color: 0 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 2 }],
+//              [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
+//              [{ x: 6, y: 0, color: 1 }, { x: 6, y: 1, color: 2 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
+//
+var state = [[{ x: 0, y: 0, color: 0 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 1 }, { x: 0, y: 3, color: 2 }],
+             [{ x: 1, y: 0, color: 0 }, { x: 1, y: 1, color: 0 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 1 }, { x: 1, y: 4, color: 1 }],
+             [{ x: 2, y: 0, color: 0 }, { x: 2, y: 1, color: 0 }, { x: 2, y: 2, color: 1 }, { x: 2, y: 3, color: 2 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
+             [{ x: 3, y: 0, color: 2 }, { x: 3, y: 1, color: 2 }, { x: 3, y: 2, color: 1 }, { x: 3, y: 3, color: 1 }, { x: 3, y: 4, color: 0 }, { x: 3, y: 5, color: 2 }, { x: 3, y: 6, color: 1 }],
+             [{ x: 4, y: 0, color: 0 }, { x: 4, y: 1, color: 1 }, { x: 4, y: 2, color: 0 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 0 }],
+             [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 2 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
+             [{ x: 6, y: 0, color: 0 }, { x: 6, y: 1, color: 0 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
 
 var pairs = [];
+
+var selected = null;
 
 var options = [];
 
@@ -146,7 +130,7 @@ function findPairs(state) {
             // find all with dublications
 
             if(state[x][y].color != 0) {
-                console.log(state[x][y].x + ", " + state[x][y].y)
+                //console.log(state[x][y].x + ", " + state[x][y].y)
 
                 for (var oArrIndex = 0; oArrIndex < oArrUp.length; oArrIndex++) {
                     if(x < 3) {
@@ -156,7 +140,7 @@ function findPairs(state) {
                             state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y].color != 0 &&
                             state[x][y].color != state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y].color
                         ) {
-                            console.log("..." + (x + oArrUp[oArrIndex].x) + ", " + (y + oArrUp[oArrIndex].y) + " " + state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y]);
+                            //console.log("..." + (x + oArrUp[oArrIndex].x) + ", " + (y + oArrUp[oArrIndex].y) + " " + state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y]);
 
                             pairs.push({
                                 first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrUp[oArrIndex].x, y: y + oArrUp[oArrIndex].y},
@@ -170,7 +154,7 @@ function findPairs(state) {
                             state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y].color != 0 &&
                             state[x][y].color != state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y].color
                         ) {
-                            console.log("..." + (x + oArrMiddle[oArrIndex].x) + ", " + (y + oArrMiddle[oArrIndex].y) + " " + state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y]);
+                            //console.log("..." + (x + oArrMiddle[oArrIndex].x) + ", " + (y + oArrMiddle[oArrIndex].y) + " " + state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y]);
 
                             pairs.push({
                                 first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrMiddle[oArrIndex].x, y: y + oArrMiddle[oArrIndex].y},
@@ -184,7 +168,7 @@ function findPairs(state) {
                             state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y].color != 0 &&
                             state[x][y].color != state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y].color
                         ) {
-                            console.log("..." + (x + oArrDown[oArrIndex].x) + ", " + (y + oArrDown[oArrIndex].y) + " " + state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y]);
+                            //console.log("..." + (x + oArrDown[oArrIndex].x) + ", " + (y + oArrDown[oArrIndex].y) + " " + state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y]);
 
                             pairs.push({
                                 first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrDown[oArrIndex].x, y: y + oArrDown[oArrIndex].y},
@@ -207,6 +191,9 @@ function findPairs(state) {
 }
 
 function render(state) {
+    // clear canvas
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
     // TODO: Add options to highlight circles
 
     // Start position of the currient line
@@ -257,6 +244,46 @@ function render(state) {
 
     for (var pairIndex = 0; pairIndex < pairs.length; pairIndex++) {
         pairs[pairIndex].m = getM(state[pairs[pairIndex].first.x][pairs[pairIndex].first.y], state[pairs[pairIndex].second.x][pairs[pairIndex].second.y]);
+    }
+
+    if(selected) {
+        for (var pairIndex = 0; pairIndex < pairs.length; pairIndex++) {
+            if(
+                pairs[pairIndex].first.x == selected.first.x && 
+                pairs[pairIndex].first.y == selected.first.y &&
+                pairs[pairIndex].second.x == selected.second.x && 
+                pairs[pairIndex].second.y == selected.second.y
+            ) {
+                // remove selected from pairs
+                pairs.splice(pairIndex, 1);
+            }
+        }
+
+        context.beginPath();
+        context.arc(
+            state[selected.first.x][selected.first.y].xPx, 
+            state[selected.first.x][selected.first.y].yPx,  
+            (l / 16) * 0.8, 
+            0, 
+            2 * Math.PI, 
+            false
+        );
+        context.strokeStyle = 'purple';
+        context.lineWidth = 17;
+        context.stroke();
+
+        context.beginPath();
+        context.arc(
+            state[selected.second.x][selected.second.y].xPx, 
+            state[selected.second.x][selected.second.y].yPx,  
+            (l / 16) * 0.8, 
+            0, 
+            2 * Math.PI, 
+            false
+        );
+        context.strokeStyle = 'purple';
+        context.lineWidth = 17;
+        context.stroke();
     }
 
     // debug
