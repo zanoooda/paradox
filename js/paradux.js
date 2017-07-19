@@ -64,20 +64,16 @@ canvas.addEventListener('click', function (e) {
             //alert(pairs[pairIndex].first.x + ", " + pairs[pairIndex].first.y + " and " + pairs[pairIndex].second.x + ", " + pairs[pairIndex].second.y);
             
             selected = pairs[pairIndex];
-            render(state);
 
-            // fill options array
+            options = getOptions(pairs[pairIndex]);
+
+            // I'am here
+
+            render(state);
 
             return;
         } 
     }
-
-    // if point in one of the circles from an array.
-    // getAllOptions(pair)
-    // save options outside this function to be accessed for this listener
-    // drawStuffFor(options)
-
-    // if point in one of the options makeMovie(option);
 
 }, false);
 
@@ -142,10 +138,42 @@ function getM(first, second) {
     };
 }
 
+function getOptions(pair) {
+    var options = [];
+
+    if(pair.first.x == pair.second.x) {
+        // they stand horizontaly
+
+        // try right
+        var right = pair.first.y > pair.second.y ? pair.first : pair.second;
+        var left = pair.first.y < pair.second.y ? pair.first : pair.second;
+        if(state[left.x][left.y - 1] !== undefined && state[left.x][left.y - 1].color == 0) {
+            var p = JSON.parse(JSON.stringify(pair)); // clone
+            p.first.y -= 1;
+            p.second.y -= 1;
+            // I'am here
+            p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+            //
+            options.push(p);
+        }
+        // try left
+        // try up right
+        // try up left
+        // try down right
+        // try down left
+    } else {
+        var upper = pair.first.x < pair.second.x ? pair.first : pair.second;
+        var bottom = pair.first.x > pair.second.x ? pair.first : pair.second;
+        
+        // Here will be two situations
+    }
+
+    return options;
+}
+
 function findPairs(state) {
     var pairs = [];
     var oArrUp = [{ x: 1, y: 0},{ x: 1, y: 1},{ x: 0, y: 1},{ x: -1, y: 0},{ x: -1, y: -1},{ x: 0, y: -1}];
-    // I'am here
     var oArrMiddle = [{ x: 1, y: -1},{ x: 1, y: 0},{ x: 0, y: 1},{ x: -1, y: 0},{ x: -1, y: -1},{ x: 0, y: -1}];
     var oArrDown = [{ x: 1, y: -1},{ x: 1, y: 0},{ x: 0, y: 1},{ x: -1, y: 1},{ x: -1, y: 0},{ x: 0, y: -1}];
 
@@ -313,14 +341,23 @@ function render(state) {
     }
 
     // debug
-    // for (var i = 0; i < pairs.length; i++) {
-    //     var element = pairs[i];
-    //     context.beginPath();
-    //     context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-    //     context.strokeStyle = 'yellow';
-    //     context.lineWidth = 1;
-    //     context.stroke();
-    // }
+    for (var i = 0; i < pairs.length; i++) {
+        var element = pairs[i];
+        context.beginPath();
+        context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+        context.strokeStyle = 'yellow';
+        context.lineWidth = 1;
+        context.stroke();
+    }
+
+    for (var i = 0; i < options.length; i++) {
+        var element = options[i];
+        context.beginPath();
+        context.arc(options[i].m.x, options[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+        context.strokeStyle = 'green';
+        context.lineWidth = 2;
+        context.stroke();
+    }
 }
 
 // Here a magic starts
