@@ -39,6 +39,7 @@ canvas.addEventListener('click', function (e) {
         state[selected.first.x][selected.first.y].color = 2;
         state[selected.second.x][selected.second.y].color = 1;
         selected = null;
+        options = [];
         render(state);
 
         return;
@@ -49,8 +50,11 @@ canvas.addEventListener('click', function (e) {
         //
         // checking this
         if(getL(point, options[optionsIndex].m) < ((l/16) * 0.5)) {
-            state[options[optionsIndex].first.x][options[optionsIndex].first.x].color = 1;
-            state[options[optionsIndex].second.x][options[optionsIndex].second.x].color = 1;
+            state[selected.first.x][selected.first.y].color = 0;
+            state[selected.second.x][selected.second.y].color = 0;
+
+            state[options[optionsIndex].first.x][options[optionsIndex].first.y].color = 1;
+            state[options[optionsIndex].second.x][options[optionsIndex].second.y].color = 2;
             selected = null;
             options = [];
             render(state);
@@ -78,15 +82,12 @@ canvas.addEventListener('click', function (e) {
 }, false);
 
 canvas.addEventListener('touchstart', function (e) {
-
-    var rect = canvas.getBoundingClientRect();
-    var point = {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-    };
-
-    alert(point.x + ", " + point.y); // Nan, NaN!
-
+    var touch = e.touches[0];
+    var mouseEvent = new MouseEvent("mousedown", {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+    });
+    canvas.dispatchEvent(mouseEvent);
 }, false);
 
 var context = canvas.getContext("2d");
@@ -102,12 +103,12 @@ var context = canvas.getContext("2d");
 //              [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
 //              [{ x: 6, y: 0, color: 1 }, { x: 6, y: 1, color: 2 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
 //
-var state = [[{ x: 0, y: 0, color: 0 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 1 }, { x: 0, y: 3, color: 2 }],
+var state = [[{ x: 0, y: 0, color: 0 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 2 }, { x: 0, y: 3, color: 1 }],
              [{ x: 1, y: 0, color: 0 }, { x: 1, y: 1, color: 0 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 1 }, { x: 1, y: 4, color: 1 }],
-             [{ x: 2, y: 0, color: 0 }, { x: 2, y: 1, color: 0 }, { x: 2, y: 2, color: 1 }, { x: 2, y: 3, color: 2 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
+             [{ x: 2, y: 0, color: 0 }, { x: 2, y: 1, color: 0 }, { x: 2, y: 2, color: 2 }, { x: 2, y: 3, color: 1 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
              [{ x: 3, y: 0, color: 2 }, { x: 3, y: 1, color: 2 }, { x: 3, y: 2, color: 1 }, { x: 3, y: 3, color: 1 }, { x: 3, y: 4, color: 0 }, { x: 3, y: 5, color: 2 }, { x: 3, y: 6, color: 1 }],
              [{ x: 4, y: 0, color: 0 }, { x: 4, y: 1, color: 1 }, { x: 4, y: 2, color: 0 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 0 }],
-             [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 2 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
+             [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 2 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
              [{ x: 6, y: 0, color: 0 }, { x: 6, y: 1, color: 0 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
 
 var pairs = [];
@@ -144,28 +145,291 @@ function getOptions(pair) {
     if(pair.first.x == pair.second.x) {
         // they stand horizontaly
 
-        // try right
+        // try left
         var right = pair.first.y > pair.second.y ? pair.first : pair.second;
         var left = pair.first.y < pair.second.y ? pair.first : pair.second;
         if(state[left.x][left.y - 1] !== undefined && state[left.x][left.y - 1].color == 0) {
             var p = JSON.parse(JSON.stringify(pair)); // clone
             p.first.y -= 1;
             p.second.y -= 1;
-            // I'am here
             p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
             //
             options.push(p);
         }
-        // try left
-        // try up right
+        // try right
+        if(state[right.x][right.y + 1] !== undefined && state[right.x][right.y + 1].color == 0) {
+            var p = JSON.parse(JSON.stringify(pair)); // clone
+            p.first.y += 1;
+            p.second.y += 1;
+            p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+            //
+            options.push(p);
+        }
         // try up left
+        if(right.x < 3) {
+            if(
+                state[right.x - 1] &&
+                state[right.x - 1][right.y - 1] !== undefined &&
+                state[left.x - 1][left.y - 1] !== undefined &&
+                state[right.x - 1][right.y - 1].color == 0 &&
+                state[left.x - 1][left.y - 1].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x -= 1;
+                p.first.y -= 1;
+                p.second.x -= 1;
+                p.second.y -= 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        } else if (right.x == 3) {
+            if(
+                state[right.x - 1][right.y - 1] !== undefined &&
+                state[left.x - 1][left.y - 1] !== undefined &&
+                state[right.x - 1][right.y - 1].color == 0 &&
+                state[left.x - 1][left.y - 1].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x -= 1;
+                p.first.y -= 1;
+                p.second.x -= 1;
+                p.second.y -= 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        } else {
+            if(
+                state[right.x - 1][right.y] !== undefined &&
+                state[left.x - 1][left.y] !== undefined &&
+                state[right.x - 1][right.y].color == 0 &&
+                state[left.x - 1][left.y].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x -= 1;
+                p.second.x -= 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        }
+        // try up right
+        if(right.x < 3) {
+            if(
+                state[right.x - 1] &&
+                state[right.x - 1][right.y] !== undefined &&
+                state[left.x - 1][left.y] !== undefined &&
+                state[right.x - 1][right.y].color == 0 &&
+                state[left.x - 1][left.y].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x -= 1;
+                p.second.x -= 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        } else if (right.x == 3) {
+            if(
+                state[right.x - 1][right.y] !== undefined &&
+                state[left.x - 1][left.y] !== undefined &&
+                state[right.x - 1][right.y].color == 0 &&
+                state[left.x - 1][left.y].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x -= 1;
+                p.second.x -= 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        } else {
+            if(
+                state[right.x - 1][right.y + 1] !== undefined &&
+                state[left.x - 1][left.y + 1] !== undefined &&
+                state[right.x - 1][right.y + 1].color == 0 &&
+                state[left.x - 1][left.y + 1].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x -= 1;
+                p.first.y += 1;
+                p.second.x -= 1;
+                p.second.y += 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        }
         // try down right
+        if(right.x < 3) {
+            if(
+                state[right.x + 1][right.y + 1] !== undefined &&
+                state[left.x + 1][left.y + 1] !== undefined &&
+                state[right.x + 1][right.y + 1].color == 0 &&
+                state[left.x + 1][left.y + 1].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x += 1;
+                p.first.y += 1;
+                p.second.x += 1;
+                p.second.y += 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        } else if (right.x == 3) {
+            if(
+                state[right.x + 1][right.y] !== undefined &&
+                state[left.x + 1][left.y] !== undefined &&
+                state[right.x + 1][right.y].color == 0 &&
+                state[left.x + 1][left.y].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x += 1;
+                p.second.x += 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        } else {
+            if(
+                state[right.x + 1] &&
+                state[right.x + 1][right.y] !== undefined &&
+                state[left.x + 1][left.y] !== undefined &&
+                state[right.x + 1][right.y].color == 0 &&
+                state[left.x + 1][left.y].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x += 1;
+                p.second.x += 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        }
         // try down left
+        if(right.x < 3) {
+            if(
+                state[right.x + 1][right.y] !== undefined &&
+                state[left.x + 1][left.y] !== undefined &&
+                state[right.x + 1][right.y].color == 0 &&
+                state[left.x + 1][left.y].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x += 1;
+                p.second.x += 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        } else if (right.x == 3) {
+            if(
+                state[right.x + 1][right.y - 1] !== undefined &&
+                state[left.x + 1][left.y - 1] !== undefined &&
+                state[right.x + 1][right.y - 1].color == 0 &&
+                state[left.x + 1][left.y - 1].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x += 1;
+                p.first.y -= 1;
+                p.second.x += 1;
+                p.second.y -= 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        } else {
+            if(
+                state[right.x + 1] &&
+                state[right.x + 1][right.y - 1] !== undefined &&
+                state[left.x + 1][left.y - 1] !== undefined &&
+                state[right.x + 1][right.y - 1].color == 0 &&
+                state[left.x + 1][left.y - 1].color == 0
+            ) {
+                var p = JSON.parse(JSON.stringify(pair)); // clone
+                p.first.x += 1;
+                p.first.y -= 1;
+                p.second.x += 1;
+                p.second.y -= 1;
+                p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                //
+                options.push(p);
+            }
+        }
     } else {
         var upper = pair.first.x < pair.second.x ? pair.first : pair.second;
         var bottom = pair.first.x > pair.second.x ? pair.first : pair.second;
         
-        // Here will be two situations
+        // Here will be two situations, lets call it temporary E (east) and W (west)
+        if(upper.x < 3) {
+            if(upper.y == bottom.y) {
+                // E
+                //alert('upper.x < 3 and E');
+
+                // try up
+                // try down
+                // try right up
+                // try right down
+                // try left up
+                // try left down
+                // when I will try down I have to think that if bottom.x == 3 => different than another situations
+            } else {
+                // W
+                //alert('upper.x < 3 and W');
+
+                // try up
+                // try down
+                // try right up
+                // try right down
+                // try left up
+                // try left down
+            }
+        } else if(upper.x == 3) {
+            if(upper.y == bottom.y) {
+                // E
+                //alert('upper.x = 3 and E');
+
+                // try up
+                // try down
+                // try right up
+                // try right down
+                // try left up
+                // try left down
+            } else {
+                // W
+                //alert('upper.x = 3 and W');
+
+                // try up
+                // try down
+                // try right up
+                // try right down
+                // try left up
+                // try left down
+            }
+        } else {
+            if(upper.y == bottom.y) {
+                // W
+                //alert('upper.x > 3 and W');
+
+                // try up
+                // try down
+                // try right up
+                // try right down
+                // try left up
+                // try left down
+            } else {
+                // E
+                //alert('upper.x > 3 and E');
+
+                // try up
+                // try down
+                // try right up
+                // try right down
+                // try left up
+                // try left down
+            }
+        }
     }
 
     return options;
@@ -341,19 +605,27 @@ function render(state) {
     }
 
     // debug
-    for (var i = 0; i < pairs.length; i++) {
-        var element = pairs[i];
-        context.beginPath();
-        context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-        context.strokeStyle = 'yellow';
-        context.lineWidth = 1;
-        context.stroke();
-    }
+    // for (var i = 0; i < pairs.length; i++) {
+    //     var element = pairs[i];
+    //     context.beginPath();
+    //     context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+    //     context.strokeStyle = 'yellow';
+    //     context.lineWidth = 1;
+    //     context.stroke();
+    // }
 
     for (var i = 0; i < options.length; i++) {
         var element = options[i];
         context.beginPath();
         context.arc(options[i].m.x, options[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+        context.strokeStyle = 'green';
+        context.lineWidth = 2;
+        context.stroke();
+    }
+
+    if(selected) {
+        context.beginPath();
+        context.arc(selected.m.x, selected.m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
         context.strokeStyle = 'green';
         context.lineWidth = 2;
         context.stroke();
