@@ -15,7 +15,6 @@ canvas.height = l;
 
 // May be replace listeners or wrap
 canvas.addEventListener('mousemove', function (e) {
-
     var rect = canvas.getBoundingClientRect();
     var point = {
         x: e.clientX - rect.left,
@@ -27,7 +26,6 @@ canvas.addEventListener('mousemove', function (e) {
 }, false);
 
 canvas.addEventListener('click', function (e) {
-
     var rect = canvas.getBoundingClientRect();
     var point = {
         x: e.clientX - rect.left,
@@ -35,7 +33,6 @@ canvas.addEventListener('click', function (e) {
     };
 
     if(selected && getL(point, selected.m) < ((l/16) * 0.5)) {
-       
         state[selected.first.x][selected.first.y].color = 2;
         state[selected.second.x][selected.second.y].color = 1;
         selected = null;
@@ -46,13 +43,9 @@ canvas.addEventListener('click', function (e) {
     }
 
     for (var optionsIndex = 0; optionsIndex < options.length; optionsIndex++) {
-        //var element = options[optionsIndex];
-        //
-        // checking this
         if(getL(point, options[optionsIndex].m) < ((l/16) * 0.5)) {
             state[selected.first.x][selected.first.y].color = 0;
             state[selected.second.x][selected.second.y].color = 0;
-
             state[options[optionsIndex].first.x][options[optionsIndex].first.y].color = 1;
             state[options[optionsIndex].second.x][options[optionsIndex].second.y].color = 2;
             selected = null;
@@ -65,14 +58,8 @@ canvas.addEventListener('click', function (e) {
 
     for (var pairIndex = 0; pairIndex < pairs.length; pairIndex++) {
         if(getL(point, pairs[pairIndex].m) < ((l/16) * 0.5)) {
-            //alert(pairs[pairIndex].first.x + ", " + pairs[pairIndex].first.y + " and " + pairs[pairIndex].second.x + ", " + pairs[pairIndex].second.y);
-            
             selected = pairs[pairIndex];
-
             options = getOptions(pairs[pairIndex]);
-
-            // I'am here
-
             render(state);
 
             return;
@@ -102,21 +89,13 @@ var context = canvas.getContext("2d");
 //              [{ x: 4, y: 0, color: 1 }, { x: 4, y: 1, color: 0 }, { x: 4, y: 2, color: 0 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 2 }],
 //              [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
 //              [{ x: 6, y: 0, color: 1 }, { x: 6, y: 1, color: 2 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
-//
-// var state = [[{ x: 0, y: 0, color: 0 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 2 }, { x: 0, y: 3, color: 1 }],
-//              [{ x: 1, y: 0, color: 0 }, { x: 1, y: 1, color: 0 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 1 }, { x: 1, y: 4, color: 1 }],
-//              [{ x: 2, y: 0, color: 0 }, { x: 2, y: 1, color: 0 }, { x: 2, y: 2, color: 2 }, { x: 2, y: 3, color: 1 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
-//              [{ x: 3, y: 0, color: 2 }, { x: 3, y: 1, color: 2 }, { x: 3, y: 2, color: 1 }, { x: 3, y: 3, color: 1 }, { x: 3, y: 4, color: 0 }, { x: 3, y: 5, color: 2 }, { x: 3, y: 6, color: 1 }],
-//              [{ x: 4, y: 0, color: 0 }, { x: 4, y: 1, color: 1 }, { x: 4, y: 2, color: 0 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 0 }],
-//              [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 2 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
-//              [{ x: 6, y: 0, color: 0 }, { x: 6, y: 1, color: 0 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
 
 var state = [[{ x: 0, y: 0, color: 1 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 1 }, { x: 0, y: 3, color: 2 }],
-             [{ x: 1, y: 0, color: 0 }, { x: 1, y: 1, color: 2 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 0 }, { x: 1, y: 4, color: 1 }],
-             [{ x: 2, y: 0, color: 0 }, { x: 2, y: 1, color: 1 }, { x: 2, y: 2, color: 0 }, { x: 2, y: 3, color: 0 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
-             [{ x: 3, y: 0, color: 0 }, { x: 3, y: 1, color: 1 }, { x: 3, y: 2, color: 2 }, { x: 3, y: 3, color: 0 }, { x: 3, y: 4, color: 2 }, { x: 3, y: 5, color: 0 }, { x: 3, y: 6, color: 1 }],
-             [{ x: 4, y: 0, color: 0 }, { x: 4, y: 1, color: 0 }, { x: 4, y: 2, color: 1 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 2 }],
-             [{ x: 5, y: 0, color: 0 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 2 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
+             [{ x: 1, y: 0, color: 2 }, { x: 1, y: 1, color: 0 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 0 }, { x: 1, y: 4, color: 1 }],
+             [{ x: 2, y: 0, color: 1 }, { x: 2, y: 1, color: 0 }, { x: 2, y: 2, color: 0 }, { x: 2, y: 3, color: 0 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
+             [{ x: 3, y: 0, color: 2 }, { x: 3, y: 1, color: 2 }, { x: 3, y: 2, color: 1 }, { x: 3, y: 3, color: 0 }, { x: 3, y: 4, color: 0 }, { x: 3, y: 5, color: 0 }, { x: 3, y: 6, color: 1 }],
+             [{ x: 4, y: 0, color: 1 }, { x: 4, y: 1, color: 0 }, { x: 4, y: 2, color: 0 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 2 }],
+             [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
              [{ x: 6, y: 0, color: 1 }, { x: 6, y: 1, color: 2 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
 
 var pairs = [];
@@ -148,6 +127,7 @@ function getM(first, second) {
 }
 
 function getOptions(pair) {
+
     var options = [];
 
     if(pair.first.x == pair.second.x) {
@@ -373,7 +353,7 @@ function getOptions(pair) {
         if(upper.x < 3) {
             if(upper.y == bottom.y) {
                 // E
-                alert('upper.x < 3 and E');
+                //alert('upper.x < 3 and E');
 
                 // try up
                 if(
@@ -392,8 +372,8 @@ function getOptions(pair) {
                 // try down
                 if(bottom.x <= 2) {
                     if(
-                        state[upper.x + 1][upper.y] !== undefined &&
-                        state[upper.x + 1][upper.y].color == 0
+                        state[bottom.x + 1][bottom.y] !== undefined &&
+                        state[bottom.x + 1][bottom.y].color == 0
                     ) {
                         var p = JSON.parse(JSON.stringify(pair)); // clone
                         p.first.x += 1;
@@ -404,36 +384,273 @@ function getOptions(pair) {
                     }
                 } else {
                     if(
-                        state[bottom.x + 1] !== undefined &&
-                        state[upper.x + 1][upper.y - 1] !== undefined &&
-                        state[upper.x + 1][upper.y - 1].color == 0
+                        state[bottom.x + 1][bottom.y - 1] !== undefined &&
+                        state[bottom.x + 1][bottom.y - 1].color == 0
                     ) {
                         var p = JSON.parse(JSON.stringify(pair)); // clone
 
-                        // if(bottom.x == 3) {
-
-                        // }
+                        if(state[bottom.x][bottom.y].color == 1) {
+                            p.first.x += 1;
+                            p.first.y -= 1;
+                            p.second.x += 1;
+                        } else {
+                            p.first.x += 1;
+                            p.second.y -= 1;
+                            p.second.x += 1;
+                        }
 
                         p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
                         
-                        // options.push(p);
+                        options.push(p); 
                     }
                 }
                 // try right up
+                if(
+                    state[upper.x - 1] !== undefined &&
+                    state[upper.x - 1][upper.y - 1] !== undefined &&
+                    state[bottom.x - 1][bottom.y - 1] !== undefined &&
+                    state[upper.x - 1][upper.y - 1].color == 0 &&
+                    state[bottom.x - 1][bottom.y - 1].color == 0
+                ) {
+                    var p = JSON.parse(JSON.stringify(pair)); // clone
+
+                    p.first.x -= 1;
+                    p.first.y -= 1;
+                    p.second.x -= 1;
+                    p.second.y -= 1;
+
+                    p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                        
+                    options.push(p); 
+                }
                 // try right down
+                if(
+                    state[upper.x][upper.y - 1] !== undefined &&
+                    state[bottom.x][bottom.y - 1] !== undefined &&
+                    state[upper.x][upper.y - 1].color == 0 &&
+                    state[bottom.x][bottom.y - 1].color == 0
+                ) {
+                    var p = JSON.parse(JSON.stringify(pair)); // clone
+
+                    p.first.y -= 1;
+                    p.second.y -= 1;
+
+                    p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                        
+                    options.push(p);
+                }
                 // try left up
+                if(
+                    state[upper.x][upper.y + 1] !== undefined &&
+                    state[bottom.x][bottom.y + 1] !== undefined &&
+                    state[upper.x][upper.y + 1].color == 0 &&
+                    state[bottom.x][bottom.y + 1].color == 0
+                ) {
+                    var p = JSON.parse(JSON.stringify(pair)); // clone
+
+                    p.first.y += 1;
+                    p.second.y += 1;
+
+                    p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                        
+                    options.push(p);
+                }
                 // try left down
-                // when I will try down I have to think that if bottom.x == 3 => different than another situations
+                if(bottom.x <= 2) {
+                    if(
+                        state[upper.x + 1][upper.y + 1] !== undefined &&
+                        state[bottom.x + 1][bottom.y + 1] !== undefined &&
+                        state[upper.x + 1][upper.y + 1].color == 0 &&
+                        state[bottom.x + 1][bottom.y + 1].color == 0
+                    ) {
+                        var p = JSON.parse(JSON.stringify(pair)); // clone
+
+                        p.first.y += 1;
+                        p.first.x += 1;
+                        p.second.y += 1;
+                        p.second.x += 1;
+
+                        p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                            
+                        options.push(p);
+                    }
+                } else {
+                    // bottom.x = 3
+                    if(
+                        state[upper.x + 1][upper.y + 1] !== undefined &&
+                        state[bottom.x + 1][bottom.y] !== undefined &&
+                        state[upper.x + 1][upper.y + 1].color == 0 &&
+                        state[bottom.x + 1][bottom.y].color == 0
+                    ) {
+                        var p = JSON.parse(JSON.stringify(pair)); // clone
+
+                        if(state[upper.x][upper.y].color == 1) {
+                            p.first.y += 1;
+                            p.first.x += 1;
+                            p.second.x += 1;
+                        } else {
+                            p.first.x += 1;
+                            p.second.x += 1;
+                            p.second.y += 1;
+                        }
+
+                        p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                            
+                        options.push(p);
+                    }
+                }
+                
             } else {
                 // W
                 //alert('upper.x < 3 and W');
 
                 // try up
+                if(
+                    state[upper.x - 1] !== undefined &&
+                    state[upper.x - 1][upper.y - 1] !== undefined &&
+                    state[upper.x - 1][upper.y - 1].color == 0
+                ) {
+                    var p = JSON.parse(JSON.stringify(pair)); // clone
+
+                    p.first.y -= 1;
+                    p.first.x -= 1;
+                    p.second.y -= 1;
+                    p.second.x -= 1;
+
+                    p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                        
+                    options.push(p);
+                }
                 // try down
+                if(bottom.x <= 2) {
+                    if(
+                        state[bottom.x + 1][bottom.y + 1] !== undefined &&
+                        state[bottom.x + 1][bottom.y + 1].color == 0
+                    ) {
+                        var p = JSON.parse(JSON.stringify(pair)); // clone
+
+                        p.first.y += 1;
+                        p.first.x += 1;
+                        p.second.y += 1;
+                        p.second.x += 1;
+
+                        p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                            
+                        options.push(p);
+                    }
+                } else {
+                    // bottom.x = 3
+                    if(
+                        state[bottom.x + 1][bottom.y] !== undefined &&
+                        state[bottom.x + 1][bottom.y].color == 0
+                    ) {
+                        var p = JSON.parse(JSON.stringify(pair)); // clone
+
+                        if(state[upper.x][upper.y].color == 1) {
+                            p.first.x += 1;
+                            p.first.y += 1;
+                            p.second.x += 1;
+                        } else {
+                            p.first.x += 1;
+                            p.second.x += 1;
+                            p.second.y += 1;
+                        }
+
+                        p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                            
+                        options.push(p);
+                    }
+                }
                 // try right up
+                if(
+                    state[upper.x - 1] !== undefined &&
+                    state[upper.x - 1][upper.y] !== undefined &&
+                    state[bottom.x - 1][bottom.y] !== undefined &&
+                    state[upper.x - 1][upper.y].color == 0 &&
+                    state[bottom.x - 1][bottom.y].color == 0
+                ) {
+                    var p = JSON.parse(JSON.stringify(pair)); // clone
+                    p.first.x -= 1;
+                    p.second.x -= 1;
+
+                    p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                        
+                    options.push(p);
+                }
                 // try right down
+                if(
+                    state[upper.x][upper.y + 1] !== undefined &&
+                    state[bottom.x][bottom.y + 1] !== undefined &&
+                    state[upper.x][upper.y + 1].color == 0 &&
+                    state[bottom.x][bottom.y + 1].color == 0
+                ) {
+                    var p = JSON.parse(JSON.stringify(pair)); // clone
+                    p.first.y += 1;
+                    p.second.y += 1;
+
+                    p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                        
+                    options.push(p);
+                }
                 // try left up
+                if(
+                    state[upper.x][upper.y - 1] !== undefined &&
+                    state[bottom.x][bottom.y - 1] !== undefined &&
+                    state[upper.x][upper.y - 1].color == 0 &&
+                    state[upper.x][upper.y - 1].color == 0
+                ) {
+                    var p = JSON.parse(JSON.stringify(pair)); // clone
+                    p.first.y -= 1;
+                    p.second.y -= 1;
+
+                    p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                        
+                    options.push(p);
+                }
+
                 // try left down
+                if(bottom.x <= 2) {
+                    if(
+                        state[upper.x + 1][upper.y] !== undefined &&
+                        state[bottom.x + 1][bottom.y] !== undefined &&
+                        state[upper.x + 1][upper.y].color == 0 &&
+                        state[bottom.x + 1][bottom.y].color == 0
+                    ) {
+                        var p = JSON.parse(JSON.stringify(pair)); // clone
+
+                        p.first.x += 1;
+                        p.second.x += 1;
+
+                        p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                            
+                        options.push(p);
+                    }
+                } else {
+                    // bottom.x = 3
+                    if(
+                        state[upper.x + 1][upper.y] !== undefined &&
+                        state[upper.x + 1][upper.y].color == 0 &&
+                        state[bottom.x + 1][bottom.y - 1] !== undefined &&
+                        state[bottom.x + 1][bottom.y - 1].color == 0
+                    ) {
+                        var p = JSON.parse(JSON.stringify(pair)); // clone
+
+                        if(state[upper.x][upper.y].color == 1) {
+                            p.first.x += 1;
+                            p.second.x += 1;
+                            p.second.y -= 1;
+                        } else {
+                            p.first.x += 1;
+                            p.second.x += 1;
+                            p.first.y -= 1;
+                        }
+
+                        p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
+                            
+                        options.push(p);
+                    }
+                    
+                }
             }
         } else if(upper.x == 3) {
             if(upper.y == bottom.y) {
@@ -496,8 +713,6 @@ function findPairs(state) {
             // find all with dublications
 
             if(state[x][y].color != 0) {
-                //console.log(state[x][y].x + ", " + state[x][y].y)
-
                 for (var oArrIndex = 0; oArrIndex < oArrUp.length; oArrIndex++) {
                     if(x < 3) {
                         if(
@@ -506,8 +721,6 @@ function findPairs(state) {
                             state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y].color != 0 &&
                             state[x][y].color != state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y].color
                         ) {
-                            //console.log("..." + (x + oArrUp[oArrIndex].x) + ", " + (y + oArrUp[oArrIndex].y) + " " + state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y]);
-
                             pairs.push({
                                 first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrUp[oArrIndex].x, y: y + oArrUp[oArrIndex].y},
                                 second: state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArrUp[oArrIndex].x, y: y + oArrUp[oArrIndex].y}
@@ -520,8 +733,6 @@ function findPairs(state) {
                             state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y].color != 0 &&
                             state[x][y].color != state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y].color
                         ) {
-                            //console.log("..." + (x + oArrMiddle[oArrIndex].x) + ", " + (y + oArrMiddle[oArrIndex].y) + " " + state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y]);
-
                             pairs.push({
                                 first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrMiddle[oArrIndex].x, y: y + oArrMiddle[oArrIndex].y},
                                 second: state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArrMiddle[oArrIndex].x, y: y + oArrMiddle[oArrIndex].y}
@@ -534,8 +745,6 @@ function findPairs(state) {
                             state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y].color != 0 &&
                             state[x][y].color != state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y].color
                         ) {
-                            //console.log("..." + (x + oArrDown[oArrIndex].x) + ", " + (y + oArrDown[oArrIndex].y) + " " + state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y]);
-
                             pairs.push({
                                 first: state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrDown[oArrIndex].x, y: y + oArrDown[oArrIndex].y},
                                 second: state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArrDown[oArrIndex].x, y: y + oArrDown[oArrIndex].y}
@@ -548,7 +757,6 @@ function findPairs(state) {
     }
 
     // remove dublicatons
-
     var uniq = new Set();
     pairs.forEach(e => uniq.add(JSON.stringify(e)));
     pairs = Array.from(uniq).map(e => JSON.parse(e));
@@ -559,8 +767,6 @@ function findPairs(state) {
 function render(state) {
     // clear canvas
     context.clearRect(0, 0, canvas.width, canvas.height);
-
-    // TODO: Add options to highlight circles
 
     // Start position of the currient line
     var start = { x: l / 4 + l / 16, y: l / 8 };
@@ -655,17 +861,15 @@ function render(state) {
     }
 
     // debug
-    for (var i = 0; i < pairs.length; i++) {
-        var element = pairs[i];
-        context.beginPath();
-        context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-        context.strokeStyle = 'yellow';
-        context.lineWidth = 1;
-        context.stroke();
-    }
+    // for (var i = 0; i < pairs.length; i++) {
+    //     context.beginPath();
+    //     context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+    //     context.strokeStyle = 'yellow';
+    //     context.lineWidth = 1;
+    //     context.stroke();
+    // }
 
     for (var i = 0; i < options.length; i++) {
-        var element = options[i];
         context.beginPath();
         context.arc(options[i].m.x, options[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
         context.strokeStyle = 'green';
