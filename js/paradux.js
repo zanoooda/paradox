@@ -342,6 +342,7 @@ function getOptions(pair) {
         var bottom = pair.first.x > pair.second.x ? pair.first : pair.second;
         
         // Here will be two situations, lets call it temporary E (east) and W (west)
+
         if(upper.x < 3) {
             if(upper.y == bottom.y) {
                 // E
@@ -653,14 +654,14 @@ function getOptions(pair) {
                 ) {
                     var p = JSON.parse(JSON.stringify(pair)); // clone
 
-                    if(state[p.first.x][p.first.y] == 1) {
-                        p.first.x -= 1;
-                        p.second.x -= 1;
-                        p.second.y -= 1;
-                    } else {
+                    if(state[upper.x][upper.y] == 1) {
                         p.first.x -= 1;
                         p.second.x -= 1;
                         p.first.y -= 1;
+                    } else {
+                        p.first.x -= 1;
+                        p.second.x -= 1;
+                        p.second.y -= 1;
                     }
 
                     p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
@@ -690,10 +691,10 @@ function getOptions(pair) {
 
                     p.first.x -= 1
                     p.second.x -= 1;
-                    if(state[p.first.x][p.first.y].color == 1) {
-                        p.first.y += 1;
-                    } else {
+                    if(state[upper.x][upper.y].color == 1) {
                         p.second.y += 1;
+                    } else {
+                        p.first.y += 1;
                     }
 
                     p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
@@ -756,14 +757,14 @@ function getOptions(pair) {
                 ) {
                     var p = JSON.parse(JSON.stringify(pair)); // clone
 
-                    if(state[p.first.x][p.first.y] == 1) {
-                        p.first.x -= 1;
-                        p.second.x -= 1;
-                        p.first.y += 1;
-                    } else {
+                    if(state[upper.x][upper.y] == 1) {
                         p.first.x -= 1;
                         p.second.x -= 1;
                         p.second.y += 1;
+                    } else {
+                        p.first.x -= 1;
+                        p.second.x -= 1;
+                        p.first.y += 1;
                     }
 
                     p.m = getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
