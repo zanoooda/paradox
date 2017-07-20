@@ -1209,21 +1209,21 @@ function render(state) {
         // for options ...
     }
 
-    for (var i = 0; i < options.length; i++) {
-        context.beginPath();
-        context.arc(options[i].m.x, options[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-        context.strokeStyle = 'green';
-        context.lineWidth = 2;
-        context.stroke();
-    }
+    // for (var i = 0; i < options.length; i++) {
+    //     context.beginPath();
+    //     context.arc(options[i].m.x, options[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+    //     context.strokeStyle = 'green';
+    //     context.lineWidth = 2;
+    //     context.stroke();
+    // }
 
-    if(selected) {
-        context.beginPath();
-        context.arc(selected.m.x, selected.m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-        context.strokeStyle = 'green';
-        context.lineWidth = 2;
-        context.stroke();
-    }
+    // if(selected) {
+    //     context.beginPath();
+    //     context.arc(selected.m.x, selected.m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+    //     context.strokeStyle = 'green';
+    //     context.lineWidth = 2;
+    //     context.stroke();
+    // }
 
     // debug
     // for (var i = 0; i < pairs.length; i++) {
