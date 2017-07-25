@@ -70,10 +70,12 @@ canvas.addEventListener('click', function (e) {
 
 canvas.addEventListener('touchstart', function (e) {
     var touch = e.touches[0];
+    // May be this make delay
     var mouseEvent = new MouseEvent("mousedown", {
         clientX: touch.clientX,
         clientY: touch.clientY
     });
+    // What is it?
     canvas.dispatchEvent(mouseEvent);
 }, false);
 
@@ -1209,21 +1211,21 @@ function render(state) {
         // for options ...
     }
 
-    // for (var i = 0; i < options.length; i++) {
-    //     context.beginPath();
-    //     context.arc(options[i].m.x, options[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-    //     context.strokeStyle = 'green';
-    //     context.lineWidth = 2;
-    //     context.stroke();
-    // }
+    for (var i = 0; i < options.length; i++) {
+        context.beginPath();
+        context.arc(options[i].m.x, options[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+        context.strokeStyle = 'green';
+        context.lineWidth = 2;
+        context.stroke();
+    }
 
-    // if(selected) {
-    //     context.beginPath();
-    //     context.arc(selected.m.x, selected.m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-    //     context.strokeStyle = 'green';
-    //     context.lineWidth = 2;
-    //     context.stroke();
-    // }
+    if(selected) {
+        context.beginPath();
+        context.arc(selected.m.x, selected.m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+        context.strokeStyle = 'green';
+        context.lineWidth = 2;
+        context.stroke();
+    }
 
     // debug
     // for (var i = 0; i < pairs.length; i++) {
