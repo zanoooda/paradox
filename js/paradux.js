@@ -656,7 +656,7 @@ function getOptions(pair) {
                 ) {
                     var p = JSON.parse(JSON.stringify(pair)); // clone
 
-                    if(state[upper.x][upper.y] == 1) {
+                    if(state[upper.x][upper.y].color == 1) {
                         p.first.x -= 1;
                         p.second.x -= 1;
                         p.first.y -= 1;
@@ -759,7 +759,7 @@ function getOptions(pair) {
                 ) {
                     var p = JSON.parse(JSON.stringify(pair)); // clone
 
-                    if(state[upper.x][upper.y] == 1) {
+                    if(state[upper.x][upper.y].color == 1) {
                         p.first.x -= 1;
                         p.second.x -= 1;
                         p.second.y += 1;
