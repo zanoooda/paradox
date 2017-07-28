@@ -1,3 +1,8 @@
+var socket = io('https://paradox-server.herokuapp.com');
+socket.on('event', function () {
+    console.log('event');
+});
+
 // TODO: Make some better indication
 //alert("Blue first!");
 
