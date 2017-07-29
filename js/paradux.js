@@ -206,6 +206,8 @@ function getM(first, second) {
 
 function isWin(state) {
 
+    var lines = [];
+
     // looking for 4 in a row
 
     var allLines = [
@@ -247,8 +249,55 @@ function isWin(state) {
         [{ x: 3, y: 0 },{ x: 4, y: 0 },{ x: 5, y: 0 },{ x: 6, y: 0 }],
         [{ x: 3, y: 1 },{ x: 4, y: 1 },{ x: 5, y: 1 },{ x: 6, y: 1 }],
         [{ x: 3, y: 2 },{ x: 4, y: 2 },{ x: 5, y: 2 },{ x: 6, y: 2 }],
-        [{ x: 3, y: 3 },{ x: 4, y: 3 },{ x: 5, y: 3 },{ x: 6, y: 3 }]
+        [{ x: 3, y: 3 },{ x: 4, y: 3 },{ x: 5, y: 3 },{ x: 6, y: 3 }],
+
+
+
+
+
+        [{ x: 0, y: 0 },{ x: 0, y: 1 },{ x: 0, y: 2 },{ x: 0, y: 3 }],
+        [{ x: 1, y: 0 },{ x: 1, y: 1 },{ x: 1, y: 2 },{ x: 1, y: 3 }],
+        [{ x: 2, y: 0 },{ x: 2, y: 1 },{ x: 2, y: 2 },{ x: 2, y: 3 }],
+        [{ x: 3, y: 0 },{ x: 3, y: 1 },{ x: 3, y: 2 },{ x: 3, y: 3 }],
+        [{ x: 4, y: 0 },{ x: 4, y: 1 },{ x: 4, y: 2 },{ x: 4, y: 3 }],
+        [{ x: 5, y: 0 },{ x: 5, y: 1 },{ x: 5, y: 2 },{ x: 5, y: 3 }],
+        [{ x: 6, y: 0 },{ x: 6, y: 1 },{ x: 6, y: 2 },{ x: 6, y: 3 }],
+
+        [{ x: 1, y: 1 },{ x: 1, y: 2 },{ x: 1, y: 3 },{ x: 1, y: 4 }],
+        [{ x: 2, y: 1 },{ x: 2, y: 2 },{ x: 2, y: 3 },{ x: 2, y: 4 }],
+        [{ x: 3, y: 1 },{ x: 3, y: 2 },{ x: 3, y: 3 },{ x: 3, y: 4 }],
+        [{ x: 4, y: 1 },{ x: 4, y: 2 },{ x: 4, y: 3 },{ x: 4, y: 4 }],
+        [{ x: 5, y: 1 },{ x: 5, y: 2 },{ x: 5, y: 3 },{ x: 5, y: 4 }],
+
+        [{ x: 2, y: 2 },{ x: 2, y: 3 },{ x: 2, y: 4 },{ x: 2, y: 5 }],
+        [{ x: 3, y: 2 },{ x: 3, y: 3 },{ x: 3, y: 4 },{ x: 3, y: 5 }],
+        [{ x: 4, y: 2 },{ x: 4, y: 3 },{ x: 4, y: 4 },{ x: 4, y: 5 }],
+
+        [{ x: 3, y: 3 },{ x: 3, y: 4 },{ x: 3, y: 5 },{ x: 3, y: 6 }]
     ]
+
+    for (var index = 0; index < allLines.length; index++) {
+        var element = allLines[index];
+        if(
+            state[allLines[index][0].x][allLines[index][0].y].color != 0 &&
+            state[allLines[index][1].x][allLines[index][1].y].color != 0 &&
+            state[allLines[index][2].x][allLines[index][2].y].color != 0 &&
+            state[allLines[index][3].x][allLines[index][3].y].color != 0 &&
+            state[allLines[index][0].x][allLines[index][0].y].color == state[allLines[index][1].x][allLines[index][1].y].color &&
+            state[allLines[index][1].x][allLines[index][1].y].color == state[allLines[index][2].x][allLines[index][2].y].color &&
+            state[allLines[index][2].x][allLines[index][2].y].color == state[allLines[index][3].x][allLines[index][3].y].color
+        ) {
+            lines.push(allLines[index]);
+        }
+    }
+
+    if(lines.length != 0) {
+        return lines;
+    }
+
+
+
+
 
     // for (var index = 0; index < allLines.length; index++) {
     //     var element = allLines[index];
@@ -260,15 +309,20 @@ function isWin(state) {
     //         context.strokeStyle = 'green';
     //         context.lineWidth = index;
     //         context.fillStyle = 'green';
-    //         if(index >= 16){
+    //         if(index >= 16 && index < 32){
     //             context.strokeStyle = 'red';
     //             context.fillStyle = 'orange';
+    //         } else if (index >= 32) {
+    //             context.strokeStyle = 'pink';
+    //             context.fillStyle = 'white';
     //         }
     //         context.fill();
     //         context.stroke();
 
-    //         console.log('.');
+            
     //     }
+
+    //     console.log('.');
     // }
 
     return false;
@@ -1390,7 +1444,9 @@ function render(state) {
         context.stroke();
     }
 
-    isWin(state);
+    if(isWin(state)) {
+        alert('somebody win or may be teko');
+    }
 
     // debug
     // for (var i = 0; i < pairs.length; i++) {
