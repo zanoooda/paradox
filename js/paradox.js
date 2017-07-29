@@ -295,10 +295,6 @@ function isWin(state) {
         return lines;
     }
 
-
-
-
-
     // for (var index = 0; index < allLines.length; index++) {
     //     var element = allLines[index];
     //     for (var i = 0; i < element.length; i++) {
