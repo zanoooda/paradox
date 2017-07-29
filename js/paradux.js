@@ -1,12 +1,8 @@
 var socket = io('https://paradox-server.herokuapp.com');
 
-
-// TODO: Make some better indication
-//alert("Blue first!");
-
 // Variables
 
-var l = Math.floor(window.innerHeight >= window.innerWidth ? window.innerWidth : window.innerHeight);
+var l = Math.floor((window.innerHeight >= window.innerWidth ? window.innerWidth : window.innerHeight) * 0.95);
 
 var container = document.getElementById("container");
 container.style.width = l + "px";
@@ -34,12 +30,31 @@ canvas.addEventListener('click', function (e) {
         x: e.clientX - rect.left,
         y: e.clientY - rect.top
     };
-
+    // TODO: && selected not last movie of oponent
     if(selected && getL(point, selected.m) < ((l/16) * 0.5)) {
+        h.push(JSON.parse(JSON.stringify(state)));
+
         state[selected.first.x][selected.first.y].color = 2;
         state[selected.second.x][selected.second.y].color = 1;
+
+        // TODO: remove elegal option
+        if(h.length > 1 && isEqual(state, h[h.length - 2])) {
+            alert('can\'t take back the last movie of your opponent');
+            state = h[h.length - 1];
+            h.pop();
+
+            return;
+        }
+
+        if(who == 1) {
+            who = 2;
+        } else {
+            who = 1;
+        }
+
         selected = null;
         options = [];
+
         render(state);
 
         return;
@@ -47,12 +62,31 @@ canvas.addEventListener('click', function (e) {
 
     for (var optionsIndex = 0; optionsIndex < options.length; optionsIndex++) {
         if(getL(point, options[optionsIndex].m) < ((l/16) * 0.5)) {
+            h.push(JSON.parse(JSON.stringify(state)));
+
             state[selected.first.x][selected.first.y].color = 0;
             state[selected.second.x][selected.second.y].color = 0;
             state[options[optionsIndex].first.x][options[optionsIndex].first.y].color = 1;
             state[options[optionsIndex].second.x][options[optionsIndex].second.y].color = 2;
+
+            // TODO: remove ilegal option
+            if(h.length > 1 && isEqual(state, h[h.length - 2])) {
+                alert('can\'t take back the last movie of your opponent');
+                state = h[h.length - 1];
+                h.pop();
+
+                return;
+            }
+
+            if(who == 1) {
+                who = 2;
+            } else {
+                who = 1;
+            }
+
             selected = null;
             options = [];
+
             render(state);
 
             return;
@@ -95,13 +129,60 @@ var state = [[{ x: 0, y: 0, color: 1 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, 
              [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
              [{ x: 6, y: 0, color: 1 }, { x: 6, y: 1, color: 2 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
 
+var h = [];
+
 var pairs = [];
 
 var selected = null;
 
 var options = [];
 
+var who = 1;
+
 // Functions
+
+function isEqual(state1, state2) {
+    for (var x = 0; x < state1.length; x++) {
+        for (var y = 0; y < state1[x].length; y++) {
+            if(state1[x][y].color !== state2[x][y].color){
+                return false;
+            }
+            
+        }
+    }
+    return true;
+}
+
+function restart() {
+    state = [[{ x: 0, y: 0, color: 1 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 1 }, { x: 0, y: 3, color: 2 }],
+             [{ x: 1, y: 0, color: 2 }, { x: 1, y: 1, color: 0 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 0 }, { x: 1, y: 4, color: 1 }],
+             [{ x: 2, y: 0, color: 1 }, { x: 2, y: 1, color: 0 }, { x: 2, y: 2, color: 0 }, { x: 2, y: 3, color: 1 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
+             [{ x: 3, y: 0, color: 2 }, { x: 3, y: 1, color: 0 }, { x: 3, y: 2, color: 0 }, { x: 3, y: 3, color: 0 }, { x: 3, y: 4, color: 0 }, { x: 3, y: 5, color: 0 }, { x: 3, y: 6, color: 1 }],
+             [{ x: 4, y: 0, color: 1 }, { x: 4, y: 1, color: 0 }, { x: 4, y: 2, color: 2 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 2 }],
+             [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
+             [{ x: 6, y: 0, color: 1 }, { x: 6, y: 1, color: 2 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
+
+    selected = null;
+    options = [];
+    history = [];
+    who = 1;
+
+    render(state);
+}
+
+function back() {
+    if(h.length != 0) {
+        state = h[h.length - 1];
+        h.pop();
+        if(who == 1) {
+            who = 2;
+        } else {
+            who = 1;
+        }
+    }
+    
+    render(state);
+}
 
 function getL(point1, point2) {
     var xs = 0;
@@ -122,6 +203,78 @@ function getM(first, second) {
         y: (first.yPx + second.yPx) / 2
     };
 }
+
+function isWin(state) {
+
+    // looking for 4 in a row
+
+    var allLines = [
+        [{ x: 0, y: 0 },{ x: 1, y: 0 },{ x: 2, y: 0 },{ x: 3, y: 0 }],
+        [{ x: 0, y: 1 },{ x: 1, y: 1 },{ x: 2, y: 1 },{ x: 3, y: 1 }],
+        [{ x: 0, y: 2 },{ x: 1, y: 2 },{ x: 2, y: 2 },{ x: 3, y: 2 }],
+        [{ x: 0, y: 3 },{ x: 1, y: 3 },{ x: 2, y: 3 },{ x: 3, y: 3 }],
+
+        [{ x: 1, y: 1 },{ x: 2, y: 1 },{ x: 3, y: 1 },{ x: 4, y: 0 }],
+        [{ x: 1, y: 2 },{ x: 2, y: 2 },{ x: 3, y: 2 },{ x: 4, y: 1 }],
+        [{ x: 1, y: 3 },{ x: 2, y: 3 },{ x: 3, y: 3 },{ x: 4, y: 2 }],
+        [{ x: 1, y: 4 },{ x: 2, y: 4 },{ x: 3, y: 4 },{ x: 4, y: 3 }],
+
+        [{ x: 2, y: 2 },{ x: 3, y: 2 },{ x: 4, y: 1 },{ x: 5, y: 0 }],
+        [{ x: 2, y: 3 },{ x: 3, y: 3 },{ x: 4, y: 2 },{ x: 5, y: 1 }],
+        [{ x: 2, y: 4 },{ x: 3, y: 4 },{ x: 4, y: 3 },{ x: 5, y: 2 }],
+        [{ x: 2, y: 5 },{ x: 3, y: 5 },{ x: 4, y: 4 },{ x: 5, y: 3 }],
+
+        [{ x: 3, y: 3 },{ x: 4, y: 2 },{ x: 5, y: 1 },{ x: 6, y: 0 }],
+        [{ x: 3, y: 4 },{ x: 4, y: 3 },{ x: 5, y: 2 },{ x: 6, y: 1 }],
+        [{ x: 3, y: 5 },{ x: 4, y: 4 },{ x: 5, y: 3 },{ x: 6, y: 2 }],
+        [{ x: 3, y: 6 },{ x: 4, y: 5 },{ x: 5, y: 4 },{ x: 6, y: 3 }],
+
+        [{ x: 0, y: 0 },{ x: 1, y: 1 },{ x: 2, y: 2 },{ x: 3, y: 3 }],
+        [{ x: 0, y: 1 },{ x: 1, y: 2 },{ x: 2, y: 3 },{ x: 3, y: 4 }],
+        [{ x: 0, y: 2 },{ x: 1, y: 3 },{ x: 2, y: 4 },{ x: 3, y: 5 }],
+        [{ x: 0, y: 3 },{ x: 1, y: 4 },{ x: 2, y: 5 },{ x: 3, y: 6 }],
+
+        [{ x: 1, y: 0 },{ x: 2, y: 1 },{ x: 3, y: 2 },{ x: 4, y: 2 }],
+        [{ x: 1, y: 1 },{ x: 2, y: 2 },{ x: 3, y: 3 },{ x: 4, y: 3 }],
+        [{ x: 1, y: 2 },{ x: 2, y: 3 },{ x: 3, y: 4 },{ x: 4, y: 4 }],
+        [{ x: 1, y: 3 },{ x: 2, y: 4 },{ x: 3, y: 5 },{ x: 4, y: 5 }],
+
+        [{ x: 2, y: 0 },{ x: 3, y: 1 },{ x: 4, y: 1 },{ x: 5, y: 1 }],
+        [{ x: 2, y: 1 },{ x: 3, y: 2 },{ x: 4, y: 2 },{ x: 5, y: 2 }],
+        [{ x: 2, y: 2 },{ x: 3, y: 3 },{ x: 4, y: 3 },{ x: 5, y: 3 }],
+        [{ x: 2, y: 3 },{ x: 3, y: 4 },{ x: 4, y: 4 },{ x: 5, y: 4 }],
+
+        [{ x: 3, y: 0 },{ x: 4, y: 0 },{ x: 5, y: 0 },{ x: 6, y: 0 }],
+        [{ x: 3, y: 1 },{ x: 4, y: 1 },{ x: 5, y: 1 },{ x: 6, y: 1 }],
+        [{ x: 3, y: 2 },{ x: 4, y: 2 },{ x: 5, y: 2 },{ x: 6, y: 2 }],
+        [{ x: 3, y: 3 },{ x: 4, y: 3 },{ x: 5, y: 3 },{ x: 6, y: 3 }]
+    ]
+
+    // for (var index = 0; index < allLines.length; index++) {
+    //     var element = allLines[index];
+    //     for (var i = 0; i < element.length; i++) {
+    //         var d = element[i];
+
+    //         context.beginPath();
+    //         context.arc(state[d.x][d.y].xPx, state[d.x][d.y].yPx, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+    //         context.strokeStyle = 'green';
+    //         context.lineWidth = index;
+    //         context.fillStyle = 'green';
+    //         if(index >= 16){
+    //             context.strokeStyle = 'red';
+    //             context.fillStyle = 'orange';
+    //         }
+    //         context.fill();
+    //         context.stroke();
+
+    //         console.log('.');
+    //     }
+    // }
+
+    return false;
+}
+
+
 
 function getOptions(pair) {
 
@@ -1053,6 +1206,8 @@ function getOptions(pair) {
         }
     }
 
+    // TODO: Chech if options not include last movie
+
     return options;
 }
 
@@ -1119,6 +1274,11 @@ function findPairs(state) {
 }
 
 function render(state) {
+    if(who == 1) {
+        document.getElementById('who').innerHTML = 'Blue\'s movie';
+    } else {
+        document.getElementById('who').innerHTML = 'Red\'s movie';
+    }
     // clear canvas
     context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1229,6 +1389,8 @@ function render(state) {
         context.lineWidth = 2;
         context.stroke();
     }
+
+    isWin(state);
 
     // debug
     // for (var i = 0; i < pairs.length; i++) {
