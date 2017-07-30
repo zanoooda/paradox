@@ -2,11 +2,7 @@ var socket = io('https://paradox-server.herokuapp.com');
 
 // Variables
 
-var l = Math.floor((window.innerHeight >= window.innerWidth ? window.innerWidth : window.innerHeight) * 0.95);
-
-var container = document.getElementById("container");
-container.style.width = l + "px";
-container.style.height = l + "px";
+var l = Math.floor((window.innerHeight >= window.innerWidth ? window.innerWidth : window.innerHeight) * 1);
 
 var canvas = document.getElementById("paradux");
 canvas.width = l;
