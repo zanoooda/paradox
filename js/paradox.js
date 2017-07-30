@@ -1440,14 +1440,14 @@ function render(state) {
         alert('somebody win or may be teko');
     }
 
-    // debug
-    // for (var i = 0; i < pairs.length; i++) {
-    //     context.beginPath();
-    //     context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-    //     context.strokeStyle = 'yellow';
-    //     context.lineWidth = 1;
-    //     context.stroke();
-    // }
+    debug
+    for (var i = 0; i < pairs.length; i++) {
+        context.beginPath();
+        context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
+        context.strokeStyle = 'yellow';
+        context.lineWidth = 1;
+        context.stroke();
+    }
 }
 
 // Here a magic starts
