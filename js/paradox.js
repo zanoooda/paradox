@@ -31,7 +31,7 @@ canvas.addEventListener('click', function (e) {
         y: e.clientY - rect.top
     };
     // TODO: && selected not last movie of oponent
-    if(selected && getL(point, selected.m) < ((l/16) * 0.5)) {
+    if(selected && getL(point, selected.m) < ((l/16) * 1)) {
         h.push(JSON.parse(JSON.stringify(state)));
 
         state[selected.first.x][selected.first.y].color = 2;
@@ -61,7 +61,7 @@ canvas.addEventListener('click', function (e) {
     }
 
     for (var optionsIndex = 0; optionsIndex < options.length; optionsIndex++) {
-        if(getL(point, options[optionsIndex].m) < ((l/16) * 0.5)) {
+        if(getL(point, options[optionsIndex].m) < ((l/16) * 1)) {
             h.push(JSON.parse(JSON.stringify(state)));
 
             state[selected.first.x][selected.first.y].color = 0;
@@ -1401,7 +1401,7 @@ function render(state) {
             false
         );
         context.strokeStyle = 'purple';
-        context.lineWidth = 17;
+        context.lineWidth = l * 0.035;
         context.stroke();
 
         context.beginPath();
@@ -1414,7 +1414,7 @@ function render(state) {
             false
         );
         context.strokeStyle = 'purple';
-        context.lineWidth = 17;
+        context.lineWidth = l * 0.035;
         context.stroke();
 
         // for options ...
@@ -1422,18 +1422,16 @@ function render(state) {
 
     for (var i = 0; i < options.length; i++) {
         context.beginPath();
-        context.arc(options[i].m.x, options[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-        context.strokeStyle = 'green';
-        context.lineWidth = 2;
-        context.stroke();
+        context.arc(options[i].m.x, options[i].m.y, (l / 16) * 0.1, 0, 2 * Math.PI, false);
+        context.fillStyle = 'green';
+        context.fill();
     }
 
     if(selected) {
         context.beginPath();
-        context.arc(selected.m.x, selected.m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-        context.strokeStyle = 'green';
-        context.lineWidth = 2;
-        context.stroke();
+        context.arc(selected.m.x, selected.m.y, (l / 16) * 0.1, 0, 2 * Math.PI, false);
+        context.fillStyle = 'green';
+        context.fill();
     }
 
     if(isWin(state)) {
@@ -1443,8 +1441,8 @@ function render(state) {
     //debug
     // for (var i = 0; i < pairs.length; i++) {
     //     context.beginPath();
-    //     context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-    //     context.strokeStyle = 'yellow';
+    //     context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.1, 0, 2 * Math.PI, false);
+    //     context.strokeStyle = 'black';
     //     context.lineWidth = 1;
     //     context.stroke();
     // }
