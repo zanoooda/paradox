@@ -21,6 +21,11 @@ canvas.addEventListener('mousemove', function (e) {
 }, false);
 
 canvas.addEventListener('click', function (e) {
+
+    if(waiting) {
+        return;
+    }
+
     var rect = canvas.getBoundingClientRect();
     var point = {
         x: e.clientX - rect.left,
@@ -53,6 +58,12 @@ canvas.addEventListener('click', function (e) {
 
         render(state);
 
+        // online
+        if(online) {
+            waiting = true;
+            socket.emit('move', state);
+        }
+
         return;
     }
 
@@ -84,6 +95,12 @@ canvas.addEventListener('click', function (e) {
             options = [];
 
             render(state);
+
+            // online
+            if(online) {
+                waiting = true;
+                socket.emit('move', state);
+            }
 
             return;
         }
@@ -135,7 +152,84 @@ var options = [];
 
 var who = 1;
 
+// !
+var online = false;
+
+var waiting = false;
+
+var whoOn = null;
+
 // Functions
+
+function playOnline() {
+
+    if(online) {
+        $("#menu-close").click();
+
+        return;
+    }
+
+    var body = document.getElementsByTagName("body")[0];
+    var child = document.getElementById("about");
+    body.removeChild(child);
+    online = true;
+
+    waiting = true;
+
+    h = [];
+    who = 1;
+    selected = null;
+    options = [];
+    state = [[{ x: 0, y: 0, color: 1 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 1 }, { x: 0, y: 3, color: 2 }],
+             [{ x: 1, y: 0, color: 2 }, { x: 1, y: 1, color: 0 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 0 }, { x: 1, y: 4, color: 1 }],
+             [{ x: 2, y: 0, color: 1 }, { x: 2, y: 1, color: 0 }, { x: 2, y: 2, color: 0 }, { x: 2, y: 3, color: 1 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
+             [{ x: 3, y: 0, color: 2 }, { x: 3, y: 1, color: 0 }, { x: 3, y: 2, color: 0 }, { x: 3, y: 3, color: 0 }, { x: 3, y: 4, color: 0 }, { x: 3, y: 5, color: 0 }, { x: 3, y: 6, color: 1 }],
+             [{ x: 4, y: 0, color: 1 }, { x: 4, y: 1, color: 0 }, { x: 4, y: 2, color: 2 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 2 }],
+             [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
+             [{ x: 6, y: 0, color: 1 }, { x: 6, y: 1, color: 2 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
+
+    render(state);
+
+    document.getElementById('who').style.color = 'black';
+    document.getElementById('who').innerHTML = 'Waiting for opponent...';
+
+    socket.emit('play');
+
+    socket.on('opponent-found', function (data) {
+        document.getElementById('who').innerHTML = 'Opponent found';
+        if(data == 1) {
+
+            whoOn = 1;
+            // make movie
+            waiting = false;
+            document.getElementById('who').innerHTML = 'Your turn';
+        } else {
+            whoOn = 2;
+
+            document.getElementById('who').innerHTML = 'Waiting for move';
+        }
+    });
+
+    socket.on('opponent-move', function (data) {
+
+        if(who == 1) {
+            who = 2;
+        } else {
+            who = 1;
+        }
+
+        waiting = false;
+        selected = null;
+        options = [];
+
+        h.push(state);
+        state = data;
+
+        render(state);
+    });
+
+    $("#menu-close").click();
+}
 
 function isEqual(state1, state2) {
     for (var x = 0; x < state1.length; x++) {
@@ -1316,11 +1410,49 @@ function findPairs(state) {
 }
 
 function render(state) {
-    if(who == 1) {
-        document.getElementById('who').innerHTML = 'Blue\'s movie';
+
+    // if(who == 1) {
+    //     document.getElementById('who').innerHTML = 'Blue\'s move';
+    //     document.getElementById('who').style.color = 'blue';
+    //     document.getElementsByClassName('status')[0].style.backgroundColor = 'blue';
+    //     document.getElementById('menu-toggle').style.backgroundColor = 'blue';
+    // } else {
+    //     document.getElementById('who').innerHTML = 'Red\'s move';
+    //     document.getElementById('who').style.color = 'red';
+    //     document.getElementsByClassName('status')[0].style.backgroundColor = 'red';
+    //     document.getElementById('menu-toggle').style.backgroundColor = 'red';
+    // }
+
+    // TODO: Refactor me later
+    if(online && !waiting) {
+        if(whoOn == who) {
+            document.getElementById('who').innerHTML = 'Your turn';
+        } else {
+            document.getElementById('who').innerHTML = 'Wait for opponent';
+        }
+        if(who == 1) {
+            document.getElementById('who').style.color = 'blue';
+            document.getElementsByClassName('status')[0].style.backgroundColor = 'blue';
+            document.getElementById('menu-toggle').style.backgroundColor = 'blue';
+        } else {
+            document.getElementById('who').style.color = 'red';
+            document.getElementsByClassName('status')[0].style.backgroundColor = 'red';
+            document.getElementById('menu-toggle').style.backgroundColor = 'red';
+        }
     } else {
-        document.getElementById('who').innerHTML = 'Red\'s movie';
+        if(who == 1) {
+            document.getElementById('who').innerHTML = 'Blue\'s move';
+            document.getElementById('who').style.color = 'blue';
+            document.getElementsByClassName('status')[0].style.backgroundColor = 'blue';
+            document.getElementById('menu-toggle').style.backgroundColor = 'blue';
+        } else {
+            document.getElementById('who').innerHTML = 'Red\'s move';
+            document.getElementById('who').style.color = 'red';
+            document.getElementsByClassName('status')[0].style.backgroundColor = 'red';
+            document.getElementById('menu-toggle').style.backgroundColor = 'red';
+        }
     }
+
     // clear canvas
     context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -1419,14 +1551,14 @@ function render(state) {
     for (var i = 0; i < options.length; i++) {
         context.beginPath();
         context.arc(options[i].m.x, options[i].m.y, (l / 16) * 0.1, 0, 2 * Math.PI, false);
-        context.fillStyle = 'green';
+        context.fillStyle = 'black';
         context.fill();
     }
 
     if(selected) {
         context.beginPath();
         context.arc(selected.m.x, selected.m.y, (l / 16) * 0.1, 0, 2 * Math.PI, false);
-        context.fillStyle = 'green';
+        context.fillStyle = 'black';
         context.fill();
     }
 
