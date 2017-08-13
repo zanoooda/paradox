@@ -73,10 +73,7 @@ hr.small {
     height: 100%;
     transform: translateX(250px);
     overflow-y: auto;
-    /* background: #222; */
-    /* border-left: 1px solid blue; */
-    background: white;
-
+    background: #222;
     -webkit-transition: all 0.4s ease 0s;
     -moz-transition: all 0.4s ease 0s;
     -ms-transition: all 0.4s ease 0s;
@@ -101,14 +98,12 @@ hr.small {
 .sidebar-nav li a {
     display: block;
     text-decoration: none;
-    /* color: #999; */
-    color: blue;
+    color: #999;
 }
 
 .sidebar-nav li a:hover {
     text-decoration: none;
-    /* color: #fff; */
-    color: darkblue;
+    color: #fff;
     background: rgba(255,255,255,0.2);
 }
 
@@ -124,13 +119,11 @@ hr.small {
 }
 
 .sidebar-nav > .sidebar-brand a {
-    /* color: #999; */
-    color: blue;
+    color: #999;
 }
 
 .sidebar-nav > .sidebar-brand a:hover {
-    /* color: #fff; */
-    color: darkblue;
+    color: #fff;
     background: none;
 }
 
@@ -162,59 +155,11 @@ hr.small {
     position: relative;
     width: 100%;
     height: 100%;
-    background: url(../img/bg.jpg) no-repeat center center scroll;
+    /* background: url(../img/bg.jpg) no-repeat center center scroll; */
     -webkit-background-size: cover;
     -moz-background-size: cover;
     background-size: cover;
     -o-background-size: cover;
-}
-
-/* About */
-
-.about {
-    padding-bottom: 50px;
-}
-
-/* Services */
-
-.services {
-    padding: 50px 0;
-}
-
-.service-item {
-    margin-bottom: 30px;
-}
-
-/* Callout */
-
-.callout {
-    display: table;
-    width: 100%;
-    height: 400px;
-    color: #fff;
-    background: url(../img/callout.jpg) no-repeat center center scroll;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    background-size: cover;
-    -o-background-size: cover;
-}
-
-/* Portfolio */
-
-.portfolio {
-    padding: 50px 0;
-}
-
-.portfolio-item {
-    margin-bottom: 30px;
-}
-
-.img-portfolio {
-    margin: 0 auto;
-}
-
-.img-portfolio:hover {
-    opacity: 0.8;
 }
 
 /* Call to Action */
@@ -227,21 +172,6 @@ hr.small {
     margin: 10px;
 }
 
-/* Map */
-
-.map {
-    height: 500px;
-}
-
-@media(max-width:768px) {
-    .map {
-        height: 75%;
-    }
-}
-
-.map iframe {
-    pointer-events: none;
-}
 
 /* Footer */
 
@@ -254,4 +184,22 @@ footer {
   position: fixed;
   bottom: 5px;
   right: 5px;
+}
+
+/* Status */
+
+#status {
+    position: absolute;
+    
+    top: 0px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /* background-color: red;  */
+    height: 2px;
+}
+
+#message {
+    margin-top:16px; 
+    font-weight:900
 }
