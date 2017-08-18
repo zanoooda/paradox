@@ -43,8 +43,16 @@ Game.prototype.playWithRobot = function() {
     this.online = false;
     this.robot = true;
     
-    // ...
+    this.state = new State();
+    this.history = new Array();
+    this.pairs = new Array();
+    this.selected = false;
+    this.options = new Array();
+    this.who = 1;
+    this.you = 1;
     this.waiting = false;
+
+    this.render();
 }
 Game.prototype.render = function() {
     // TODO: if this function exist
@@ -221,6 +229,11 @@ Game.prototype.addListeners = function addListeners() {
                 socket.emit('move', game.state);
             }
 
+            // robot
+            if(game.robot) {
+                game.robotPlay();
+            }
+
             return;
         }
 
@@ -257,6 +270,11 @@ Game.prototype.addListeners = function addListeners() {
                 if(game.online) {
                     game.waiting = true;
                     socket.emit('move', game.state);
+                } 
+
+                // robot
+                if(game.robot) {
+                    game.robotPlay();
                 }
 
                 return;
@@ -1450,6 +1468,32 @@ Game.prototype.back = function () {
     
     this.render();
 }
+Game.prototype.stop = function() {
+    this.online = false;
+    this.waiting = true;
+}
+Game.prototype.robotPlay = function() {
+    this.waiting = true;
+
+    this.waiting = false;
+    this.history.push(game.state);
+    this.state = game.goodMove();
+
+    if(this.who == 1) {
+        this.who = 2;
+    } else {
+        this.who = 1;
+    }
+
+    game.render();
+}
+Game.prototype.goodMove = function() {
+    var newState = this.state;
+
+    // ...
+
+    return newState;
+}
 function State() {
     return [[{ x: 0, y: 0, color: 1 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 1 }, { x: 0, y: 3, color: 2 }],
             [{ x: 1, y: 0, color: 2 }, { x: 1, y: 1, color: 0 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 0 }, { x: 1, y: 4, color: 1 }],
@@ -1459,4 +1503,3 @@ function State() {
             [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
             [{ x: 6, y: 0, color: 1 }, { x: 6, y: 1, color: 2 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
 }
-

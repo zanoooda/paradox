@@ -1,6 +1,9 @@
 // Functions
 function playOffline() {
     //if game not offline
+    if(game.online) {
+        socket.disconnect();
+    }
     if(!game.offline) {
         console.log('play offline');
 
@@ -51,25 +54,26 @@ function playOnline() {
         $("#status").css("background-color", "white"); //???
         $("#menu-toggle").css("background-color", "gray"); //???
         //
-
+        game.online = true;
+        game.offline = false;
+        game.robot = false;
+        game.waiting = true;
         game.updateStatus = function() {
             // TODO: Refactor me later
-            if(!this.waiting) {
-                if(this.you == this.who) {
-                    document.getElementById('message').innerHTML = 'Your turn';
-                } else {
-                    document.getElementById('message').innerHTML = 'Wait for opponent';
-                }
-                if(this.who == 1) {
-                    document.getElementById('message').style.color = 'blue';
-                    document.getElementById('status').style.backgroundColor = 'blue';
-                    document.getElementById('menu-toggle').style.backgroundColor = 'blue';
-                } else {
-                    document.getElementById('message').style.color = 'red';
-                    document.getElementById('status').style.backgroundColor = 'red';
-                    document.getElementById('menu-toggle').style.backgroundColor = 'red';
-                }
-            } 
+            if(this.you == this.who) {
+                document.getElementById('message').innerHTML = 'Your turn';
+            } else {
+                document.getElementById('message').innerHTML = 'Wait for opponent';
+            }
+            if(this.who == 1) {
+                document.getElementById('message').style.color = 'blue';
+                document.getElementById('status').style.backgroundColor = 'blue';
+                document.getElementById('menu-toggle').style.backgroundColor = 'blue';
+            } else {
+                document.getElementById('message').style.color = 'red';
+                document.getElementById('status').style.backgroundColor = 'red';
+                document.getElementById('menu-toggle').style.backgroundColor = 'red';
+            }
         };
 
         socket.emit("play");
@@ -85,11 +89,39 @@ function playOnline() {
     }
 }
 function playWithRobot() {
+    if(game.online) {
+        socket.disconnect();
+    }
     if(!game.robot) {
         console.log('play with robot');
 
         highlight('robot');
         $("#buttons").show();
+
+        // wrap it into something
+        $("#message").html("@@@");
+        $("#message").css("color", "blue");   
+        $("#status").css("background-color", "blue"); 
+        $("#menu-toggle").css("background-color", "blue"); 
+        //
+
+        game.updateStatus = function() {
+            // TODO: Refactor me later
+            if(this.you == this.who) {
+                document.getElementById('message').innerHTML = 'Your turn';
+            } else {
+                document.getElementById('message').innerHTML = 'Wait for move';
+            }
+            if(this.who == 1) {
+                document.getElementById('message').style.color = 'blue';
+                document.getElementById('status').style.backgroundColor = 'blue';
+                document.getElementById('menu-toggle').style.backgroundColor = 'blue';
+            } else {
+                document.getElementById('message').style.color = 'red';
+                document.getElementById('status').style.backgroundColor = 'red';
+                document.getElementById('menu-toggle').style.backgroundColor = 'red';
+            }
+        };
 
         game.playWithRobot();
 
@@ -186,13 +218,20 @@ socket.on('counter', function(n) {
 socket.on('disconnect', function() {
     console.log('socket disconnected');
 
-    //
-    document.getElementById('message').innerHTML = "unfortunaly disconnected";
-    document.getElementById('message').style.color = 'blue';
-    document.getElementById('status').style.backgroundColor = 'blue';
-    document.getElementById('menu-toggle').style.backgroundColor = 'blue';
+    if(game.online) {
+        $('#message').html("opponent disconnected");
+        $("#message").css("color", "black");  
+        $("#status").css("background-color", "white"); 
+        $("#menu-toggle").css("background-color", "gray");
 
-    //socket = io('http://localhost:3000/');
+        $('#online').html("Play Online second time");
+
+        game.stop();
+
+        socket.open();
+    }
+    
+    // reconnect if server was down
 
     $("#online").hide();
 });
