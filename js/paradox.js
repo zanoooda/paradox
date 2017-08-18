@@ -204,7 +204,7 @@ Game.prototype.addListeners = function addListeners() {
             game.state[game.selected.second.x][game.selected.second.y].color = 1;
 
             // TODO: remove elegal option
-            if(game.history.length > 1 && game.isEqual(game.state, game.history[game.history.length - 2])) {
+            if(game.history.length > 1 && game.isEqual(game.state, game.history[game.history.length - 2])) { // !!!!!!!!!!!!!!!!! -2
                 alert('can\'t take back the last movie of your opponent');
                 game.state = game.history[game.history.length - 1];
                 game.history.pop();
@@ -230,7 +230,7 @@ Game.prototype.addListeners = function addListeners() {
             }
 
             // robot
-            if(game.robot) {
+            if(game.robot && game.who == 2) {
                 game.robotPlay();
             }
 
@@ -247,7 +247,7 @@ Game.prototype.addListeners = function addListeners() {
                 game.state[game.options[optionsIndex].second.x][game.options[optionsIndex].second.y].color = 2;
 
                 // TODO: remove ilegal option
-                if(game.history.length > 1 && game.isEqual(game.state, game.history[game.history.length - 2])) {
+                if(game.history.length > 1 && game.isEqual(game.state, game.history[game.history.length - 2])) { /////////// -2
                     alert('can\'t take back the last movie of your opponent');
                     game.state = game.history[game.history.length - 1];
                     game.history.pop();
@@ -1446,6 +1446,10 @@ Game.prototype.getM = function (first, second) {
     };
 }
 Game.prototype.restart = function () {
+    if(this.robot) {
+        this.playWithRobot();
+        return;
+    }
     this.state = new State();
 
     this.selected = null;
@@ -1476,7 +1480,7 @@ Game.prototype.robotPlay = function() {
     this.waiting = true;
 
     this.waiting = false;
-    this.history.push(game.state);
+    this.history.push(this.state);
     this.state = game.goodMove();
 
     if(this.who == 1) {
@@ -1488,9 +1492,13 @@ Game.prototype.robotPlay = function() {
     game.render();
 }
 Game.prototype.goodMove = function() {
-    var newState = this.state;
+    var newState = JSON.parse(JSON.stringify(this.state));
 
-    // ...
+    // BUG WITH LAST MOVE
+
+    var pairs = this.findPairs();
+    newState[pairs[0].first.x][pairs[0].first.y].color = 2;
+    newState[pairs[0].second.x][pairs[0].second.y].color = 1;
 
     return newState;
 }
