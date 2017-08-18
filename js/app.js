@@ -180,7 +180,7 @@ function highlight(id) {
 }
 
 // Sockets
-var socket = io('http://localhost:3000/');
+var socket = io('https://paradox-server.herokuapp.com');
 
 socket.on('connect', function() {
     console.log('socket connected');
