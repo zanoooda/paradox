@@ -3,6 +3,7 @@ function playOffline() {
     //if game not offline
     if(game.online) {
         socket.disconnect();
+        // This can be the place for bug. (connected count)
     }
     if(!game.offline) {
         console.log('play offline');
@@ -16,7 +17,8 @@ function playOffline() {
         //
         game.updateStatus = function() {
             // TODO: Refactor me later
-
+            // This must come back to paradox.ja as it was
+            // but refactor
             if(this.who == 1) {
                 document.getElementById('message').innerHTML = 'Blue\'s move';
                 document.getElementById('message').style.color = 'blue';
@@ -180,6 +182,7 @@ function highlight(id) {
 }
 
 // Sockets
+//var socket = io('http://localhost:3000/'); 
 var socket = io('https://paradox-server.herokuapp.com');
 
 socket.on('connect', function() {
@@ -190,7 +193,7 @@ socket.on('connect', function() {
 socket.on('move', function(newState) {
     console.log('move');
 
-    //
+    // wrap it to Game.protoytype
     if(game.who == 1) {
         game.who = 2;
     } else {
@@ -229,6 +232,8 @@ socket.on('disconnect', function() {
         game.stop();
 
         socket.open();
+        // bug!
+        // after online two sockets :(
     }
     
     // reconnect if server was down

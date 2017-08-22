@@ -777,7 +777,7 @@ Game.prototype.getOptions = function(pair) {
                     state[upper.x][upper.y - 1] !== undefined &&
                     state[bottom.x][bottom.y - 1] !== undefined &&
                     state[upper.x][upper.y - 1].color == 0 &&
-                    state[upper.x][upper.y - 1].color == 0
+                    state[bottom.x][bottom.y - 1].color == 0
                 ) {
                     var p = JSON.parse(JSON.stringify(pair)); // clone
                     p.first.y -= 1;
@@ -1479,9 +1479,10 @@ Game.prototype.stop = function() {
 Game.prototype.robotPlay = function() {
     this.waiting = true;
 
-    this.waiting = false;
     this.history.push(this.state);
     this.state = game.goodMove();
+
+    this.waiting = false;
 
     if(this.who == 1) {
         this.who = 2;
