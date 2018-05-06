@@ -173,13 +173,13 @@ Game.prototype.render = function() {
         this.restart();
     }
 
-    ////debug
-    // for (var i = 0; i < pairs.length; i++) {
-    //     context.beginPath();
-    //     context.arc(pairs[i].m.x, pairs[i].m.y, (l / 16) * 0.1, 0, 2 * Math.PI, false);
-    //     context.strokeStyle = 'black';
-    //     context.lineWidth = 1;
-    //     context.stroke();
+    // //debug
+    // for (var i = 0; i < this.pairs.length; i++) {
+    //     this.context.beginPath();
+    //     this.context.arc(this.pairs[i].m.x, this.pairs[i].m.y, (l / 16) * 1, 0, 2 * Math.PI, false);
+    //     this.context.strokeStyle = 'black';
+    //     this.context.lineWidth = 1;
+    //     this.context.stroke();
     // }
 
     //////////////////////////////
@@ -282,7 +282,7 @@ Game.prototype.addListeners = function addListeners() {
         }
 
         for (var pairIndex = 0; pairIndex < game.pairs.length; pairIndex++) {
-            if(game.getL(point, game.pairs[pairIndex].m) < ((game.l/16) * 0.5)) {
+            if(game.getL(point, game.pairs[pairIndex].m) < ((game.l/16) * 1)) {
                 game.selected = game.pairs[pairIndex];
                 game.options = game.getOptions(game.pairs[pairIndex]);
                 game.render();
