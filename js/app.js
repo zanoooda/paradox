@@ -3,7 +3,7 @@ function playOffline() {
     //if game not offline
     if(game.online) {
         socket.disconnect();
-        // This can be the place for bug. (connected count)
+        // This can be the place for bug (connected count)
     }
     if(!game.offline) {
         console.log('play offline');
