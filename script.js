@@ -6,8 +6,8 @@ class Game {
 class Grid {
     constructor(radius = 4) {
         this.cells = new Array();
-        for (let radiusIndex = 0, radiusCellQuantity = 1; radiusIndex < radius; radiusIndex++, radiusCellQuantity = radiusIndex * 6) {
-            for (let cellIndex = 0; cellIndex < radiusCellQuantity; cellIndex++) {
+        for (let radiusIndex = 0, radiusCellsQuantity = 1; radiusIndex < radius; radiusIndex++, radiusCellsQuantity = radiusIndex * 6) {
+            for (let radiusCellsIndex = 0; radiusCellsIndex < radiusCellsQuantity; radiusCellsIndex++) {
                 this.cells.push(new Cell(0, 0, 0));
             }
         }
