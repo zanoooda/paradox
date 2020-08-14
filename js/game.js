@@ -4,7 +4,6 @@ class Game {
         this.canvasContext = canvas.getContext('2d');
         this.grid = this.createGrid();
     }
-
     createGrid(depth = 4) {
         let grid = new Array();
         for (let depthIndex = 0; depthIndex < depth; depthIndex++) {
@@ -15,24 +14,20 @@ class Game {
         }
         return grid;
     }
-
     play() {
         this.render();
     }
-
     render() {
         this.grid.forEach(cell => {
-            //this.strokeCircle(this.canvas.height/2, this.canvas.width/2);
+            this.renderCircle(this.canvas.width / 2, this.canvas.height / 2, canvasSize / 32);
         });
     }
-
-    strokeCircle(x, y) {
+    renderCircle(x, y, r) {
         this.canvasContext.beginPath();
-        this.canvasContext.arc(x, y, canvasLength/32, 0, 2 * Math.PI);
+        this.canvasContext.arc(x, y, r, 0, 2 * Math.PI);
         this.canvasContext.stroke();
     }
 }
-
 class Cell {
     constructor(x, y, z) {
         this.x = x;
