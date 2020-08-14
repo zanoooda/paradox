@@ -1,31 +1,17 @@
 class Game {
-    constructor(canvas) {
-        this.canvas = canvas;
-        this.canvasContext = canvas.getContext('2d');
-        this.grid = this.createGrid();
+    constructor() {
+        this.grid = new Grid();
     }
-    createGrid(depth = 4) {
-        let grid = new Array();
-        for (let depthIndex = 0; depthIndex < depth; depthIndex++) {
-            let cellCounter = depthIndex == 0 ? 1 : depthIndex * 6;
+}
+class Grid {
+    constructor(radius = 4) {
+        this.cells = new Array();
+        for (let radiusIndex = 0; radiusIndex < radius; radiusIndex++) {
+            let cellCounter = radiusIndex == 0 ? 1 : radiusIndex * 6;
             for (let cellIndex = 0; cellIndex < cellCounter; cellIndex++) {
-                grid.push(new Cell('?', '?', '?'));
+                this.cells.push(new Cell(0, 0, 0));
             }
         }
-        return grid;
-    }
-    play() {
-        this.render();
-    }
-    render() {
-        this.grid.forEach(cell => {
-            this.renderCircle(this.canvas.width / 2, this.canvas.height / 2, canvasSize / 32);
-        });
-    }
-    renderCircle(x, y, r) {
-        this.canvasContext.beginPath();
-        this.canvasContext.arc(x, y, r, 0, 2 * Math.PI);
-        this.canvasContext.stroke();
     }
 }
 class Cell {

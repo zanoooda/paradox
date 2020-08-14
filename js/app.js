@@ -5,4 +5,3 @@ let bodyBoundingClientRect = document.body.getBoundingClientRect(),
 canvas.width = canvasSize;
 canvas.height = canvasSize;
 document.body.prepend(canvas);
-game.play();
