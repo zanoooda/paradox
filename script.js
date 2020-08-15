@@ -2,12 +2,12 @@ class Grid {
     constructor(radius = 4) {
         this.cells = new Array();
         this.directions = [
-            new Vector(1, -1, 0),
-            new Vector(1, 0, -1),
-            new Vector(0, 1, -1),
-            new Vector(-1, 1, 0),
-            new Vector(-1, 0, 1),
-            new Vector(0, -1, 1)
+            new Vector(1, -1, 0), // →
+            new Vector(1, 0, -1), // ↗
+            new Vector(0, 1, -1), // ↖
+            new Vector(-1, 1, 0), // ←
+            new Vector(-1, 0, 1), // ↙
+            new Vector(0, -1, 1)  // ↘  
         ];
         for (let radiusIndex = 0, radiusCellsQuantity = 1;
             radiusIndex < radius;
