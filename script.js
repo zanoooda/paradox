@@ -15,9 +15,9 @@ class Grid {
             radiusIndex++, radiusCellsQuantity = radiusIndex * 6) {
             for (let radiusCellsIndex = 0, directionIndex = 0;
                 radiusCellsIndex < radiusCellsQuantity;
-                radiusCellsIndex++, //...
-                radiusCellsIndex != 1 && radiusCellsIndex % radiusIndex == 0 ? directionIndex++ : directionIndex) { //!
-                //radiusCellsIndex++, radiusCellsIndex % radiusIndex == 0 ? directionIndex++ : directionIndex) {
+                radiusCellsIndex++, 
+                radiusCellsIndex != 1 && (radiusCellsIndex-1) % radiusIndex == 0 ? directionIndex++ : directionIndex
+                ) {
                 let direction = this.directions[directionIndex];
                 console.log(`radiusIndex: ${radiusIndex}, radiusCellsIndex: ${radiusCellsIndex}, directionIndex: ${directionIndex}, direction: {${direction.x}, ${direction.y}, ${direction.z}}`);
                 if (radiusCellsIndex == 0) {
