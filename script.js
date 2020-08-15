@@ -7,24 +7,24 @@ const directions = [
     [0, -1, 1]  // ↘
 ];
 const startDirection = directions[4];
-function scalarMult(arr, x) {
-    return arr.map(i => i * x);
+function add(arr, dir) {
+    return arr.map((n, i) => n + dir[i]);
 }
-function add(arr1, arr2) {
-    return arr1.map((x, i) => x + arr2[i]);
+function mult(arr, n) {
+    return arr.map(i => i * n);
 }
 function getDiameter(radius) {
-    let diameter = [scalarMult(startDirection, radius)];
+    let diameter = [mult(startDirection, radius)];
     for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += diameterIndex++ % radius == 0) {
         diameter.push(add(diameter[diameter.length - 1], directions[directionIndex]));
     }
     return diameter;
 }
-function createGrid(radius = 4) {
+function createGrid(radius) {
     let grid = [];
-    for (let radius = 0; radius < 4; radius++) {
-        grid.push(...getDiameter(radius));
+    for (let r = 0; r < radius; r++) {
+        grid.push(...getDiameter(r).map(c => new Object({ coord: c})));
     }
     return grid;
 }
-createGrid().forEach(c => console.log(JSON.stringify(c)));
+createGrid(4).forEach(c => console.log(JSON.stringify(c)));
