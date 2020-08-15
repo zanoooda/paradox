@@ -1,17 +1,17 @@
 const directions = [
-    { x: -1, y: 0, z: 1 }, // ↙
-    { x: -1, y: 1, z: 0 }, // ←
-    { x: 0, y: 1, z: -1 }, // ↖
-    { x: 1, y: 0, z: -1 }, // ↗
-    { x: 1, y: -1, z: 0 }, // →
-    { x: 0, y: -1, z: 1 }  // ↘
-]
+    [-1, 0, 1], // ↙
+    [-1, 1, 0], // ←
+    [0, 1, -1], // ↖
+    [1, 0, -1], // ↗
+    [1, -1, 0], // →
+    [0, -1, 1]  // ↘
+];
 const startDirection = directions[4];
-function scalarMult(vector, scalar) {
-    return { x: vector.x * scalar, y: vector.y * scalar, z: vector.z * scalar };
+function scalarMult(arr, x) {
+    return arr.map(i => i * x);
 }
-function add(vector1, vector2) {
-    return { x: vector1.x + vector2.x, y: vector1.y + vector2.y, z: vector1.z + vector2.z };
+function add(arr1, arr2) {
+    return arr1.map((x, i) => x + arr2[i]);
 }
 function getDiameter(radius) {
     let diameter = [scalarMult(startDirection, radius)];
@@ -20,11 +20,11 @@ function getDiameter(radius) {
     }
     return diameter;
 }
-
-let grid = [];
-for (let radius = 0; radius < 4; radius++) {
-    grid.push(...getDiameter(radius).map(vector => new Object({ cordinates: vector })));
+function createGrid(radius = 4) {
+    let grid = [];
+    for (let radius = 0; radius < 4; radius++) {
+        grid.push(...getDiameter(radius));
+    }
+    return grid;
 }
-grid.forEach(cell => {
-    console.log(JSON.stringify(cell))
-});
+createGrid().forEach(c => console.log(JSON.stringify(c)));
