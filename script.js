@@ -3,10 +3,10 @@ class Grid {
         this.cells = new Array();
         this.directions = [
             new Vector(1, -1, 0), // →
-            new Vector(1, 0, -1), // ↗
-            new Vector(0, 1, -1), // ↖
-            new Vector(-1, 1, 0), // ←
             new Vector(-1, 0, 1), // ↙
+            new Vector(-1, 1, 0), // ←
+            new Vector(0, 1, -1), // ↖
+            new Vector(1, 0, -1), // ↗
             new Vector(0, -1, 1)  // ↘  
         ];
         for (let radiusIndex = 0, radiusCellsQuantity = 1;
@@ -22,8 +22,8 @@ class Grid {
                     console.log(`${radiusIndex * direction.x}, ${radiusIndex * direction.y}, ${radiusIndex * direction.z}`);
                 } else {
                     let previousCell = this.cells[this.cells.length - 1];
-                    this.cells.push(new Cell(previousCell.x - direction.x, previousCell.y - direction.y, previousCell.z - direction.z));
-                    console.log(`${previousCell.x - direction.x}, ${previousCell.y - direction.y}, ${previousCell.z - direction.z}`);
+                    this.cells.push(new Cell(previousCell.x + direction.x, previousCell.y + direction.y, previousCell.z + direction.z));
+                    console.log(`${previousCell.x + direction.x}, ${previousCell.y + direction.y}, ${previousCell.z + direction.z}`);
                 }
             }
         }
