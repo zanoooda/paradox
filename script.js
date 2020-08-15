@@ -7,8 +7,8 @@ const directions = [
     [0, -1, 1]  // ↘
 ];
 const startDirection = directions[4];
-function add(arr, dir) {
-    return arr.map((n, i) => n + dir[i]);
+function add(arr1, arr2) {
+    return arr1.map((n, i) => n + arr2[i]);
 }
 function mult(arr, n) {
     return arr.map(i => i * n);
