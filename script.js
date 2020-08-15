@@ -34,7 +34,7 @@ class Vector {
     }
     static getDiameter(radius) {
         let diameter = [Vector.scalarMult(Vector.startDirection, radius)];
-        for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += (++diameterIndex - 1) % radius == 0) {
+        for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += diameterIndex++ % radius == 0) {
             diameter.push(Vector.add(diameter[diameter.length - 1], Vector.directions[directionIndex]));
         }
         return diameter;
