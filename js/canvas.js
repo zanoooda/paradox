@@ -5,22 +5,24 @@ export class Canvas {
         this.element.height = sideLength;
         this.context = this.element.getContext('2d');
         this.sideLength = sideLength;
+        this.cellRadius = sideLength / 16;
     }
     showGrid(grid) {
         for (let i = 0; i < grid.length; i++) {
-            showCell(grid[i], this.context, this.sideLength);
+            showCell(grid[i], this.context, this.sideLength, this.cellRadius);
         }
     }
 }
 function getPoint(cell, sideLength) {
-    //...
-    return [sideLength / 2, sideLength / 2];
+    let x = (sideLength / 2) + (cell[0] * sideLength / 8);
+    let y = (sideLength / 2) + (cell[1] * sideLength / 8);
+    return [x, y];
 }
-function showCell(cell, context, sideLength) {
-    console.log(JSON.stringify(cell));
-
-    let cellRadius = sideLength / 32;
+function showCell(cell, context, sideLength, cellRadius) {
+    let point = getPoint(cell, sideLength);
     context.beginPath();
-    context.arc(...getPoint(cell, sideLength), cellRadius, 0, 2 * Math.PI);
+    context.arc(...point, cellRadius, 0, 2 * Math.PI);
     context.stroke();
+    context.font = "10px Arial";
+    context.fillText(JSON.stringify(cell), point[0], point[1]);
 }
