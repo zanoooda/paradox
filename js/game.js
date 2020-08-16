@@ -1,6 +1,13 @@
 import { create as createGrid } from './grid.js'
-import { create as createCanvas, show as showGrid } from './canvas.js'
+import { Canvas } from './canvas.js'
 
-let grid = createGrid(4);
-createCanvas();
-showGrid(grid);
+export class Game {
+    constructor() {
+        this.grid = createGrid(4);
+        this.canvas = new Canvas(Math.min(document.body.getBoundingClientRect().width, document.body.getBoundingClientRect().height));
+        document.body.prepend(this.canvas.element);
+    }
+    play() {
+        this.canvas.showGrid(this.grid);
+    }
+}
