@@ -1,4 +1,4 @@
-import createGrid from './grid'
-import renderGrid from './canvas'
+import createGrid from './grid.js'
+import renderGrid from './canvas.js'
 
 renderGrid(createGrid(4));
