@@ -19,12 +19,10 @@ function getDiameter(radius) {
     }
     return diameter;
 }
-function createGrid(radius) {
+export function createGrid(radius) {
     let grid = [];
     for (let r = 0; r < radius; r++) {
         grid.push(...getDiameter(r).map(c => new Object({ coord: c })));
     }
     return grid;
 }
-
-let grid = createGrid(4);

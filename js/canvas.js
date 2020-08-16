@@ -12,7 +12,7 @@ function renderCell(cell) {
     ctx.arc(...getPoint(cell.coord), cellRadius, 0, 2 * Math.PI);
     ctx.stroke();
 }
-function renderGrid(grid) {
+export function renderGrid(grid) {
     grid.forEach(cell => {
         renderCell(cell);
     });
