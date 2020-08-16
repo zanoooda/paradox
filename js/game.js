@@ -1,8 +1,8 @@
-import { createGrid } from './grid.js'
+import Grid from './grid.js'
 
-export class Game {
+export default class Game {
     constructor() {
-        this.grid = createGrid(4);
+        this.grid = Grid.create(4);
         this.balls; //class Ball
         this.selectedPair; //[Ball{...}, Ball{...}]
         this.players; //class Player
@@ -10,7 +10,7 @@ export class Game {
     selectPair(pair) {
         //...
     }
-    move(pair) {
+    move(pair, d) {
         //...
     }
 }

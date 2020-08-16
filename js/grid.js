@@ -19,10 +19,12 @@ function getPerimeter(radius) {
     }
     return perimeter;
 }
-export function createGrid(radius) {
-    let grid = [];
-    for (let r = 0; r < radius; r++) {
-        grid.push(...getPerimeter(r));
+export default class Grid {
+    static create(radius) {
+        let grid = [];
+        for (let r = 0; r < radius; r++) {
+            grid.push(...getPerimeter(r));
+        }
+        return grid;
     }
-    return grid;
 }

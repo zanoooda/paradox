@@ -1,4 +1,4 @@
-export class Canvas {
+export default class Canvas {
     constructor(sideLength) {
         this.element = document.createElement('canvas');
         this.element.width = sideLength;
@@ -13,7 +13,7 @@ export class Canvas {
         }
     }
 }
-function getPoint(cell, sideLength) {
+function getPoint(cell, sideLength) { // x = cell[0]; y = cell[1]; z = cell[2]
     let x = (sideLength / 2) + (cell[0] * sideLength / 8);
     let y = (sideLength / 2) + (cell[1] * sideLength / 8);
     return [x, y];
