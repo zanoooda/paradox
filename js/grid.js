@@ -14,15 +14,15 @@ function mult(arr, n) {
 }
 function getPerimeter(radius) {
     let perimeter = [mult(startDirection, radius)];
-    for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += diameterIndex++ % radius == 0) {
+    for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += diameterIndex % radius == 0, diameterIndex++) {
         perimeter.push(add(perimeter[perimeter.length - 1], directions[directionIndex]));
     }
     return perimeter;
 }
-export function create(radius) {
+export function createGrid(radius) {
     let grid = [];
     for (let r = 0; r < radius; r++) {
-        grid.push(...getPerimeter(r).map(c => new Object({ coord: c })));
+        grid.push(...getPerimeter(r));
     }
     return grid;
 }

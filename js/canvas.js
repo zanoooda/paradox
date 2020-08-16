@@ -1,25 +1,26 @@
 export class Canvas {
-    constructor(diameter) {
+    constructor(sideLength) {
         this.element = document.createElement('canvas');
-        this.element.width = diameter;
-        this.element.height = diameter;
+        this.element.width = sideLength;
+        this.element.height = sideLength;
         this.context = this.element.getContext('2d');
-        this.diameter = diameter;
+        this.sideLength = sideLength;
     }
     showGrid(grid) {
-        grid.forEach(cell => {
-            showCell(cell, this.context, this.diameter);
-        });
+        for (let i = 0; i < grid.length; i++) {
+            showCell(grid[i], this.context, this.sideLength);
+        }
     }
 }
-function getPoint(c, diameter) {
+function getPoint(cell, sideLength) {
     //...
-    return [diameter / 2, diameter / 2];
+    return [sideLength / 2, sideLength / 2];
 }
-function showCell(cell, context, diameter) {
-    console.log(JSON.stringify(cell.coord));
+function showCell(cell, context, sideLength) {
+    console.log(JSON.stringify(cell));
 
+    let cellRadius = sideLength / 32;
     context.beginPath();
-    context.arc(...getPoint(cell.coord, diameter), diameter / 32, 0, 2 * Math.PI);
+    context.arc(...getPoint(cell, sideLength), cellRadius, 0, 2 * Math.PI);
     context.stroke();
 }
