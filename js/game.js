@@ -1,4 +1,5 @@
-import { createGrid } from './grid.js'
-import { renderGrid } from './canvas.js'
+import { create } from './grid.js'
+import { render } from './canvas.js'
 
-renderGrid(createGrid(4));
+let grid = create(4);
+render(grid);
