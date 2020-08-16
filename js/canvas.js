@@ -1,22 +1,24 @@
-const radius = Math.min(document.body.getBoundingClientRect().width, document.body.getBoundingClientRect().height),
-cellRadius = radius / 32,
-canvas = document.createElement('canvas'),
-ctx = canvas.getContext('2d');
-canvas.width = radius;
-canvas.height = radius;
-document.body.prepend(canvas);
+let context, radius;
 function getPoint(c) {
     console.log(JSON.stringify(c));
     //...
-    return [canvas.width / 2, canvas.height / 2];
+    return [radius / 2, radius / 2];
 }
-function renderCell(c) {
-    ctx.beginPath();
-    ctx.arc(...getPoint(c.coord), cellRadius, 0, 2 * Math.PI);
-    ctx.stroke();
+function showCell(c) {
+    context.beginPath();
+    context.arc(...getPoint(c.coord), radius / 32, 0, 2 * Math.PI);
+    context.stroke();
 }
-export function render(grid) {
+export function show(grid) {
     grid.forEach(cell => {
-        renderCell(cell);
+        showCell(cell);
     });
+}
+export function create() {
+    let canvas = document.createElement('canvas');
+    context = canvas.getContext('2d');
+    radius = Math.min(document.body.getBoundingClientRect().width, document.body.getBoundingClientRect().height);
+    canvas.width = radius;
+    canvas.height = radius;
+    document.body.prepend(canvas);
 }
