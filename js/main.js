@@ -1,0 +1,1 @@
+renderGrid(grid);

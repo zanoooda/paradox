@@ -17,9 +17,7 @@ function renderGrid(grid) {
         renderCell(cell);
     });
 }
+
 canvas.width = radius;
 canvas.height = radius;
 document.body.prepend(canvas);
-
-let grid = createGrid(4);
-renderGrid(grid);

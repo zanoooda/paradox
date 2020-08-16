@@ -26,3 +26,5 @@ function createGrid(radius) {
     }
     return grid;
 }
+
+let grid = createGrid(4);
