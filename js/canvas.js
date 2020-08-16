@@ -6,14 +6,20 @@ function getPoint(position, sideLength) {
 function showCell(cell, context, sideLength, cellRadius) {
     let point = getPoint(cell.position, sideLength);
     if(cell.ball) {
-        // showBall(cell)
+        showCellWithBall(context, point, cellRadius, cell.ball.color);
     } else {
-        context.beginPath();
-        context.arc(...point, cellRadius, 0, 2 * Math.PI);
-        context.stroke(); 
+        showEmptyCell(context, point, cellRadius);
     }
     context.font = "10px Arial";
     context.fillText(`${cell.position}`, ...point);
+}
+function showEmptyCell(context, point, cellRadius) {
+    context.beginPath();
+    context.arc(...point, cellRadius, 0, 2 * Math.PI);
+    context.stroke(); 
+}
+function showCellWithBall(context, point, cellRadius, color) {
+    // ...
 }
 export default class Canvas {
     constructor(sideLength) {

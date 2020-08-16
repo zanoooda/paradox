@@ -1,13 +1,4 @@
 import Grid from './grid.js';
-class Color {
-    static first = 'red';
-    static second = 'blue';
-}
-class Ball {
-    constructor(color) {
-        this.color = color;
-    }
-}
 class Cell {
     constructor(position, ball = null) {
         this.position = position;
@@ -15,8 +6,8 @@ class Cell {
     }
 }
 class Board {
-    constructor() {
-        this.cells = Grid.create(4).map(position => new Cell(position, null));
+    constructor(radius = 4) {
+        this.cells = Grid.create(radius).map(position => new Cell(position, null));
         // add balls to cells
     }
 }
