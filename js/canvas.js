@@ -5,21 +5,20 @@ function getPoint(position, sideLength) {
 }
 function showCell(cell, context, sideLength, cellRadius) {
     let point = getPoint(cell.position, sideLength);
-    if(cell.ball) {
+    if (cell.ball)
         showCellWithBall(context, point, cellRadius, cell.ball.color);
-    } else {
+    else
         showEmptyCell(context, point, cellRadius);
-    }
     context.font = "10px Arial";
     context.fillText(`${cell.position}`, ...point);
+    console.log(`${cell.position}`);
 }
 function showEmptyCell(context, point, cellRadius) {
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
-    context.stroke(); 
+    context.stroke();
 }
 function showCellWithBall(context, point, cellRadius, color) {
-    // ...
 }
 export default class Canvas {
     constructor(sideLength) {
