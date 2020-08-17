@@ -5,4 +5,4 @@ let bodyRect = document.body.getBoundingClientRect();
 let sideLength = Math.min(bodyRect.width, bodyRect.height);
 let canvas = new Canvas(sideLength);
 document.body.prepend(canvas.element);
-canvas.show(game.board);
+canvas.show(game.state);
