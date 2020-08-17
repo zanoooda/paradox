@@ -77,12 +77,12 @@ Game.prototype.render = function() {
 
             switch (this.state[x][y].color) {
                 case 1:
-                    this.context.fillStyle = 'blue';
+                    this.context.fillStyle = 'DeepSkyBlue';
                     this.context.strokeStyle = 'darkblue';
                     this.context.lineWidth = 5;
                     break;
                 case 2:
-                    this.context.fillStyle = 'red';
+                    this.context.fillStyle = 'DeepPink';
                     this.context.strokeStyle = 'darkred';
                     this.context.lineWidth = 5;
                     break;
