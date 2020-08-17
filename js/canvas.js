@@ -1,10 +1,10 @@
-function getPoint(position, sideLength) {
-    let x = (sideLength / 2) + (position[0] * sideLength / 8);
-    let y = (sideLength / 2) + (position[1] * sideLength / 8);
+function getPoint(position, size) {
+    let x = (size / 2) + (position[0] * size / 8);
+    let y = (size / 2) + (position[1] * size / 8);
     return [x, y];
 }
-function showCell(cell, context, sideLength, cellRadius) {
-    let point = getPoint(cell.position, sideLength);
+function showCell(cell, context, size, cellRadius) {
+    let point = getPoint(cell.position, size);
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
     context.closePath();
@@ -18,17 +18,17 @@ function showCell(cell, context, sideLength, cellRadius) {
     context.fillText(`${cell.position}`, ...point);
 }
 export default class Canvas {
-    constructor(sideLength) {
+    constructor(size) {
         this.element = document.createElement('canvas');
-        this.element.width = sideLength;
-        this.element.height = sideLength;
+        this.element.width = size;
+        this.element.height = size;
         this.context = this.element.getContext('2d');
-        this.sideLength = sideLength;
-        this.cellRadius = sideLength / 16;
+        this.size = size;
+        this.cellRadius = size / 16;
     }
     show(state) {
         for (let i = 0; i < state.cells.length; i++) {
-            showCell(state.cells[i], this.context, this.sideLength, this.cellRadius);
+            showCell(state.cells[i], this.context, this.size, this.cellRadius);
         }
     }
 }
