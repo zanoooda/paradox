@@ -1,21 +1,21 @@
 function getPoint(position, sideLength) {
-    let x = (sideLength / 2) + (position[0] * sideLength / 8); // !
-    let y = (sideLength / 2) + (position[1] * sideLength / 8); // !
+    let x = (sideLength / 2) + (position[0] * sideLength / 8);
+    let y = (sideLength / 2) + (position[1] * sideLength / 8);
     return [x, y];
 }
 function showCell(cell, context, sideLength, cellRadius) {
     let point = getPoint(cell.position, sideLength);
-    if (cell.ball) {
-        // show ball
-    }
-    else {
-        context.beginPath();
-        context.arc(...point, cellRadius, 0, 2 * Math.PI);
+    context.beginPath();
+    context.arc(...point, cellRadius, 0, 2 * Math.PI);
+    context.closePath();
+    if (cell.ball){
+        context.fillStyle = !cell.ball.color ? 'red' : 'blue';
+        context.fill();
+    } else
         context.stroke();
-    }
+    context.fillStyle = 'black';
     context.font = "10px Arial";
     context.fillText(`${cell.position}`, ...point);
-    console.log(`${cell.position}`);
 }
 export default class Canvas {
     constructor(sideLength) {

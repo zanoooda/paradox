@@ -8,8 +8,11 @@ class Cell {
 class State {
     constructor(radius) {
         this.cells = Grid.create(radius).map(position => new Cell(position, null));
-        // TODO: Add balls to cells
-        Grid.getPerimeter(radius)
+        let outerPerimeter = Grid.getPerimeter(radius);
+        for (let i = 0; i < outerPerimeter.length; i++) {
+            this.cell(outerPerimeter[i]).ball = new Object({ color: (i % 2 != 0)});
+        }
+        // ...
     }
     cell(position) { // TODO: get cell without loop (dictionary?)
         return this.cells.find(cell =>
@@ -20,12 +23,13 @@ class State {
     }
 }
 export default class Game {
-    constructor(radius = 4) {
+    constructor(radius = 3) {
         this.state = new State(radius);
         this.history;
     }
     move(pair, destinition) {
         // if move legal
         // push to history and update state
+        // if win?
     }
 }

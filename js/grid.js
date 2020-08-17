@@ -16,7 +16,7 @@ export default class Grid {
     static startDirection = this.directions[4];
     static create(radius) {
         let grid = [];
-        for (let r = 0; r < radius; r++) {
+        for (let r = 0; r <= radius; r++) {
             grid.push(...this.getPerimeter(r));
         }
         return grid;
