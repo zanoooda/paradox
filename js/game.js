@@ -1,4 +1,9 @@
 import Grid from './grid.js';
+class Ball {
+    constructor(color) {
+        this.color = color;
+    }
+}
 class Cell {
     constructor(position, ball = null) {
         this.position = position;
@@ -10,7 +15,7 @@ class State {
         this.cells = Grid.create(radius).map(position => new Cell(position, null));
         let outerPerimeter = Grid.getPerimeter(radius);
         for (let i = 0; i < outerPerimeter.length; i++) {
-            this.cell(outerPerimeter[i]).ball = new Object({ color: (i % 2 != 0)});
+            this.cell(outerPerimeter[i]).ball = new Ball(i % 2);
         }
         // ...
     }
