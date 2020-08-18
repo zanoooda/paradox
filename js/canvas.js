@@ -8,8 +8,8 @@ function showCell(cell, context, size, cellRadius) {
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
     context.closePath();
-    if (cell.ball){
-        context.fillStyle = !cell.ball.color ? 'red' : 'blue';
+    if (cell.ball) {
+        context.fillStyle = Canvas.colors[cell.ball.color];
         context.fill();
     } else
         context.stroke();
@@ -18,6 +18,7 @@ function showCell(cell, context, size, cellRadius) {
     context.fillText(`${cell.position}`, ...point);
 }
 export default class Canvas {
+    static colors = ['red', 'blue'];
     constructor(size) {
         this.element = document.createElement('canvas');
         this.element.width = size;
