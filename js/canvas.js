@@ -20,11 +20,11 @@ function showCell(cell, context, size, cellRadius) {
 export default class Canvas {
     static colors = ['red', 'blue'];
     constructor(size) {
+        this.size = size;
         this.element = document.createElement('canvas');
         this.element.width = size;
         this.element.height = size;
         this.context = this.element.getContext('2d');
-        this.size = size;
         this.cellRadius = size / 16;
     }
     show(state) {
