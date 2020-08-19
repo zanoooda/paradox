@@ -1,40 +1,45 @@
 import Grid from './grid.js';
-class Ball {
-    constructor(color) {
-        this.color = color;
-    }
+
+function initState(radius) {
+    let state = Grid.create(radius).map(position => {
+        position.push(null);
+        return position;
+    });
+    Grid.getPerimeter(radius).map((position, i) => getCell(position, state)[3] = i % 2);
+    // Add two balls at the middle
+    return state;
 }
-class Cell {
-    constructor(position, ball = null) {
-        this.position = position;
-        this.ball = ball;
-    }
+function getCell(position, state) { // Dispose of loop
+    return state.find(cell =>
+        cell[0] === position[0] &&
+        cell[1] === position[1] &&
+        cell[2] === position[2]
+    );
 }
-class State {
-    constructor(radius) {
-        this.cells = Grid.create(radius).map(position => new Cell(position, null));
-        let outerPerimeter = Grid.getPerimeter(radius);
-        for (let i = 0; i < outerPerimeter.length; i++) {
-            this.cell(outerPerimeter[i]).ball = new Ball(i % 2);
-        }
-        // ...
-    }
-    cell(position) { // TODO: get cell without loop (dictionary?)
-        return this.cells.find(cell =>
-            cell.position[0] == position[0] &&
-            cell.position[1] == position[1] &&
-            cell.position[2] == position[2]
-        );
-    }
+
+function win(state) {
+    return false;
+}
+function updateState(pair, direction, state) {
+    return state;
+}
+function legal(pair, direction, state) { 
+    return true;
 }
 export default class Game {
     constructor(radius = 3) {
-        this.state = new State(radius);
-        this.history;
+        this.state = initState(radius);
+        this.history = [this.state];
+        this.winner = null;
     }
-    move(pair, destinition) {
-        // if move legal
-        // push to history and update state
-        // if win?
+    move(pair, direction) {
+        if (legal(pair, direction, this.state)) {
+            this.history.push(this.state);
+            this.state = updateState(pair, direction, this.state);
+            if(win(state)) {
+                this.winner = this.history.length % 2; // or opposit!
+            }
+            return true;
+        } else return false;
     }
 }
