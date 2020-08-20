@@ -17,13 +17,13 @@ function getCell(position, state) { // Dispose of loop
     );
 }
 
-function win(state) {
+function isWin(state) {
     return false;
 }
 function updateState(pair, direction, state) {
     return state;
 }
-function legal(pair, direction, state) { 
+function isLegal(pair, direction, state) {
     return true;
 }
 export default class Game {
@@ -33,11 +33,11 @@ export default class Game {
         this.winner = null;
     }
     move(pair, direction) {
-        if (legal(pair, direction, this.state)) {
+        if (!Number.isInteger(winner) && isLegal(pair, direction, this.state)) {
             this.history.push(this.state);
             this.state = updateState(pair, direction, this.state);
-            if(win(state)) {
-                this.winner = this.history.length % 2; // or opposit!
+            if (isWin(this.state)) {
+                this.winner = this.history.length % 2;
             }
             return true;
         } else return false;
