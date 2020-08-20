@@ -5,16 +5,19 @@ function initState(radius) {
         position.push(null);
         return position;
     });
-    Grid.getPerimeter(radius).map((position, i) => getCell(position, state)[3] = i % 2);
-    // Add two balls at the middle
+    Grid.getPerimeter(radius).forEach((position, i) => {
+        setItem(i % 2, position, state);
+    });
+    setItem(0, Grid.startPerimeter(Grid.startDirection, -1), state);
+    setItem(1, Grid.startPerimeter(Grid.startDirection, 1), state);
     return state;
 }
-function getCell(position, state) { // Dispose of loop
-    return state.find(cell =>
+function setItem(value, position, state) {
+    state.find(cell =>
         cell[0] === position[0] &&
         cell[1] === position[1] &&
         cell[2] === position[2]
-    );
+    )[3] = value;
 }
 
 function isWin(state) {
@@ -36,9 +39,7 @@ export default class Game {
         if (!Number.isInteger(winner) && isLegal(pair, direction, this.state)) {
             this.history.push(this.state);
             this.state = updateState(pair, direction, this.state);
-            if (isWin(this.state)) {
-                this.winner = this.history.length % 2;
-            }
+            if (isWin(this.state)) this.winner = this.history.length % 2;
             return true;
         } else return false;
     }

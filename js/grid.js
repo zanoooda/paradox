@@ -32,4 +32,5 @@ export default class Grid {
     static startDirection = startDirection;
     static create = create;
     static getPerimeter = getPerimeter;
+    static startPerimeter = startPerimeter;
 }
