@@ -5,7 +5,7 @@ function startGame() {
     let size = getCanvasSize();
     let canvas = new Canvas(size);
     document.body.prepend(canvas.element);
-    canvas.start(game.state);
+    canvas.show(game.state);
 }
 function getCanvasSize() {
     let bodyRect = document.body.getBoundingClientRect();

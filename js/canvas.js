@@ -18,13 +18,6 @@ function showCell(cell, context, size, cellRadius) {
     context.font = "10px Arial";
     context.fillText(`${cell[0]}, ${cell[1]}, ${cell[2]}`, ...point);
 }
-function showState(state, context, size, cellRadius) {
-    for (let i = 0; i < state.length; i++) {
-        showCell(state[i], context, size, cellRadius);
-    }
-}
-function setListeners() {
-}
 export default class Canvas {
     constructor(size) {
         this.size = size;
@@ -35,8 +28,9 @@ export default class Canvas {
         this.cellRadius = size / 16;
         this.colors = colors;
     }
-    start(state) {
-        setListeners();
-        showState(state, this.context, this.size, this.cellRadius);
+    show(state) {
+        for (let i = 0; i < state.length; i++) {
+            showCell(state[i], this.context, this.size, this.cellRadius);
+        }
     }
 }
