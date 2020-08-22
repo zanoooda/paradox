@@ -1,7 +1,8 @@
 let colors = ['red', 'blue'];
 function getPoint(position, size) { // Implement
-    let x = (size / 2) + (position[2] * size / 8);
-    let y = (size / 2) + (position[0] * size / 8);
+    let distance = size /16;
+    let x = (size / 2) + (distance * 3/2 * position[0]);
+    let y = (size / 2) + (distance * Math.sqrt(3) * (position[2] + position[0]/2));
     return [x, y];
 }
 function showCell(cell, context, size, cellRadius) {
