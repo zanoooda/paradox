@@ -1,7 +1,7 @@
 let colors = ['red', 'blue'];
 function getPoint(position, size) { // Implement
-    let x = (size / 2) + (position[0] * size / 8);
-    let y = (size / 2) + (position[1] * size / 8);
+    let x = (size / 2) + (position[2] * size / 8);
+    let y = (size / 2) + (position[0] * size / 8);
     return [x, y];
 }
 function showCell(cell, context, size, cellRadius) {
@@ -12,10 +12,12 @@ function showCell(cell, context, size, cellRadius) {
     if (cell[3] != null) {
         context.fillStyle = colors[cell[3]];
         context.fill();
-    } else
-        context.stroke();
+    } else {
+        context.strokeStyle = 'lightgray'
+        context.stroke();   
+    }
     context.fillStyle = 'black';
-    context.font = "10px Arial";
+    context.font = '10px Arial';
     context.fillText(`${cell[0]}, ${cell[1]}, ${cell[2]}`, ...point);
 }
 export default class Canvas {
@@ -25,7 +27,7 @@ export default class Canvas {
         this.element.width = size;
         this.element.height = size;
         this.context = this.element.getContext('2d');
-        this.cellRadius = size / 16;
+        this.cellRadius = size / 20;
         this.colors = colors;
     }
     show(state) {
