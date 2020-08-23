@@ -6,6 +6,7 @@ const directions = [
     [1, -1, 0], // →
     [0, -1, 1]  // ↘
 ], startDirection = directions[4];
+
 function neighbor(position, direction) {
     return position.map((n, i) => n + direction[i]);
 }
@@ -27,6 +28,7 @@ function create(radius) {
     }
     return grid;
 }
+
 export default class Grid {
     static directions = directions;
     static startDirection = startDirection;

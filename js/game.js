@@ -12,7 +12,7 @@ function initState(radius) {
     setItem(1, Grid.startPerimeter(Grid.startDirection, 1), state);
     return state;
 }
-function setItem(value, position, state) {
+function setItem(value, position, state) { // dispose of loop
     state.find(cell =>
         cell[0] === position[0] &&
         cell[1] === position[1] &&
@@ -20,27 +20,8 @@ function setItem(value, position, state) {
     )[3] = value;
 }
 
-function isWin(state) {
-    return false;
-}
-function updateState(pair, direction, state) {
-    return state;
-}
-function isLegal(pair, direction, state) {
-    return true;
-}
 export default class Game {
     constructor(radius = 3) {
         this.state = initState(radius);
-        this.history = [this.state];
-        this.winner = null;
-    }
-    move(pair, direction) {
-        if (!Number.isInteger(winner) && isLegal(pair, direction, this.state)) {
-            this.history.push(this.state);
-            this.state = updateState(pair, direction, this.state);
-            if (isWin(this.state)) this.winner = this.history.length % 2;
-            return true;
-        } else return false;
     }
 }
