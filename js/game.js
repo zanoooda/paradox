@@ -1,22 +1,22 @@
 import Grid from './grid.js';
 
 function initState(radius) {
-    let state = Grid.create(radius).map(position => {
-        position.push(null);
-        return position;
+    let state = Grid.create(radius).map(coordinates => {
+        coordinates.push(null);
+        return coordinates;
     });
-    Grid.getPerimeter(radius).forEach((position, i) => {
-        setItem(i % 2, position, state);
+    Grid.getPerimeter(radius).forEach((coordinates, i) => {
+        setItem(i % 2, coordinates, state);
     });
     setItem(0, Grid.startPerimeter(Grid.startDirection, -1), state);
     setItem(1, Grid.startPerimeter(Grid.startDirection, 1), state);
     return state;
 }
-function setItem(value, position, state) { // dispose of loop
+function setItem(value, coordinates, state) { // dispose of loop
     state.find(cell =>
-        cell[0] === position[0] &&
-        cell[1] === position[1] &&
-        cell[2] === position[2]
+        cell[0] === coordinates[0] &&
+        cell[1] === coordinates[1] &&
+        cell[2] === coordinates[2]
     )[3] = value;
 }
 

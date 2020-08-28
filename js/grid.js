@@ -7,8 +7,8 @@ const directions = [
     [0, -1, 1]  // ↘
 ], startDirection = directions[4];
 
-function neighbor(position, direction) {
-    return position.map((n, i) => n + direction[i]);
+function neighbor(coordinates, direction) {
+    return coordinates.map((n, i) => n + direction[i]);
 }
 // diagonals
 function startPerimeter(direction, radius) {
