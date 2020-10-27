@@ -7,9 +7,6 @@ function initItems(grid) {
     });
     return items;
 }
-function findPairs(items) {
-
-}
 
 export default class Game {
     constructor(radius = 3) {
