@@ -26,7 +26,7 @@ function show(state, context, size, cellRadius) {
         showCell(state[i], context, size, cellRadius);
     }
 }
-function getState(game) {
+function getState(game) { // move to game.js?
     let state = game.grid.cells.map(cell => [...cell, null]);
     game.items.forEach(item => 
         state.find(cell => 

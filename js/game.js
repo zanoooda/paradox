@@ -7,12 +7,13 @@ function initItems(grid) {
     });
     return items;
 }
+function findPairs(items) {
+
+}
 
 export default class Game {
     constructor(radius = 3) {
         this.grid = new Grid(radius);
         this.items = initItems(this.grid);
-
-        this.findAllPairs = null;
     }
 }
