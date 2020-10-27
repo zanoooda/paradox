@@ -10,29 +10,31 @@ const directions = [
 function neighbor(coordinates, direction) {
     return coordinates.map((n, i) => n + direction[i]);
 }
-// diagonals
 function startPerimeter(direction, radius) {
     return direction.map(i => i * radius);
 }
 function getPerimeter(radius) {
-    let perimeter = [startPerimeter(this.startDirection, radius)];
+    let perimeter = [startPerimeter(startDirection, radius)];
     for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += diameterIndex % radius == 0, diameterIndex++) {
-        perimeter.push(neighbor(perimeter[perimeter.length - 1], this.directions[directionIndex]));
+        perimeter.push(neighbor(perimeter[perimeter.length - 1], directions[directionIndex]));
     }
     return perimeter;
 }
-function create(radius) {
-    let grid = [];
+function createCells(radius) {
+    let cells = [];
     for (let r = 0; r <= radius; r++) {
-        grid.push(...this.getPerimeter(r));
+        cells.push(...getPerimeter(r));
     }
-    return grid;
+    return cells;
 }
 
 export default class Grid {
-    static directions = directions;
-    static startDirection = startDirection;
-    static create = create;
-    static getPerimeter = getPerimeter;
-    static startPerimeter = startPerimeter;
+    constructor(radius) {
+        this.radius = radius;
+        this.cells = createCells(radius);
+        this.directions = directions;
+        this.startDirection = startDirection;
+        this.getPerimeter = getPerimeter;
+        this.startPerimeter = startPerimeter;
+    }
 }

@@ -1,27 +1,29 @@
 import Grid from './grid.js';
 
-function initState(radius) {
-    let state = Grid.create(radius).map(coordinates => {
-        coordinates.push(null);
-        return coordinates;
+function initItems(grid) {
+    let items = [[...grid.startPerimeter(grid.startDirection, -1), 0], [...grid.startPerimeter(grid.startDirection, 1), 1]];
+    grid.getPerimeter(grid.radius).forEach((coordinates, i) => {
+        items.push([...coordinates, i % 2]);
     });
-    Grid.getPerimeter(radius).forEach((coordinates, i) => {
-        setItem(i % 2, coordinates, state);
-    });
-    setItem(0, Grid.startPerimeter(Grid.startDirection, -1), state);
-    setItem(1, Grid.startPerimeter(Grid.startDirection, 1), state);
-    return state;
+    return items;
 }
-function setItem(value, coordinates, state) { // dispose of loop
-    state.find(cell =>
-        cell[0] === coordinates[0] &&
-        cell[1] === coordinates[1] &&
-        cell[2] === coordinates[2]
-    )[3] = value;
+
+function getState(grid, items) {
+    let state = grid.cells.map(cell => [...cell, null]);
+    items.forEach(item => {
+        state.find(cell => 
+            cell[0] === item[0] &&
+            cell[1] === item[1] &&
+            cell[2] === item[2])[3] = item[3];
+    });
+    return state;
 }
 
 export default class Game {
     constructor(radius = 3) {
-        this.state = initState(radius);
+        this.grid = new Grid(radius);
+        this.items = initItems(this.grid);
+
+        this.state = getState(this.grid, this.items);
     }
 }
