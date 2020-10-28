@@ -1,8 +1,8 @@
 let colors = ['red', 'blue'];
-function getPoint(cell, size) {
+function getPoint(coordinates, size) {
     let distance = size / 12;
-    let x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell[2]/2));
-    let y = (size / 2) + (distance * 3/2 * cell[2]);
+    let x = (size / 2) + (distance * Math.sqrt(3) * (coordinates[0] + coordinates[2]/2));
+    let y = (size / 2) + (distance * 3/2 * coordinates[2]);
     return [x, y];
 }
 function showCell(cell, context, size, cellRadius) {
@@ -22,18 +22,19 @@ function showCell(cell, context, size, cellRadius) {
     context.fillText(`${cell[0]}, ${cell[1]}, ${cell[2]}`, ...point);
 }
 function show(state, context, size, cellRadius) {
-    for (let i = 0; i < state.length; i++) {
-        showCell(state[i], context, size, cellRadius);
+    for(const item of state) {
+        showCell(item, context, size, cellRadius);
     }
 }
 function itemsOnTheGrid(game) { // move to game.js?
     let itemsOnTheGrid = game.grid.cells.map(cell => [...cell, null]);
-    game.items.forEach(item => 
+    for(const item of game.items) {
         itemsOnTheGrid.find(cell => 
             cell[0] == item[0] && 
             cell[1] == item[1] && 
             cell[2] == item[2]
-        )[3] = item[3]);
+        )[3] = item[3];
+    }
     return itemsOnTheGrid;
 }
 export default class Canvas {

@@ -29,7 +29,9 @@ function createCells(radius) {
 }
 function getNeighbours(cell, radius) {
     let neighbours = [];
-    //directions.forEach(direction => )
+    for(const direction of directions) {
+        //...
+    }
     return neighbours;
 }
 
