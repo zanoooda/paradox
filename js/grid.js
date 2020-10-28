@@ -7,8 +7,18 @@ const directions = [
     [0, -1, 1]  // ↘
 ], startDirection = directions[4];
 
-function neighbor(cell, direction) {
+function getNeighbor(cell, direction) {
     return cell.map((n, i) => n + direction[i]);
+}
+function getNeighbors(cell, radius) {
+    let neighbors = [];
+    for (const direction of directions) {
+        let neighbor = getNeighbor(cell, direction);
+        if (Math.max(...neighbor.map(Math.abs)) <= radius) {
+            neighbors.push(neighbor);
+        }
+    }
+    return neighbors;
 }
 function startPerimeter(direction, radius) {
     return direction.map(i => i * radius);
@@ -16,7 +26,7 @@ function startPerimeter(direction, radius) {
 function getPerimeter(radius) {
     let perimeter = [startPerimeter(startDirection, radius)];
     for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += diameterIndex % radius == 0, diameterIndex++) {
-        perimeter.push(neighbor(perimeter[perimeter.length - 1], directions[directionIndex]));
+        perimeter.push(getNeighbor(perimeter[perimeter.length - 1], directions[directionIndex]));
     }
     return perimeter;
 }
@@ -27,13 +37,6 @@ function createCells(radius) {
     }
     return cells;
 }
-function getNeighbours(cell, radius) {
-    let neighbours = [];
-    for(const direction of directions) {
-        //...
-    }
-    return neighbours;
-}
 
 export default class Grid {
     constructor(radius) {
@@ -43,6 +46,6 @@ export default class Grid {
         this.startDirection = startDirection;
         this.getPerimeter = getPerimeter;
         this.startPerimeter = startPerimeter;
-        this.getNeighbours = cell => getNeighbours(cell, this.radius);
+        this.getneighbors = cell => getNeighbors(cell, this.radius);
     }
 }

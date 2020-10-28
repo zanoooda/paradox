@@ -11,12 +11,12 @@ function findPairs(items, grid) {
     let pairs = [];
     let notPairedItems = items;
     for(const item of items) {
-        for(const neighbourCell of grid.getNeighbours(item)) {
-            let neighbour = getItemByCoordinates(notPairedItems, neighbourCell);
-            if(neighbour && neighbour[3] != item[3]) {
-                pairs.push([item, neighbour]);
-                removeItem(notPairedItems, item);
-            }
+        for(const neighborCell of grid.getneighbors(item.slice(0, 3))) {
+            // let neighborItem = getItemByCell(notPairedItems, neighborCell);
+            // if(neighborItem && neighborItem[3] != item[3]) {
+            //     pairs.push([item, neighborItem]);
+            //     removeItem(notPairedItems, item);
+            // }
         }
     }
     return pairs;
