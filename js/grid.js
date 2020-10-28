@@ -46,6 +46,6 @@ export default class Grid {
         this.startDirection = startDirection;
         this.getPerimeter = getPerimeter;
         this.startPerimeter = startPerimeter;
-        this.getneighbors = cell => getNeighbors(cell, this.radius);
+        this.getNeighbors = cell => getNeighbors(cell, this.radius);
     }
 }

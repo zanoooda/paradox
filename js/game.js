@@ -11,7 +11,7 @@ function findPairs(items, grid) {
     let pairs = [];
     let notPairedItems = items;
     for(const item of items) {
-        for(const neighborCell of grid.getneighbors(item.slice(0, 3))) {
+        for(const neighborCell of grid.getNeighbors(item.slice(0, 3))) {
             // let neighborItem = getItemByCell(notPairedItems, neighborCell);
             // if(neighborItem && neighborItem[3] != item[3]) {
             //     pairs.push([item, neighborItem]);
