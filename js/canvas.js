@@ -26,15 +26,15 @@ function show(state, context, size, cellRadius) {
         showCell(state[i], context, size, cellRadius);
     }
 }
-function getState(game) { // move to game.js?
-    let state = game.grid.cells.map(cell => [...cell, null]);
+function itemsOnTheGrid(game) { // move to game.js?
+    let itemsOnTheGrid = game.grid.cells.map(cell => [...cell, null]);
     game.items.forEach(item => 
-        state.find(cell => 
+        itemsOnTheGrid.find(cell => 
             cell[0] == item[0] && 
             cell[1] == item[1] && 
             cell[2] == item[2]
         )[3] = item[3]);
-    return state;
+    return itemsOnTheGrid;
 }
 export default class Canvas {
     constructor(size) {
@@ -45,6 +45,6 @@ export default class Canvas {
         this.context = this.element.getContext('2d');
         this.cellRadius = size / 18;
         this.colors = colors;
-        this.show = (game) => show(getState(game), this.context, this.size, this.cellRadius);
+        this.show = (game) => show(itemsOnTheGrid(game), this.context, this.size, this.cellRadius);
     }
 }
