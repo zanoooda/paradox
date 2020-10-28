@@ -7,8 +7,8 @@ const directions = [
     [0, -1, 1]  // ↘
 ], startDirection = directions[4];
 
-function neighbor(coordinates, direction) {
-    return coordinates.map((n, i) => n + direction[i]);
+function neighbor(cell, direction) {
+    return cell.map((n, i) => n + direction[i]);
 }
 function startPerimeter(direction, radius) {
     return direction.map(i => i * radius);
@@ -27,6 +27,11 @@ function createCells(radius) {
     }
     return cells;
 }
+function getNeighbours(cell, radius) {
+    let neighbours = [];
+    //directions.forEach(direction => )
+    return neighbours;
+}
 
 export default class Grid {
     constructor(radius) {
@@ -36,5 +41,6 @@ export default class Grid {
         this.startDirection = startDirection;
         this.getPerimeter = getPerimeter;
         this.startPerimeter = startPerimeter;
+        this.getNeighbours = cell => getNeighbours(cell, this.radius);
     }
 }

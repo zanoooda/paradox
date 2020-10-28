@@ -2,23 +2,23 @@ import Grid from './grid.js';
 
 function initItems(grid) {
     let items = [[...grid.startPerimeter(grid.startDirection, -1), 0], [...grid.startPerimeter(grid.startDirection, 1), 1]];
-    grid.getPerimeter(grid.radius).forEach((coordinates, i) => {
-        items.push([...coordinates, i % 2]);
+    grid.getPerimeter(grid.radius).forEach((cell, i) => {
+        items.push([...cell, i % 2]);
     });
     return items;
 }
 function findPairs(items, grid) {
     let pairs = [];
-    // let notPairedItems = items;
-    // items.forEach(item => {
-    //     grid.findNeighbours(item).forEach(neighbourCoordinates => {
-    //         let neighbour = getItemByCoordinates(notPairedItems, neighbourCoordinates);
-    //         if(neighbour[3] != item[3]) {
-    //             pairs.push([item, neighbour]);
-    //             removeItem(notPairedItems, [item, neighbour]);
-    //         }
-    //     });
-    // });
+    let notPairedItems = items;
+    items.forEach(item => {
+        grid.getNeighbours(item).forEach(neighbourCell => {
+            // let neighbour = getItemByCoordinates(notPairedItems, neighbourCell); //!!!
+            // if(neighbour && neighbour[3] != item[3]) {
+            //     pairs.push([item, neighbour]);
+            //     removeItem(notPairedItems, item);
+            // }
+        });
+    });
     return pairs;
 }
 
