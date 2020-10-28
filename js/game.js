@@ -2,7 +2,7 @@ import Grid from './grid.js';
 
 function initItems(grid) {
     let items = [[...grid.startPerimeter(grid.startDirection, -1), 0], [...grid.startPerimeter(grid.startDirection, 1), 1]];
-    for(const [index, cell] of grid.getPerimeter(grid.radius).entries()) {
+    for (const [index, cell] of grid.getPerimeter(grid.radius).entries()) {
         items.push([...cell, index % 2]);
     }
     return items;
@@ -10,8 +10,8 @@ function initItems(grid) {
 function findPairs(items, grid) {
     let pairs = [];
     let notPairedItems = items;
-    for(const item of items) {
-        for(const neighborCell of grid.getNeighbors(item.slice(0, 3))) {
+    for (const item of items) {
+        for (const neighborCell of grid.getNeighbors(item.slice(0, 3))) {
             // let neighborItem = getItemByCell(notPairedItems, neighborCell);
             // if(neighborItem && neighborItem[3] != item[3]) {
             //     pairs.push([item, neighborItem]);
