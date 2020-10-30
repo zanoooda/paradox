@@ -64,12 +64,8 @@ function findPairs() {
     return pairs;
 }
 
-function isItem(cell) {
-    return [...initialItems[0], ...initialItems[1]].findIndex(item =>
-        item[0] == cell[0] && item[1] == cell[1]) != -1 ? true : false;
-}
-function getItem(cell) {
-    return initialItems.findIndex(sameColorItems =>
+function getItem(cell, items) { // Test
+    return items.findIndex(sameColorItems =>
         sameColorItems.findIndex(item =>
             item[0] == cell[0] && item[1] == cell[1]) != -1);
 }
@@ -88,6 +84,9 @@ class Game {
         // itemsHistory
         // pairsHistory
         // ...
+    }
+    winner() { // -1, 0, 1, 2 if nichya
+        
     }
     isLegal(move) { // [...pair, direction of the move (-1 is switch)]
 
