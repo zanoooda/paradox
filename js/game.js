@@ -7,9 +7,10 @@ const radius = 3,
         [1, -1], // →
         [0, -1]  // ↘
     ],
-    forward = directions[4];
+    forward = directions[4],
+    initialItems = initItems();
 
-function scalarMult(array, scalar) {
+function mult(array, scalar) {
     return array.map(i => i * scalar);
 }
 function getNeighbor(cell, direction) {
@@ -26,7 +27,7 @@ function getNeighbors(cell) {
     return neighbors;
 }
 function getPerimeter(radius) {
-    let perimeter = [scalarMult(forward, radius)];
+    let perimeter = [mult(forward, radius)];
     for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += diameterIndex % radius == 0, diameterIndex++) {
         perimeter.push(getNeighbor(perimeter[perimeter.length - 1], directions[directionIndex]));
     }
@@ -41,7 +42,7 @@ function getCells() {
 }
 
 function initItems() {
-    let items = [[scalarMult(forward, -1)], [scalarMult(forward, 1)]];
+    let items = [[mult(forward, -1)], [mult(forward, 1)]];
     for (const [index, cell] of getPerimeter(radius).entries()) {
         items[index % 2].push(cell);
     }
@@ -63,8 +64,6 @@ function findPairs() {
     return pairs;
 }
 
-const initialItems = initItems();
-
 function isItem(cell) {
     return [...initialItems[0], ...initialItems[1]].findIndex(item =>
         item[0] == cell[0] && item[1] == cell[1]) != -1 ? true : false;
@@ -77,16 +76,16 @@ function getItem(cell) {
 
 class Game {
     static directions = directions;
-    static getCells() {
-        return getCells();
-    }
+    static getCells() { return getCells() }
 
     constructor() {
         this.items = initialItems;
         this.history = [];
     }
+
     move(pair, direction) {
         this.history.push([...pair, direction]);
+        // ...
     }
     findPairs() {
         this.pairs = findPairs(this.items);
