@@ -29,20 +29,28 @@ function show(state, context, size, cellRadius) {
         showCell(item, context, size, cellRadius);
     }
 }
-function itemsOnTheGrid(game) { // move to game.js?
+function itemsOnTheCells(game) { // move to game.js?
     let itemsOnTheGrid = Game.getCells().map(cell => [...cell, null]);
-    for (const item of game.items[0]) { // for 2 fors
-        itemsOnTheGrid.find(cell =>
-            cell[0] == item[0] &&
-            cell[1] == item[1]
-        )[2] = 0;
+    for (let playerIndex = 0; playerIndex < game.items.length; playerIndex++) {
+        for (const item of game.items[playerIndex]) { // for 2 fors
+            itemsOnTheGrid.find(cell =>
+                cell[0] == item[0] &&
+                cell[1] == item[1]
+            )[2] = playerIndex;
+        }
     }
-    for (const item of game.items[1]) {
-        itemsOnTheGrid.find(cell =>
-            cell[0] == item[0] &&
-            cell[1] == item[1]
-        )[2] = 1;
-    }
+    // for (const item of game.items[0]) { // for 2 fors
+    //     itemsOnTheGrid.find(cell =>
+    //         cell[0] == item[0] &&
+    //         cell[1] == item[1]
+    //     )[2] = 0;
+    // }
+    // for (const item of game.items[1]) {
+    //     itemsOnTheGrid.find(cell =>
+    //         cell[0] == item[0] &&
+    //         cell[1] == item[1]
+    //     )[2] = 1;
+    // }
     return itemsOnTheGrid;
 }
 export default class Paradox {
@@ -64,7 +72,7 @@ export default class Paradox {
         this.socket = null;
     }
     playHotSeat() {
-        show(itemsOnTheGrid(this.game), this.context, this.size, this.cellRadius); 
+        show(itemsOnTheCells(this.game), this.context, this.size, this.cellRadius); 
     }
     playWithRobot(playerColor) {
         
