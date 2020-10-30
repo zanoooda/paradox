@@ -8,7 +8,7 @@ function getPoint(cell, size) {
     return [x, y];
 }
 function showCell(cell, context, size, cellRadius) {
-    cell.splice(2, 0, -(cell[1] + cell[0]));
+    cell.splice(2, 0, -cell[1] - cell[0]);
     let point = getPoint(cell, size);
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
@@ -22,35 +22,23 @@ function showCell(cell, context, size, cellRadius) {
     }
     context.fillStyle = 'black';
     context.font = '10px Arial';
-    context.fillText(`[${cell[0]}, ${cell[1]}], ${cell[2]} (0)`, ...point);
+    context.fillText(`${cell[0]}, ${cell[1]}, ${cell[2]}`, ...point);
 }
 function show(state, context, size, cellRadius) {
     for (const item of state) {
         showCell(item, context, size, cellRadius);
     }
 }
-function itemsOnTheCells(game) { // move to game.js?
+function itemsOnTheCells(game) {
     let itemsOnTheGrid = Game.getCells().map(cell => [...cell, null]);
     for (let playerIndex = 0; playerIndex < game.items.length; playerIndex++) {
-        for (const item of game.items[playerIndex]) { // for 2 fors
-            itemsOnTheGrid.find(cell =>
+        for (const item of game.items[playerIndex]) { 
+            itemsOnTheGrid.find(cell => // getItem
                 cell[0] == item[0] &&
                 cell[1] == item[1]
             )[2] = playerIndex;
         }
     }
-    // for (const item of game.items[0]) { // for 2 fors
-    //     itemsOnTheGrid.find(cell =>
-    //         cell[0] == item[0] &&
-    //         cell[1] == item[1]
-    //     )[2] = 0;
-    // }
-    // for (const item of game.items[1]) {
-    //     itemsOnTheGrid.find(cell =>
-    //         cell[0] == item[0] &&
-    //         cell[1] == item[1]
-    //     )[2] = 1;
-    // }
     return itemsOnTheGrid;
 }
 export default class Paradox {

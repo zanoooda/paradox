@@ -95,12 +95,7 @@ class Game {
     }
 }
 
-// let pairs = [
-//     [9, 5],
-//     [8, 4]
-//     // ...
-// ];
-// let pair = [9, 9]; // index of the first's and second's color item
+// let pair = [9, 9]; // index of items of the first's and second's color item
 
 // let move = [9, 9, -1]; // ...pair, direction of the move (-1 is switch)
 
