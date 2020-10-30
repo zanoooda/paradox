@@ -52,8 +52,14 @@ export default class Board {
         
         container.prepend(this.canvas);
     }
-    play() {
+    play() { // playHotSeat
         this.game = new Game();
         show(itemsOnTheGrid(this.game), this.context, this.size, this.cellRadius); 
+    }
+    playWithRobot(color) {
+        
+    }
+    playOnline() {
+        // ???
     }
 }
