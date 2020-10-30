@@ -16,23 +16,51 @@ function getPerimeter(radius) {
     }
     return perimeter;
 }
+function getNeighbor(cell, direction) {
+    return cell.map((n, i) => n + direction[i]);
+}
+function getNeighbors(cell) {
+    let neighbors = [];
+    for (const direction of directions) {
+        let neighbor = getNeighbor(cell, direction);
+        if (Math.max(...neighbor.map(Math.abs)) <= radius) {
+            neighbors.push(neighbor);
+        }
+    }
+    return neighbors;
+}
 
 function initItems() {
     let items = [
         [forward.map(i => i * -1)],
-        [forward.map(i => i * 1)]
-    ];
-    //let items = [[...grid.startPerimeter(grid.startDirection, -1), 0], [...grid.startPerimeter(grid.startDirection, 1), 1]];
-    for (const [index, cell] of grid.getPerimeter(grid.radius).entries()) {
-        items.push([...cell, index % 2]);
+        [forward.map(i => i * 1)]];
+    for (const [index, cell] of getPerimeter(radius).entries()) {
+        items[index % 2].push(cell);
     }
     return items;
 }
 
-let initialItems = [
-    [[-1, 1], [3, -3], [1, -3], [-1, -2], [-3, 0], [-3, 2], [-2, 3], [0, 3], [2, 1], [3, -1]], // first color
-    [[1, -1], [2, -3], [0, -3], [-2, -1], [-3, 1], [-3, 3], [-1, 3], [1, 2], [3, 0], [3, -2]]  // second color
-];
+function findPairs() {
+    let pairs = [];
+    let notPairedItems = items;
+    for (const item of items) {
+        for (const neighborCell of getNeighbors(item)) {
+            // let neighborItem = getItemByCell(notPairedItems, neighborCell);
+            // if(neighborItem && neighborItem[3] != item[3]) {
+            //     pairs.push([item, neighborItem]);
+            //     removeItem(notPairedItems, item);
+            // }
+        }
+    }
+    return pairs;
+}
+
+const initialItems = initItems();
+
+// let initialItems = [
+//     [[-1, 1], [3, -3], [1, -3], [-1, -2], [-3, 0], [-3, 2], [-2, 3], [0, 3], [2, 1], [3, -1]], // first color
+//     [[1, -1], [2, -3], [0, -3], [-2, -1], [-3, 1], [-3, 3], [-1, 3], [1, 2], [3, 0], [3, -2]]  // second color
+// ];
 
 let move = [9, 9, -1]; // ...pair, direction of the move (-1 is switch)
 
