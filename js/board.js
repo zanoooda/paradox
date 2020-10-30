@@ -37,15 +37,17 @@ function itemsOnTheGrid(game) { // move to game.js?
     }
     return itemsOnTheGrid;
 }
-export default class Canvas {
+export default class Board {
     constructor(size) {
         this.size = size;
-        this.element = document.createElement('canvas');
-        this.element.width = size;
-        this.element.height = size;
-        this.context = this.element.getContext('2d');
+        this.canvas = document.createElement('canvas');
+        this.canvas.width = size;
+        this.canvas.height = size;
+        this.context = this.canvas.getContext('2d');
         this.cellRadius = size / 18;
         this.colors = colors;
+
+        document.body.prepend(this.canvas);
     }
     play(game) {
         show(itemsOnTheGrid(game), this.context, this.size, this.cellRadius); 
