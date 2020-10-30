@@ -29,17 +29,17 @@ function show(state, context, size, cellRadius) {
         showCell(item, context, size, cellRadius);
     }
 }
-function itemsOnTheCells(game) {
-    let itemsOnTheCells = Game.getCells().map(cell => [...cell, null]);
+function cellsWithItems(game) {
+    let cellsWithItems = Game.cells.map(cell => [...cell, null]);
     for (let playerIndex = 0; playerIndex < game.items.length; playerIndex++) {
         for (const item of game.items[playerIndex]) { 
-            itemsOnTheCells.find(cell => // getItem
+            cellsWithItems.find(cell => // getItem
                 cell[0] == item[0] &&
                 cell[1] == item[1]
             )[2] = playerIndex;
         }
     }
-    return itemsOnTheCells;
+    return cellsWithItems;
 }
 export default class Paradox {
     constructor(container) {
@@ -60,7 +60,7 @@ export default class Paradox {
         this.socket = null;
     }
     playHotSeat() {
-        show(itemsOnTheCells(this.game), this.context, this.size, this.cellRadius); 
+        show(cellsWithItems(this.game), this.context, this.size, this.cellRadius); 
     }
     playWithRobot(playerColor) {
         

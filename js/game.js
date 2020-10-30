@@ -8,7 +8,8 @@ const radius = 3,
         [0, -1]  // ↘
     ],
     forward = directions[4],
-    initialItems = initItems();
+    initialItems = initItems(),
+    cells = initCells();
 
 function mult(array, scalar) {
     return array.map(i => i * scalar);
@@ -33,7 +34,7 @@ function getPerimeter(radius) {
     }
     return perimeter;
 }
-function getCells() {
+function initCells() {
     let cells = [];
     for (let r = 0; r <= radius; r++) {
         cells.push(...getPerimeter(r));
@@ -75,7 +76,7 @@ function getItem(cell) {
 
 class Game {
     static directions = directions;
-    static getCells() { return getCells() }
+    static cells = cells;
 
     constructor() {
         this.items = initialItems;
