@@ -21,7 +21,7 @@ function showCell(cell, context, size, cellRadius) {
     }
     context.fillStyle = 'black';
     context.font = '10px Arial';
-    context.fillText(`${cell[0]}, ${cell[1]}, ${cell[2]}`, ...point);
+    context.fillText(`[${cell[0]}, ${cell[1]}], ${cell[2]} (0)`, ...point);
 }
 function show(state, context, size, cellRadius) {
     for (const item of state) {
