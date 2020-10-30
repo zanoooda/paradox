@@ -30,16 +30,16 @@ function show(state, context, size, cellRadius) {
     }
 }
 function itemsOnTheCells(game) {
-    let itemsOnTheGrid = Game.getCells().map(cell => [...cell, null]);
+    let itemsOnTheCells = Game.getCells().map(cell => [...cell, null]);
     for (let playerIndex = 0; playerIndex < game.items.length; playerIndex++) {
         for (const item of game.items[playerIndex]) { 
-            itemsOnTheGrid.find(cell => // getItem
+            itemsOnTheCells.find(cell => // getItem
                 cell[0] == item[0] &&
                 cell[1] == item[1]
             )[2] = playerIndex;
         }
     }
-    return itemsOnTheGrid;
+    return itemsOnTheCells;
 }
 export default class Paradox {
     constructor(container) {
