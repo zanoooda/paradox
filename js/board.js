@@ -1,3 +1,5 @@
+import Game from "./game.js";
+
 let colors = ['red', 'blue'];
 function getPoint(cell, size) {
     let distance = size / 12;
@@ -50,7 +52,8 @@ export default class Board {
         
         container.prepend(this.canvas);
     }
-    play(game) {
-        show(itemsOnTheGrid(game), this.context, this.size, this.cellRadius); 
+    play() {
+        this.game = new Game();
+        show(itemsOnTheGrid(this.game), this.context, this.size, this.cellRadius); 
     }
 }
