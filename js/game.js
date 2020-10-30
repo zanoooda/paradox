@@ -55,7 +55,7 @@ function findPairs() {
     for (const item of items) {
         for (const neighborCell of getNeighbors(item)) {
             // let neighborItem = getItem(notPairedItems, neighborCell);
-            // if(neighborItem && neighborItem[3] != item[3]) {
+            // if(neighborItem && neighborItem[2] != item[2]) {
             //     pairs.push([item, neighborItem]);
             //     removeItem(notPairedItems, item);
             // }
@@ -95,7 +95,7 @@ class Game {
     }
 }
 
-// let pair = [9, 9]; // index of items of the first's and second's color item
+// let pair = [9, 9, [0, 1, 2, 3, 4, 5]]; // index of items of the first's and second's color item
 
 // let move = [9, 9, -1]; // ...pair, direction of the move (-1 is switch)
 
