@@ -75,7 +75,7 @@ function getItem(cell) {
 }
 
 class Game {
-    static directions = directions;
+    //static directions = directions;
     static cells = cells;
 
     constructor() {
