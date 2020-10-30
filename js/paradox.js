@@ -43,9 +43,11 @@ export default class Paradox {
     constructor(container) {
         let rectangle = container.getBoundingClientRect();
         this.size = Math.min(rectangle.width, rectangle.height);
-        this.canvas = document.createElement('canvas');
+
+        this.canvas = document.createElement('canvas'); // TODO: Wrap
         this.canvas.width = this.size;
         this.canvas.height = this.size;
+
         this.context = this.canvas.getContext('2d');
         this.cellRadius = this.size / 18;
         this.colors = colors;
