@@ -8,6 +8,7 @@ function getPoint(cell, size) {
     return [x, y];
 }
 function showCell(cell, context, size, cellRadius) {
+    cell.splice(2, 0, -(cell[1] + cell[0]));
     let point = getPoint(cell, size);
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
@@ -29,13 +30,18 @@ function show(state, context, size, cellRadius) {
     }
 }
 function itemsOnTheGrid(game) { // move to game.js?
-    let itemsOnTheGrid = game.grid.cells.map(cell => [...cell, null]);
-    for (const item of game.items) {
+    let itemsOnTheGrid = Game.getCells().map(cell => [...cell, null]);
+    for (const item of game.items[0]) { // for 2 fors
         itemsOnTheGrid.find(cell =>
             cell[0] == item[0] &&
-            cell[1] == item[1] &&
-            cell[2] == item[2]
-        )[3] = item[3];
+            cell[1] == item[1]
+        )[2] = 0;
+    }
+    for (const item of game.items[1]) {
+        itemsOnTheGrid.find(cell =>
+            cell[0] == item[0] &&
+            cell[1] == item[1]
+        )[2] = 1;
     }
     return itemsOnTheGrid;
 }
@@ -47,6 +53,7 @@ export default class Paradox {
         this.canvas = document.createElement('canvas'); // TODO: Wrap
         this.canvas.width = this.size;
         this.canvas.height = this.size;
+        container.prepend(this.canvas);
 
         this.context = this.canvas.getContext('2d');
         this.cellRadius = this.size / 18;
@@ -55,8 +62,6 @@ export default class Paradox {
         this.game = new Game();
 
         this.socket = null;
-        
-        container.prepend(this.canvas);
     }
     playHotSeat() {
         show(itemsOnTheGrid(this.game), this.context, this.size, this.cellRadius); 

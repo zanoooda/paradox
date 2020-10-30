@@ -1,18 +1,59 @@
-import Grid from './grid.js';
+const radius = 3,
+    directions = [
+        [-1, 0], // ↙
+        [-1, 1], // ←
+        [0, 1],  // ↖
+        [1, 0],  // ↗
+        [1, -1], // →
+        [0, -1]  // ↘
+    ],
+    forward = directions[4];
 
-function initItems(grid) {
-    let items = [[...grid.startPerimeter(grid.startDirection, -1), 0], [...grid.startPerimeter(grid.startDirection, 1), 1]];
-    for (const [index, cell] of grid.getPerimeter(grid.radius).entries()) {
-        items.push([...cell, index % 2]);
+function scalarMult(array, scalar) {
+    return array.map(i => i * scalar);
+}
+function getNeighbor(cell, direction) {
+    return cell.map((n, i) => n + direction[i]);
+}
+function getNeighbors(cell) {
+    let neighbors = [];
+    for (const direction of directions) {
+        let neighbor = getNeighbor(cell, direction);
+        if (Math.max(...neighbor.map(Math.abs)) <= radius) {
+            neighbors.push(neighbor);
+        }
+    }
+    return neighbors;
+}
+function getPerimeter(radius) {
+    let perimeter = [scalarMult(forward, radius)];
+    for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += diameterIndex % radius == 0, diameterIndex++) {
+        perimeter.push(getNeighbor(perimeter[perimeter.length - 1], directions[directionIndex]));
+    }
+    return perimeter;
+}
+function getCells() {
+    let cells = [];
+    for (let r = 0; r <= radius; r++) {
+        cells.push(...getPerimeter(r));
+    }
+    return cells;
+}
+
+function initItems() {
+    let items = [[scalarMult(forward, -1)], [scalarMult(forward, 1)]];
+    for (const [index, cell] of getPerimeter(radius).entries()) {
+        items[index % 2].push(cell);
     }
     return items;
 }
-function findPairs(items, grid) {
+
+function findPairs() {
     let pairs = [];
     let notPairedItems = items;
     for (const item of items) {
-        for (const neighborCell of grid.getNeighbors(item.slice(0, 3))) {
-            // let neighborItem = getItemByCell(notPairedItems, neighborCell);
+        for (const neighborCell of getNeighbors(item)) {
+            // let neighborItem = getItem(notPairedItems, neighborCell);
             // if(neighborItem && neighborItem[3] != item[3]) {
             //     pairs.push([item, neighborItem]);
             //     removeItem(notPairedItems, item);
@@ -22,10 +63,49 @@ function findPairs(items, grid) {
     return pairs;
 }
 
-export default class Game {
-    constructor(radius = 3) {
-        this.grid = new Grid(radius);
-        this.items = initItems(this.grid);
-        this.pairs = findPairs(this.items, this.grid);
+const initialItems = initItems();
+
+function isItem(cell) {
+    return [...initialItems[0], ...initialItems[1]].findIndex(item =>
+        item[0] == cell[0] && item[1] == cell[1]) != -1 ? true : false;
+}
+function getItem(cell) {
+    return initialItems.findIndex(sameColorItems =>
+        sameColorItems.findIndex(item =>
+            item[0] == cell[0] && item[1] == cell[1]) != -1);
+}
+
+class Game {
+    static directions = directions;
+    static getCells() {
+        return getCells();
+    }
+
+    constructor() {
+        this.items = initialItems;
+        this.history = [];
+    }
+    move(pair, direction) {
+        this.history.push([...pair, direction]);
+    }
+    findPairs() {
+        this.pairs = findPairs(this.items);
+    }
+    findAllMoves() {
+
     }
 }
+
+// let pairs = [
+//     [9, 5],
+//     [8, 4]
+//     // ...
+// ];
+// let pair = [9, 9]; // index of the first's and second's color item
+
+// let move = [9, 9, -1]; // ...pair, direction of the move (-1 is switch)
+
+// let itemsHistory = [];
+// let pairsHistory = [];
+
+export default Game;
