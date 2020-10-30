@@ -46,6 +46,6 @@ export default class Canvas {
         this.context = this.element.getContext('2d');
         this.cellRadius = size / 18;
         this.colors = colors;
-        this.show = (game) => show(itemsOnTheGrid(game), this.context, this.size, this.cellRadius);
+        this.play = (game) => show(itemsOnTheGrid(game), this.context, this.size, this.cellRadius); // play => show !
     }
 }

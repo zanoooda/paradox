@@ -8,4 +8,4 @@ let game = new Game(),
     size = initCanvasSize(),
     canvas = new Canvas(size);
 document.body.prepend(canvas.element);
-canvas.show(game);
+canvas.play(game);

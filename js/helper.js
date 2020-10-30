@@ -7,24 +7,28 @@ const radius = 3,
         [1, -1], // →
         [0, -1]  // ↘
     ],
-    startDirection = directions[4];
+    forward = directions[4];
 
 let items = [
     [[-1, 1], [3, -3], [1, -3], [-1, -2], [-3, 0], [-3, 2], [-2, 3], [0, 3], [2, 1], [3, -1]], // first color
     [[1, -1], [2, -3], [0, -3], [-2, -1], [-3, 1], [-3, 3], [-1, 3], [1, 2], [3, 0], [3, -2]]  // second color
 ];
 
-let move = [9, 5, -1]; // ...pair, direction of the move (-1 is switch)
+let move = [9, 9, -1]; // ...pair, direction of the move (-1 is switch)
 
 let itemsHistory = [];
 let pairsHistory = [];
 
-let item = getColor([-1, 3]);
+let item = getItem([-1, 3]);
 
-function getColor(cell) {
-    return items.findIndex(sameItems => 
-        sameItems.findIndex(item => 
-            item[0] === cell[0] && item[1] === cell[1]) != -1);
+function isItem(cell) {
+    return [...items[0], ...items[1]].findIndex(item =>
+        item[0] == cell[0] && item[1] == cell[1]) != -1 ? true : false;
+}
+function getItem(cell) {
+    return items.findIndex(sameColorItems =>
+        sameColorItems.findIndex(item =>
+            item[0] == cell[0] && item[1] == cell[1]) != -1);
 }
 
 let pairs = [
@@ -32,4 +36,20 @@ let pairs = [
     [8, 4]
     // ...
 ];
-let pair = [9, 5]; // index of the first's color item, index of the direction with second's color item
+let pair = [9, 9]; // index of the first's and second's color item
+
+class Game {
+    constructor() {
+        this.items = items;
+        this.directions = directions;
+        this.history = []; // pairsHistory
+    }
+    move(pair, direction) {
+        this.history.push(null);
+        
+        getItem([1,2]);
+    }
+    findPairs() {
+
+    }
+}
