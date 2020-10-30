@@ -91,7 +91,7 @@ class Game {
         this.pairs = findPairs(this.items);
     }
     findAllMoves() {
-
+        // also ecept option to make "back" (usethis.history)
     }
 }
 
