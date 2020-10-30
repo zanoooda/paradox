@@ -48,7 +48,6 @@ function initItems() {
     }
     return items;
 }
-
 function findPairs() {
     let pairs = [];
     let notPairedItems = items;
@@ -85,21 +84,19 @@ class Game {
 
     move(pair, direction) {
         this.history.push([...pair, direction]);
+        // itemsHistory
+        // pairsHistory
         // ...
     }
-    findPairs() {
+    isLegal(move) { // [...pair, direction of the move (-1 is switch)]
+
+    }
+    findPairs() { // pair = [9, 9, [0, 1, 2, 3, 4, 5]]; // index of items of the first's and second's color item
         this.pairs = findPairs(this.items);
     }
     findAllMoves() {
         // also ecept option to make "back" (usethis.history)
     }
 }
-
-// let pair = [9, 9, [0, 1, 2, 3, 4, 5]]; // index of items of the first's and second's color item
-
-// let move = [9, 9, -1]; // ...pair, direction of the move (-1 is switch)
-
-// let itemsHistory = [];
-// let pairsHistory = [];
 
 export default Game;
