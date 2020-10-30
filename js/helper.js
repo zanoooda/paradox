@@ -9,12 +9,12 @@ const radius = 3,
     ],
     forward = directions[4];
 
-function mult(array, scalar) {
+function scalarMult(array, scalar) {
     return array.map(i => i * scalar);
 }
 
 function getPerimeter(radius) {
-    let perimeter = [mult(forward, radius)];
+    let perimeter = [scalarMult(forward, radius)];
     for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += diameterIndex % radius == 0, diameterIndex++) {
         perimeter.push(getNeighbor(perimeter[perimeter.length - 1], directions[directionIndex]));
     }
@@ -35,7 +35,7 @@ function getNeighbors(cell) {
 }
 
 function initItems() {
-    let items = [[mult(forward, -1)], [mult(forward, 1)]];
+    let items = [[scalarMult(forward, -1)], [scalarMult(forward, 1)]];
     for (const [index, cell] of getPerimeter(radius).entries()) {
         items[index % 2].push(cell);
     }
