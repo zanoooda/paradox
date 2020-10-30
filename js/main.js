@@ -4,8 +4,7 @@ function initCanvasSize() {
     let bodyRect = document.body.getBoundingClientRect();
     return Math.min(bodyRect.width, bodyRect.height);
 }
-let game = new Game(),
-    size = initCanvasSize(),
+let size = initCanvasSize(),
     canvas = new Canvas(size);
 document.body.prepend(canvas.element);
-canvas.play(game);
+canvas.play(new Game());
