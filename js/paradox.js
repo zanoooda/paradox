@@ -39,7 +39,7 @@ function itemsOnTheGrid(game) { // move to game.js?
     }
     return itemsOnTheGrid;
 }
-export default class Board {
+export default class Paradox {
     constructor(container) {
         let rectangle = container.getBoundingClientRect();
         this.size = Math.min(rectangle.width, rectangle.height);

@@ -1,4 +1,4 @@
-import Board from './board.js';
+import Paradox from './paradox.js';
 
-let board = new Board(document.body);
-board.play();
+let paradox = new Paradox(document.body);
+paradox.play();
