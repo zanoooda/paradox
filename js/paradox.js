@@ -52,12 +52,13 @@ export default class Paradox {
         this.cellRadius = this.size / 18;
         this.colors = colors;
 
+        this.game = new Game();
+
         this.socket = null;
         
         container.prepend(this.canvas);
     }
     playHotSeat() {
-        this.game = new Game();
         show(itemsOnTheGrid(this.game), this.context, this.size, this.cellRadius); 
     }
     playWithRobot(playerColor) {
