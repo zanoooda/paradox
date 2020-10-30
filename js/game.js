@@ -64,7 +64,7 @@ function findPairs() {
     return pairs;
 }
 
-function getItem(cell, items) { // Test
+function findItem(cell, items) { // Test
     return items.findIndex(sameColorItems =>
         sameColorItems.findIndex(item =>
             item[0] == cell[0] && item[1] == cell[1]) != -1);
