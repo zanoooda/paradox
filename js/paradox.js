@@ -58,10 +58,12 @@ export default class Paradox {
         this.game = new Game();
         show(itemsOnTheGrid(this.game), this.context, this.size, this.cellRadius); 
     }
-    playWithRobot(color) {
+    playWithRobot(playerColor) {
         
     }
     playOnline() {
-        // ???
+        // connect()
+        // findPartner()
+        // Decide about first turn (color)
     }
 }
