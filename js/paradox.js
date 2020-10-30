@@ -49,10 +49,12 @@ export default class Paradox {
         this.context = this.canvas.getContext('2d');
         this.cellRadius = this.size / 18;
         this.colors = colors;
+
+        this.socket = null;
         
         container.prepend(this.canvas);
     }
-    play() { // playHotSeat
+    playHotSeat() {
         this.game = new Game();
         show(itemsOnTheGrid(this.game), this.context, this.size, this.cellRadius); 
     }
