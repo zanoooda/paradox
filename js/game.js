@@ -54,6 +54,9 @@ function findPairs() {
     // ...
     return pairs;
 }
+function findMoves(pair, anotherPropToExceptBack) {
+    // also except option to make "back" (usethis.history)
+}
 
 function findItem(cell, items) { // Test
     return items.findIndex(sameColorItems =>
@@ -92,9 +95,6 @@ class Game {
     }
     findPairs() { // pair = [9, 9, [0, 1, 2, 3, 4, 5]]; // index of items of the first's and second's color item
         this.pairs = findPairs(this.items);
-    }
-    findMoves(pairs) {
-        // also except option to make "back" (usethis.history)
     }
 }
 
