@@ -41,25 +41,28 @@ function cellsWithItems(game) {
     }
     return cellsWithItems;
 }
+function createCanvas(size) {
+    let canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    return canvas;
+}
+function initSize(container) {
+    let rectangle = container.getBoundingClientRect();
+    return Math.min(rectangle.width, rectangle.height);
+}
 export default class Paradox {
     constructor(container) {
-        let rectangle = container.getBoundingClientRect();
-        this.size = Math.min(rectangle.width, rectangle.height);
-
-        this.canvas = document.createElement('canvas'); // TODO: Wrap
-        this.canvas.width = this.size;
-        this.canvas.height = this.size;
+        this.size = initSize(container);
+        this.canvas = createCanvas(this.size);
         container.prepend(this.canvas);
 
         this.context = this.canvas.getContext('2d');
         this.cellRadius = this.size / 18;
-        this.colors = colors;
-
-        this.game = new Game();
-
-        this.socket = null;
+        //this.colors = colors;
     }
     playHotSeat() {
+        this.game = new Game();
         show(cellsWithItems(this.game), this.context, this.size, this.cellRadius); 
     }
     playWithRobot(playerColor) {
