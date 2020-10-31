@@ -9,6 +9,13 @@ function getPoint(cell, size) {
     return [x, y];
 }
 
+function createCanvas(size) {
+    let canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    canvas.addEventListener('click', click, false);
+    return canvas;
+}
 function showCell(cell, context, size, cellRadius) {
     cell.splice(2, 0, -cell[1] - cell[0]);
     let point = getPoint(cell, size);
@@ -31,6 +38,9 @@ function show(state, context, size, cellRadius) {
         showCell(item, context, size, cellRadius);
     }
 }
+function click(event) {
+    alert(`${JSON.stringify(event)}`);
+}
 
 function cellsWithItems(game) {
     let cellsWithItems = Game.cells.map(cell => [...cell, null]);
@@ -44,17 +54,11 @@ function cellsWithItems(game) {
     }
     return cellsWithItems;
 }
-
-function createCanvas(size) {
-    let canvas = document.createElement('canvas');
-    canvas.width = size;
-    canvas.height = size;
-    return canvas;
-}
 function getSize(container) {
     let containerRect = container.getBoundingClientRect();
     return Math.min(containerRect.width, containerRect.height);
 }
+
 class Paradox {
     constructor(container) {
         this.size = getSize(container);
