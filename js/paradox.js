@@ -1,6 +1,11 @@
 import Game from "./game.js";
-//#region canvas
-let colors = ['red', 'blue'];
+
+const colors = ['red', 'blue'];
+
+function getSize(container) {
+    let containerRect = container.getBoundingClientRect();
+    return Math.min(containerRect.width, containerRect.height);
+}
 function createCanvas(size) {
     let canvas = document.createElement('canvas');
     canvas.width = size;
@@ -8,11 +13,19 @@ function createCanvas(size) {
     canvas.addEventListener('click', click, false);
     return canvas;
 }
+function click(event) {
+    alert(`${JSON.stringify(event)}`); // TODO: Alert [point]
+}
 function getPoint(cell, size) {
     let distance = size / 12;
     let x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell[2] / 2));
     let y = (size / 2) + (distance * 3 / 2 * cell[2]);
     return [x, y];
+}
+function show(state, context, size, cellRadius) { // state!
+    for (const item of state) {
+        showCell(item, context, size, cellRadius);
+    }
 }
 function showCell(cell, context, size, cellRadius) {
     cell.splice(2, 0, -cell[1] - cell[0]);
@@ -31,13 +44,8 @@ function showCell(cell, context, size, cellRadius) {
     context.font = '10px Arial';
     context.fillText(`${cell[0]}, ${cell[1]}, ${cell[2]}`, ...point);
 }
-function show(state, context, size, cellRadius) {
-    for (const item of state) {
-        showCell(item, context, size, cellRadius);
-    }
-}
-function click(event) {
-    alert(`${JSON.stringify(event)}`);
+function selectPair(pair) {
+    
 }
 
 function cellsWithItems(game) {
@@ -52,20 +60,14 @@ function cellsWithItems(game) {
     }
     return cellsWithItems;
 }
-function getSize(container) {
-    let containerRect = container.getBoundingClientRect();
-    return Math.min(containerRect.width, containerRect.height);
-}
-//#endregion
+
 class Paradox {
     constructor(container) {
         this.size = getSize(container);
         this.canvas = createCanvas(this.size);
         container.prepend(this.canvas);
-
         this.context = this.canvas.getContext('2d');
         this.cellRadius = this.size / 18;
-        //this.colors = colors;
     }
     playHotSeat() {
         this.game = new Game();
