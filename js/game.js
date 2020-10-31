@@ -65,7 +65,6 @@ function findItem(cell, items) { // Test
 }
 
 class Game {
-    //static directions = directions;
     static cells = cells;
 
     constructor() {
@@ -90,11 +89,11 @@ class Game {
     winner() { // -1, 0, 1, 2 if nichya
         
     }
-    isLegal(move) { // [...pair, direction of the move (-1 is switch)]
+    isLegal(move, game) { // [...pair, direction of the move (-1 is switch)]
 
     }
     findPairs() { // pair = [9, 9, [0, 1, 2, 3, 4, 5]]; // index of items of the first's and second's color item
-        this.pairs = findPairs(this.items);
+        return findPairs(this.items);
     }
 }
 
