@@ -10,7 +10,7 @@ const radius = 3,
     ],
     forward = directions[4],
     initialItems = initItems(),
-    cells = initCells();
+    cells = getCells();
 
 function mult(array, scalar) {
     return array.map(i => i * scalar);
@@ -35,7 +35,7 @@ function getPerimeter(radius) {
     }
     return perimeter;
 }
-function initCells() {
+function getCells() {
     let cells = [];
     for (let r = 0; r <= radius; r++) {
         cells.push(...getPerimeter(r));
@@ -50,20 +50,22 @@ function initItems() {
     }
     return items;
 }
-function findPairs() {
+function findPairs(items) {
     let pairs = [];
     // ...
     return pairs;
 }
-function findMoves(pair, anotherPropToExceptBack) {
-    // also except option to make "back" (usethis.history)
+function findMoves(pairs, items, prevMove) {
+    // ...
+    return pairs;
 }
 
-function updateItems(move) {
-
+function updateItems(move, items) {
+    // ...
+    return items;
 }
-function updateHistory(move, items, pairs) {
-    this.history.push([move, items, pairs]);
+function findWinner(items) {  // -1 (no one), 0, 1, 2 if draw
+    return -1;
 }
 function findItem(cell, items) { // Test
     return items.findIndex(sameColorItems =>
@@ -79,19 +81,19 @@ class Game {
         this.history = [];
     }
     move(pair, direction) {
-        updateHistory([...pair, direction], this.items, this.pairs)
-        updateItems([...pair, direction])
-        // ...
+        let move = [...pair, direction];
+        this.history.push([move, items, pairs]);
+        this.items = updateItems(move, this.items);
+        let winner = findWinner(this.items);
+        if(winner == -1) {
+            this.pairs = findPairs(this.items);
+            this.pairs = findMoves(this.pairs, this.items, move);
+        } else {
+            alert(`Win!`);
+        }
     }
-    
-    winner() { // -1, 0, 1, 2 if nichya
+    isLegal(move, items, prevMove) { 
         
-    }
-    isLegal(move, game) { // [...pair, direction of the move (-1 is switch)]
-
-    }
-    findPairs() { // pair = [9, 9, [0, 1, 2, 3, 4, 5]]; // index of items of the first's and second's color item
-        return findPairs(this.items);
     }
 }
 
