@@ -66,7 +66,8 @@ function updateItems(move, items) {
     // ...
     return items;
 }
-function findWinner(items) {  // -1 (no one), 0, 1, 2 if draw
+function findWinner(items) {  
+    // -1 (no one), 0, 1, 2 if draw
     return -1;
 }
 function findItem(cell, items) { // Test
@@ -81,17 +82,15 @@ class Game {
         this.items = initialItems;
         this.pairs = findPairs(this.items, null);
         this.history = [];
-        this.winner = null;
+        this.winner = -1;
     }
     move(pair, direction) {
         let move = [...pair, direction];
         this.history.push([move, items, pairs]);
         this.items = updateItems(move, this.items);
-        let winner = findWinner(this.items);
-        if(winner == -1) {
+        this.winner = findWinner(this.items);
+        if(this.winner == -1) {
             this.pairs = findPairs(this.items, move);
-        } else {
-            this.winner = this.history.length % 2;
         }
     }
     isLegal(move, items, prevMove) { 
