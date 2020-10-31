@@ -51,16 +51,7 @@ function initItems() {
 }
 function findPairs() {
     let pairs = [];
-    let notPairedItems = items;
-    for (const item of items) {
-        for (const neighborCell of getNeighbors(item)) {
-            // let neighborItem = getItem(notPairedItems, neighborCell);
-            // if(neighborItem && neighborItem[2] != item[2]) {
-            //     pairs.push([item, neighborItem]);
-            //     removeItem(notPairedItems, item);
-            // }
-        }
-    }
+    // ...
     return pairs;
 }
 
@@ -79,11 +70,19 @@ class Game {
         this.history = [];
     }
 
-    move(pair, direction) {
-        this.history.push([...pair, direction]);
-        // itemsHistory
-        // pairsHistory
-        // ...
+    // move(pair, direction) {
+    //     updateItems(pair, direction)
+    //     updateHistory(move, items = null, pairs = null)
+    //     // ...
+    // }
+    updateItems(pair, direction) {
+
+    }
+    updateHistory(move, items = null, pairs = null) {
+        //     this.history.push([...pair, direction]);
+        //     // itemsHistory
+        //     // pairsHistory
+        //     // ...
     }
     winner() { // -1, 0, 1, 2 if nichya
         
@@ -94,7 +93,7 @@ class Game {
     findPairs() { // pair = [9, 9, [0, 1, 2, 3, 4, 5]]; // index of items of the first's and second's color item
         this.pairs = findPairs(this.items);
     }
-    findAllMoves() {
+    findMoves(pairs) {
         // also except option to make "back" (usethis.history)
     }
 }
