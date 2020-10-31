@@ -70,6 +70,11 @@ function findWinner(items) {
     // -1 (no one), 0, 1, 2 if draw
     return -1;
 }
+function isLegal(move, items, prevMove) {
+    // ...
+    return true;
+}
+
 function findItem(cell, items) { // Test
     return items.findIndex(sameColorItems =>
         sameColorItems.findIndex(item =>
@@ -93,9 +98,8 @@ class Game {
             this.pairs = findPairs(this.items, move);
         }
     }
-    isLegal(move, items, prevMove) { 
-        // ...
-        return true;
+    isLegal(move) { 
+        return isLegal(move, this.items, this.history[this.history.length - 1][0])
     }
 }
 
