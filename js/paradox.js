@@ -31,8 +31,8 @@ function show(state, context, size, cellRadius) {
 }
 function cellsWithItems(game) {
     let cellsWithItems = Game.cells.map(cell => [...cell, null]);
-    for (let playerIndex = 0; playerIndex < game.items.length; playerIndex++) {
-        for (const item of game.items[playerIndex]) { 
+    for (const [playerIndex, cells] of game.items.entries()) {
+        for (const item of cells) { 
             cellsWithItems.find(cell => // getItem?
                 cell[0] == item[0] &&
                 cell[1] == item[1]
