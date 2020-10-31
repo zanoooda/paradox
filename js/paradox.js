@@ -1,20 +1,18 @@
 import Game from "./game.js";
-
+//#region canvas
 let colors = ['red', 'blue'];
-
-function getPoint(cell, size) {
-    let distance = size / 12;
-    let x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell[2] / 2));
-    let y = (size / 2) + (distance * 3 / 2 * cell[2]);
-    return [x, y];
-}
-
 function createCanvas(size) {
     let canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
     canvas.addEventListener('click', click, false);
     return canvas;
+}
+function getPoint(cell, size) {
+    let distance = size / 12;
+    let x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell[2] / 2));
+    let y = (size / 2) + (distance * 3 / 2 * cell[2]);
+    return [x, y];
 }
 function showCell(cell, context, size, cellRadius) {
     cell.splice(2, 0, -cell[1] - cell[0]);
@@ -58,7 +56,7 @@ function getSize(container) {
     let containerRect = container.getBoundingClientRect();
     return Math.min(containerRect.width, containerRect.height);
 }
-
+//#endregion
 class Paradox {
     constructor(container) {
         this.size = getSize(container);
