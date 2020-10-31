@@ -16,12 +16,6 @@ function createCanvas(size) {
 function click(event) {
     alert(`${JSON.stringify(event)}`); // TODO: Alert [point]
 }
-function getPoint(cell, size) {
-    let distance = size / 12;
-    let x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell[2] / 2));
-    let y = (size / 2) + (distance * 3 / 2 * cell[2]);
-    return [x, y];
-}
 function show(state, context, size, cellRadius) { // state!
     for (const item of state) {
         showCell(item, context, size, cellRadius);
@@ -48,6 +42,12 @@ function selectPair(pair) {
     
 }
 
+function getPoint(cell, size) {
+    let distance = size / 12;
+    let x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell[2] / 2));
+    let y = (size / 2) + (distance * 3 / 2 * cell[2]);
+    return [x, y];
+}
 function cellsWithItems(game) {
     let cellsWithItems = Game.cells.map(cell => [...cell, null]);
     for (const [playerIndex, cells] of game.items.entries()) {

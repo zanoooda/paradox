@@ -59,6 +59,12 @@ function findMoves(pair, anotherPropToExceptBack) {
     // also except option to make "back" (usethis.history)
 }
 
+function updateItems(move) {
+
+}
+function updateHistory(move, items, pairs) {
+    this.history.push([move, items, pairs]);
+}
 function findItem(cell, items) { // Test
     return items.findIndex(sameColorItems =>
         sameColorItems.findIndex(item =>
@@ -69,22 +75,15 @@ class Game {
     static cells = cells;
     constructor() {
         this.items = initialItems;
+        this.pairs = findPairs(this.items);
         this.history = [];
     }
-    // move(pair, direction) {
-    //     updateItems(pair, direction)
-    //     updateHistory(move, items = null, pairs = null)
-    //     // ...
-    // }
-    updateItems(pair, direction) {
-
+    move(pair, direction) {
+        updateHistory([...pair, direction], this.items, this.pairs)
+        updateItems([...pair, direction])
+        // ...
     }
-    updateHistory(move, items = null, pairs = null) {
-        //     this.history.push([...pair, direction]);
-        //     // itemsHistory
-        //     // pairsHistory
-        //     // ...
-    }
+    
     winner() { // -1, 0, 1, 2 if nichya
         
     }
