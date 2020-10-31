@@ -67,12 +67,10 @@ function findItem(cell, items) { // Test
 
 class Game {
     static cells = cells;
-
     constructor() {
         this.items = initialItems;
         this.history = [];
     }
-
     // move(pair, direction) {
     //     updateItems(pair, direction)
     //     updateHistory(move, items = null, pairs = null)
