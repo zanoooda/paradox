@@ -50,14 +50,16 @@ function initItems() {
     }
     return items;
 }
-function findPairs(items) {
+function findPairs(items, prevMove) {
     let pairs = [];
     // ...
+    // for each pair findMoves()
     return pairs;
 }
-function findMoves(pairs, items, prevMove) {
+function findMoves(pair, items, prevMove) {
+    let moves = [];
     // ...
-    return pairs;
+    return moves;
 }
 
 function updateItems(move, items) {
@@ -77,8 +79,9 @@ class Game {
     static cells = cells;
     constructor() {
         this.items = initialItems;
-        this.pairs = findPairs(this.items);
+        this.pairs = findPairs(this.items, null);
         this.history = [];
+        this.winner = null;
     }
     move(pair, direction) {
         let move = [...pair, direction];
@@ -86,14 +89,14 @@ class Game {
         this.items = updateItems(move, this.items);
         let winner = findWinner(this.items);
         if(winner == -1) {
-            this.pairs = findPairs(this.items);
-            this.pairs = findMoves(this.pairs, this.items, move);
+            this.pairs = findPairs(this.items, move);
         } else {
-            alert(`Win!`);
+            this.winner = this.history.length % 2;
         }
     }
     isLegal(move, items, prevMove) { 
-        
+        // ...
+        return true;
     }
 }
 
