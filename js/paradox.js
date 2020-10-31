@@ -1,12 +1,14 @@
 import Game from "./game.js";
 
 let colors = ['red', 'blue'];
+
 function getPoint(cell, size) {
     let distance = size / 12;
     let x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell[2] / 2));
     let y = (size / 2) + (distance * 3 / 2 * cell[2]);
     return [x, y];
 }
+
 function showCell(cell, context, size, cellRadius) {
     cell.splice(2, 0, -cell[1] - cell[0]);
     let point = getPoint(cell, size);
@@ -29,6 +31,7 @@ function show(state, context, size, cellRadius) {
         showCell(item, context, size, cellRadius);
     }
 }
+
 function cellsWithItems(game) {
     let cellsWithItems = Game.cells.map(cell => [...cell, null]);
     for (const [playerIndex, cells] of game.items.entries()) {
@@ -41,19 +44,20 @@ function cellsWithItems(game) {
     }
     return cellsWithItems;
 }
+
 function createCanvas(size) {
     let canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
     return canvas;
 }
-function initSize(container) {
-    let rectangle = container.getBoundingClientRect();
-    return Math.min(rectangle.width, rectangle.height);
+function getSize(container) {
+    let containerRect = container.getBoundingClientRect();
+    return Math.min(containerRect.width, containerRect.height);
 }
-export default class Paradox {
+class Paradox {
     constructor(container) {
-        this.size = initSize(container);
+        this.size = getSize(container);
         this.canvas = createCanvas(this.size);
         container.prepend(this.canvas);
 
@@ -74,3 +78,5 @@ export default class Paradox {
         // Decide about first turn (color)
     }
 }
+
+export default Paradox;
