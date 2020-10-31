@@ -1,3 +1,4 @@
+//#region grid
 const radius = 3,
     directions = [
         [-1, 0], // ↙
@@ -41,7 +42,7 @@ function initCells() {
     }
     return cells;
 }
-
+//#endregion
 function initItems() {
     let items = [[mult(forward, -1)], [mult(forward, 1)]];
     for (const [index, cell] of getPerimeter(radius).entries()) {
