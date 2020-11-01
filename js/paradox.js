@@ -55,12 +55,12 @@ class Paradox {
     playHotSeat() {
         this.game = new Game();
         this.size = getSize(this.container);
+        this.cellRadius = this.size / 18;
         this.canvas = createCanvas(this.size);
+        this.context = this.canvas.getContext('2d');
         this.canvas.addEventListener('click', (event) => canvasClick(event, this.canvas, this.game), false);
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
-        this.context = this.canvas.getContext('2d');
-        this.cellRadius = this.size / 18;
         showCells(this.game.getCells(), this.context, this.size, this.cellRadius);
     }
     playWithRobot(playerColor) {
