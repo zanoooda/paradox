@@ -102,4 +102,5 @@ class Game {
         return isLegal(move, this.items, this.history[this.history.length - 1][0]);
     }
 }
+
 export default Game;

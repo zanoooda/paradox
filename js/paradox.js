@@ -1,5 +1,7 @@
 import Game from "./game.js";
+
 const colors = ['red', 'blue'];
+
 function getPoint(cell, size) { // TODO: Fix distance
     cell.push(-cell[1] - cell[0]);
     let distance = size / 12;
@@ -62,4 +64,5 @@ class Paradox {
         // ...
     }
 }
+
 export default Paradox;
