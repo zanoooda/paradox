@@ -32,7 +32,7 @@ function showCell(cell, context, size, cellRadius) {
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
     context.closePath();
-    if (cell[2] != -1) { // TODO: if cell[3] exist
+    if (cell[2] != -1) {
         context.fillStyle = colors[cell[2]];
         context.fill();
     } else {

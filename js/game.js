@@ -9,8 +9,8 @@ const radius = 3,
         [0, -1]  // ↘
     ],
     forward = directions[4],
-    initialItems = initItems(),
-    cells = getCells();
+    initialItems = createItems(),
+    cells = createCells();
 
 function mult(array, scalar) {
     return array.map(i => i * scalar);
@@ -18,11 +18,11 @@ function mult(array, scalar) {
 function getNeighbor(cell, direction) {
     return cell.map((n, i) => n + direction[i]);
 }
-function getNeighbors(cell) { // test
+function getNeighbors(cell) {
     let neighbors = [];
     for (const direction of directions) {
         let neighbor = getNeighbor(cell, direction);
-        if (Math.max(...[...neighbor, -neighbor[0] - neighbor[1]].map(Math.abs)) <= radius) {
+        if (Math.max(...[...neighbor, -neighbor[0] - neighbor[1]].map(Math.abs)) <= radius) { //:
             neighbors.push(neighbor);
         }
     }
@@ -35,7 +35,7 @@ function getPerimeter(radius) {
     }
     return perimeter;
 }
-function getCells() {
+function createCells() {
     let cells = [];
     for (let r = 0; r <= radius; r++) {
         cells.push(...getPerimeter(r));
@@ -43,7 +43,7 @@ function getCells() {
     return cells;
 }
 //#endregion
-function initItems() {
+function createItems() {
     let items = [[mult(forward, -1)], [mult(forward, 1)]];
     for (const [index, cell] of getPerimeter(radius).entries()) {
         items[index % 2].push(cell);
@@ -53,7 +53,7 @@ function initItems() {
 function findPairs(items, prevMove) {
     let pairs = [];
     // ...
-    // for each pair findMoves()
+    // for each pair findMoves(pair, items, prevMove)
     return pairs;
 }
 function findMoves(pair, items, prevMove) {
@@ -61,7 +61,6 @@ function findMoves(pair, items, prevMove) {
     // ...
     return moves;
 }
-
 function updateItems(move, items) {
     // ...
     return items;
@@ -70,19 +69,16 @@ function findWinner(items) {
     // -1 (no one), 0, 1, 2 if draw
     return -1;
 }
-
 function findItem(cell, items) {
     return items.findIndex(sameItems =>
         sameItems.findIndex(item =>
             item[0] == cell[0] && item[1] == cell[1]
         ) != -1);
 }
-
 function isLegal(move, items, prevMove) {
     // ...
     return true;
 }
-
 class Game {
     constructor() {
         this.items = initialItems;
@@ -106,5 +102,4 @@ class Game {
         return isLegal(move, this.items, this.history[this.history.length - 1][0]);
     }
 }
-
 export default Game;
