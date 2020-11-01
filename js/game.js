@@ -99,7 +99,7 @@ class Game {
         }
     }
     isLegal(move) { 
-        return isLegal(move, this.items, this.history[this.history.length - 1][0])
+        return isLegal(move, this.items, this.history[this.history.length - 1][0]);
     }
 }
 
