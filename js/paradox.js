@@ -17,10 +17,9 @@ function createCanvas(size) {
     let canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
-    canvas.addEventListener('click', (event) => canvasClick(event, canvas), false);
     return canvas;
 }
-function canvasClick(event, canvas) {
+function canvasClick(event, canvas, game) {
     let point = [
         event.pageX - canvas.offsetLeft - canvas.clientLeft, 
         event.pageY - canvas.offsetTop - canvas.clientTop
@@ -59,6 +58,7 @@ class Paradox {
     }
     playHotSeat() {
         this.game = new Game();
+        this.canvas.addEventListener('click', (event) => canvasClick(event, this.canvas, this.game), false);
         showCells(this.game.getCells(), this.context, this.size, this.cellRadius);
     }
     playWithRobot(playerColor) {
