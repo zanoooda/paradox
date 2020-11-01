@@ -44,9 +44,6 @@ function showCell(cell, context, size, cellRadius) {
     context.font = '10px Arial';
     context.fillText(`${cell[0]}, ${cell[1]}, ${cell[2]}`, ...point);
 }
-function selectPair(pair) {
-    // ...
-}
 
 class Paradox {
     constructor(container) {
