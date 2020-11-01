@@ -33,7 +33,7 @@ function showCell(cell, context, size, cellRadius) {
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
     context.closePath();
-    if (cell[3] != null) {
+    if (cell[3] != -1) { // TODO: if cell[3] exist
         context.fillStyle = colors[cell[3]];
         context.fill();
     } else {
@@ -48,19 +48,6 @@ function selectPair(pair) {
     // ...
 }
 
-function cellsWithItems(game) {
-    let cellsWithItems = Game.cells.map(cell => [...cell, null]);
-    for (const [playerIndex, cells] of game.items.entries()) {
-        for (const item of cells) {
-            cellsWithItems.find(cell => // getItem?
-                cell[0] == item[0] &&
-                cell[1] == item[1]
-            )[2] = playerIndex;
-        }
-    }
-    return cellsWithItems;
-}
-
 class Paradox {
     constructor(container) {
         this.size = getSize(container);
@@ -71,15 +58,13 @@ class Paradox {
     }
     playHotSeat() {
         this.game = new Game();
-        showCells(cellsWithItems(this.game), this.context, this.size, this.cellRadius);
+        showCells(this.game.getCells(), this.context, this.size, this.cellRadius);
     }
     playWithRobot(playerColor) {
-
+        // ...
     }
     playOnline() {
-        // connect()
-        // findPartner()
-        // Decide about first turn (color)
+        // ...
     }
 }
 

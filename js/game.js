@@ -70,19 +70,20 @@ function findWinner(items) {
     // -1 (no one), 0, 1, 2 if draw
     return -1;
 }
+
+function findItem(cell, items) {
+    return items.findIndex(sameItems =>
+        sameItems.findIndex(item =>
+            item[0] == cell[0] && item[1] == cell[1]
+        ) != -1);
+}
+
 function isLegal(move, items, prevMove) {
     // ...
     return true;
 }
 
-function findItem(cell, items) { // Test
-    return items.findIndex(sameColorItems =>
-        sameColorItems.findIndex(item =>
-            item[0] == cell[0] && item[1] == cell[1]) != -1);
-}
-
 class Game {
-    static cells = cells;
     constructor() {
         this.items = initialItems;
         this.pairs = findPairs(this.items, null);
@@ -97,6 +98,9 @@ class Game {
         if(this.winner == -1) {
             this.pairs = findPairs(this.items, move);
         }
+    }
+    getCells() {
+        return cells.map(cell => [...cell, findItem(cell, this.items)]);
     }
     isLegal(move) { 
         return isLegal(move, this.items, this.history[this.history.length - 1][0]);
