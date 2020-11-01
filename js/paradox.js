@@ -23,9 +23,9 @@ function createCanvas(size) {
 function click(event) {
     alert(`${JSON.stringify(event)}`); // TODO: Alert [point]
 }
-function show(state, context, size, cellRadius) { // state!
-    for (const item of state) {
-        showCell(item, context, size, cellRadius);
+function showCells(cells, context, size, cellRadius) {
+    for (const cell of cells) {
+        showCell(cell, context, size, cellRadius);
     }
 }
 function showCell(cell, context, size, cellRadius) {
@@ -45,7 +45,7 @@ function showCell(cell, context, size, cellRadius) {
     context.fillText(`${cell[0]}, ${cell[1]}, ${cell[2]}`, ...point);
 }
 function selectPair(pair) {
-
+    // ...
 }
 
 function cellsWithItems(game) {
@@ -71,7 +71,7 @@ class Paradox {
     }
     playHotSeat() {
         this.game = new Game();
-        show(cellsWithItems(this.game), this.context, this.size, this.cellRadius);
+        showCells(cellsWithItems(this.game), this.context, this.size, this.cellRadius);
     }
     playWithRobot(playerColor) {
 
