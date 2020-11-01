@@ -52,8 +52,16 @@ function createItems() {
 }
 function findPairs(items, prevMove) {
     let pairs = [];
-    // ...
-    // for each pair findMoves(pair, items, prevMove)
+    for(const [itemIndex, item] of items[0].entries()) {
+        let neighbors = getNeighbors(item);
+        for(const neighborCell of neighbors) {
+            let neighborIndex = findItemIndex(neighborCell, items[1]);
+            if(neighborIndex != -1) {
+                let moves = findMoves([itemIndex, neighborIndex], items, prevMove);
+                pairs.push([itemIndex, neighborIndex, moves]);
+            }
+        }
+    }
     return pairs;
 }
 function findMoves(pair, items, prevMove) {
@@ -70,10 +78,10 @@ function findWinner(items) {
     return -1;
 }
 function findItem(cell, items) {
-    return items.findIndex(sameItems =>
-        sameItems.findIndex(item =>
-            item[0] == cell[0] && item[1] == cell[1]
-        ) != -1);
+    return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
+}
+function findItemIndex(cell, items) {
+    return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
 function isLegal(move, items, prevMove) {
     // ...
@@ -97,9 +105,6 @@ class Game {
     }
     getCells() {
         return cells.map(cell => [...cell, findItem(cell, this.items)]);
-    }
-    isLegal(move) { 
-        return isLegal(move, this.items, this.history[this.history.length - 1][0]);
     }
 }
 
