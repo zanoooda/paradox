@@ -94,7 +94,7 @@ class Game {
         this.history = [];
         this.winner = -1;
     }
-    move(pair, direction) {
+    move(pair, direction) { // direction is directions index or -1|6 for switch
         let move = [...pair, direction];
         this.history.push([move, items, pairs]);
         this.items = updateItems(move, this.items);
