@@ -1,4 +1,4 @@
-import Game from "./game.js";
+import Game from './game.js';
 
 const colors = ['red', 'blue'];
 
@@ -17,11 +17,15 @@ function createCanvas(size) {
     let canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
-    canvas.addEventListener('click', canvasClick, false);
+    canvas.addEventListener('click', (event) => canvasClick(event, canvas), false);
     return canvas;
 }
-function canvasClick(event) {
-    console.log(`${JSON.stringify(event)}`);
+function canvasClick(event, canvas) {
+    let point = [
+        event.pageX - canvas.offsetLeft - canvas.clientLeft, 
+        event.pageY - canvas.offsetTop - canvas.clientTop
+    ];
+    console.log(`${point[0]}, ${point[1]}`);
     // ...
 }
 function showCells(cells, context, size, cellRadius) {
