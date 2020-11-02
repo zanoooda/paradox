@@ -18,7 +18,7 @@ function mult(array, scalar) {
 function getNeighbor(cell, direction) {
     return cell.map((n, i) => n + direction[i]);
 }
-function getNeighbors(cell) { //
+function getNeighbors(cell) { // Test
     let neighbors = [];
     for (const direction of directions) {
         let neighbor = getNeighbor(cell, direction);
@@ -52,7 +52,7 @@ function createItems() {
     }
     return items;
 }
-function findPairs(items, prevMove) { //
+function findPairs(items, prevMove) { // Test
     let pairs = [];
     for(const [itemIndex, item] of items[0].entries()) {
         let neighbors = getNeighbors(item);

@@ -61,6 +61,15 @@ function showCell(cell, context, size, cellRadius) {
         context.fillText(`id: ${cell[3]}`, point[0], point[1] + 12);
     }
 }
+function getPairs(game) {
+
+}
+function showPairs(pairs, context, size) {
+
+}
+function showPair(pair, context, size) {
+    
+}
 class Paradox {
     constructor(container) {
         this.container = container;
@@ -75,6 +84,7 @@ class Paradox {
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
         showCells(getCells(this.game), this.context, this.size, this.cellRadius);
+        showPairs(getPairs(this.game), this.context, this.size);
     }
     playWithRobot(playerColor) { // TODO: Implement
     }
