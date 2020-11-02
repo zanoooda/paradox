@@ -54,11 +54,11 @@ function createItems() {
 }
 function findPairs(items, prevMove) { // Test
     let pairs = [];
-    for(const [itemIndex, item] of items[0].entries()) {
+    for (const [itemIndex, item] of items[0].entries()) {
         let neighbors = getNeighbors(item);
-        for(const neighborCell of neighbors) {
+        for (const neighborCell of neighbors) {
             let neighborIndex = findItemIndex(neighborCell, items[1]);
-            if(neighborIndex != -1) {
+            if (neighborIndex != -1) {
                 let moves = findMoves([itemIndex, neighborIndex], items, prevMove);
                 pairs.push([itemIndex, neighborIndex, moves]);
             }
@@ -90,6 +90,7 @@ function isLegal(move, items, prevMove) { // TODO: Implement
     return true;
 }
 class Game {
+    static cells = cells;
     constructor() {
         this.items = initialItems;
         this.pairs = findPairs(this.items, null);
@@ -102,7 +103,7 @@ class Game {
         this.history.push([move, items, pairs]);
         this.items = updateItems(move, this.items);
         this.winner = findWinner(this.items);
-        if(this.winner == -1) {
+        if (this.winner == -1) {
             this.pairs = findPairs(this.items, move);
         }
     }
