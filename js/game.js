@@ -93,6 +93,10 @@ function findWinner(items) { // TODO: Implement (-1 (no one), 0, 1, 2 if draw)
 function findItem(cell, items) {
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
 }
+function findItemWithIndex(cell, items) { // TODO: Implement
+    // ...
+    return [-1, -1];
+}
 function findItemIndex(cell, items) {
     return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
@@ -107,12 +111,11 @@ function isLegal(move, items, prevMove) { // TODO: Implement
             break;
         default:
             // switch by move[2] (direction) and pairDiagonal (0, 1, 2)
-            // use isExist(cell) and findItem(cell, items)
             if (
                 isExist(getNeighbor(items[0][move[0]], directions[move[2]])) && 
                 isExist(getNeighbor(items[1][move[1]], directions[move[2]])) // &&
             ) {
-                // ...
+                // use findItemWithIndex(cell, items)
                 return true;
             }
             break;
