@@ -15,6 +15,10 @@ const radius = 3,
 function mult(array, scalar) {
     return array.map(i => i * scalar);
 }
+function isExist(cell) {
+    let cube = [...cell, -(cell[0] + cell[1])];
+    return Math.max(...cube.map(Math.abs)) <= radius
+}
 function getNeighbor(cell, direction) {
     return cell.map((n, i) => n + direction[i]);
 }
@@ -22,9 +26,7 @@ function getNeighbors(cell) { // Improve
     let neighbors = [];
     for (const direction of directions) {
         let neighbor = getNeighbor(cell, direction);
-        neighbor.push(-neighbor[0] - neighbor[1]); // => [...]
-        if (Math.max(...neighbor.map(Math.abs)) <= radius) { // => isExist(neighbor) // [c1, c2]
-            neighbor.pop(); // !
+        if (isExist(neighbor)) {
             neighbors.push(neighbor);
         }
     }
@@ -99,7 +101,6 @@ function isLegal(move, items, prevMove) { // TODO: Implement
     return true;
 }
 class Game {
-    static cells = cells;
     constructor() {
         this.items = initialItems;
         this.pairs = findPairs(this.items, null);

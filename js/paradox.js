@@ -3,7 +3,7 @@ import { Game, Grid } from './game.js';
 const colors = ['red', 'blue'];
 
 function getPoint(cell, size) { // TODO: Fix distance
-    let cell2 = -cell[1] - cell[0];
+    let cell2 = -cell[1] - cell[0]; //:
     let distance = size / 12;
     let x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell2 / 2));
     let y = (size / 2) + (distance * 3 / 2 * cell2);
