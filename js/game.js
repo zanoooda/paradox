@@ -19,7 +19,7 @@ function isExist(cell) {
     let cube = [...cell, -(cell[0] + cell[1])];
     return Math.max(...cube.map(Math.abs)) <= radius
 }
-function getNeighbor(cell, direction) {
+function getNeighbor(cell, direction) { // direction => directionIndex ?
     return cell.map((n, i) => n + direction[i]);
 }
 function getNeighbors(cell) { // Improve
@@ -100,12 +100,19 @@ function isLegal(move, items, prevMove) { // TODO: Implement
     // ... switch vs if/else
     switch (move[2]) {
         case -1: // switch
-            // ...
+            if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && move[2] == prevMove[2]) { // move.equals(prevMove)
+                return false;
+            }
             return true;
             break;
         default:
-            // ...
-            if (isExist(getNeighbor(items[0][move[0]], directions[move[2]])) && isExist(getNeighbor(items[1][move[1]], directions[move[2]]))) {
+            // switch by move[2] (direction) and pairDiagonal (0, 1, 2)
+            // use isExist(cell) and findItem(cell, items)
+            if (
+                isExist(getNeighbor(items[0][move[0]], directions[move[2]])) && 
+                isExist(getNeighbor(items[1][move[1]], directions[move[2]])) // &&
+            ) {
+                // ...
                 return true;
             }
             break;
