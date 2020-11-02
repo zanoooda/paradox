@@ -18,13 +18,13 @@ function mult(array, scalar) {
 function getNeighbor(cell, direction) {
     return cell.map((n, i) => n + direction[i]);
 }
-function getNeighbors(cell) { // Test
+function getNeighbors(cell) { // Improve
     let neighbors = [];
     for (const direction of directions) {
         let neighbor = getNeighbor(cell, direction);
-        neighbor.push(-neighbor[0] - neighbor[1]);
-        if (Math.max(...neighbor.map(Math.abs)) <= radius) {
-            neighbor.pop();
+        neighbor.push(-neighbor[0] - neighbor[1]); // => [...]
+        if (Math.max(...neighbor.map(Math.abs)) <= radius) { // => isExist(neighbor) // [c1, c2]
+            neighbor.pop(); // !
             neighbors.push(neighbor);
         }
     }
@@ -52,7 +52,7 @@ function createItems() {
     }
     return items;
 }
-function findPairs(items, prevMove) { // Test
+function findPairs(items, prevMove) {
     let pairs = [];
     for (const [itemIndex, item] of items[0].entries()) {
         let neighbors = getNeighbors(item);
@@ -66,9 +66,18 @@ function findPairs(items, prevMove) { // Test
     }
     return pairs;
 }
-function findMoves(pair, items, prevMove) { // TODO: Implement
+function findMoves(pair, items, prevMove) {
     let moves = [];
-    // ...
+    let switchMove = [...pair, -1];
+    if (isLegal(switchMove, items, prevMove)) {
+        moves.push(-1);
+    }
+    for (const [directionIndex, direction] of directions.entries()) {
+        let move = [...pair, directionIndex];
+        if (isLegal(move, items, prevMove)) {
+            moves.push(directionIndex);
+        }
+    }
     return moves;
 }
 function updateItems(move, items) { // TODO: Implement
@@ -86,7 +95,7 @@ function findItemIndex(cell, items) {
     return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
 function isLegal(move, items, prevMove) { // TODO: Implement
-    // ...
+    // ...  use isExist(cell)
     return true;
 }
 class Game {
