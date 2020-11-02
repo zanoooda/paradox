@@ -46,7 +46,7 @@ function showCell(cell, context, size, cellRadius) {
     }
     context.fillStyle = 'black';
     context.font = '10px Arial';
-    context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
+    context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point); // TODO: Show index from game.items
 }
 class Paradox {
     constructor(container) {
