@@ -97,7 +97,7 @@ class Game {
         this.history = [];
         this.winner = -1;
     }
-    move(pair, direction) { // direction is directions index or -1|6 for switch
+    move(pair, direction) { // Test // direction is directions index or -1|6 for switch
         //if(!isLegal([...pair, direction], this.items, this.history.length > 0 ? this.history[this.history.length - 1] : null)) return;
         let move = [...pair, direction];
         this.history.push([move, items, pairs]);

@@ -61,18 +61,16 @@ function showCell(cell, context, cellRadius) {
         context.fillText(`id: ${cell[5]}`, point[0], point[1] + 12);
     }
 }
-function getPairs(game, size) { // TODO: Implementation
+function getPairs(game, size) { // Another option is to get point by pairs and cells (with points)
     let res = game.pairs.map((pair) => {
-        let c0 = game.items[0][pair[0]];
-        let c1 = game.items[1][pair[1]];
-        let p0 = getPoint(c0, size); // can take from state.cells
-        let p1 = getPoint(c1, size); // ...
-        let pp = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
-        return [pair[0], pair[1], ...pp];
+        let cells = [game.items[0][pair[0]], game.items[1][pair[1]]];
+        let points = [getPoint(cells[0], size), getPoint(cells[1], size)];
+        let point = [(points[0][0] + points[1][0]) / 2, (points[0][1] + points[1][1]) / 2];
+        return [pair[0], pair[1], ...point];
     });
     return res;
 }
-function showPairs(pairs, context, clickRadius) { // TODO: Implement
+function showPairs(pairs, context, clickRadius) {
     for (const pair of pairs) {
         showPair(pair, context, clickRadius);
     }
