@@ -93,24 +93,31 @@ function findWinner(items) { // TODO: Implement (-1 (no one), 0, 1, 2 if draw)
 function findItem(cell, items) {
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
 }
-function findItemWithIndex(cell, items) { // TODO: Implement
-    // ...
-    return [-1, -1];
+function findItemWithIndex(cell, items) { // TODO: Improve (!)
+    let itemsIndex = findItem(cell, items);
+    let itemIndex = -1;
+    if (itemsIndex != -1) {
+        itemIndex = findItemIndex(cell, items[itemsIndex])
+    }
+    return [itemsIndex, itemIndex];
 }
 function findItemIndex(cell, items) {
     return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
-function isLegal(move, items, prevMove) { // TODO: Implement
-    if(move[2] == -1) {
+function isLegal(move, items, prevMove) { // Test
+    if (move[2] == -1) {
         if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && move[2] == prevMove[2]) { // move.equals(prevMove)
             return false;
         }
         return true;
     }
-    else if (isExist(getNeighbor(items[0][move[0]], directions[move[2]])) && 
-            isExist(getNeighbor(items[1][move[1]], directions[move[2]]))) {
-        // use findItemWithIndex(cell, items) ...
-        return true;
+    else if (isExist(getNeighbor(items[0][move[0]], directions[move[2]])) && isExist(getNeighbor(items[1][move[1]], directions[move[2]]))) {
+        let itemWithIndex0 = findItemWithIndex(getNeighbor(items[0][move[0]], directions[move[2]]), items),
+            itemWithIndex1 = findItemWithIndex(getNeighbor(items[1][move[1]], directions[move[2]]), items);
+        if ((itemWithIndex0[0] == -1 || (itemWithIndex0[0] == 1 && itemWithIndex0[1] == move[1])) &&
+            (itemWithIndex1[0] == -1 || (itemWithIndex1[0] == 0 && itemWithIndex1[1] == move[0]))) {
+            return true;
+        }
     }
     return false;
 }
