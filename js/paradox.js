@@ -61,8 +61,8 @@ function showCell(cell, context, cellRadius) {
         context.fillText(`id: ${cell[5]}`, point[0], point[1] + 12);
     }
 }
-function getPairs(game, size) { // TODO: Implement // !!! game.items attach item[2] /:
-    //let cell = [game.items[0][pair[0]], game.items[1][pair[1]]];
+function getPairs(game, size) { // TODO: Implement
+    // ...
     let res = game.pairs.map((pair) => {
         let c0 = game.items[0][pair[0]];
         let p0 = getPoint(c0, size);
