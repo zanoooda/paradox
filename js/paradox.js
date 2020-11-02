@@ -26,7 +26,7 @@ function canvasClick(event, canvas, game) { // TODO: Implement
     ];
     console.log(`${point[0]}, ${point[1]}`);
 }
-function getCells(game) { // TODO: Attach point to each cell
+function getCells(game) { // TODO: Attach point to each cell // [[cell[0], cell[1], point[0], point[1] (optional), itemsIndex, itemIndex],...]
     return Grid.cells.map(cell => {
         let itemsIndex = game.findItem(cell);
         if(itemsIndex != -1) {
@@ -63,9 +63,12 @@ function showCell(cell, context, size, cellRadius) {
 }
 function getPairs(game, cells) { // TODO: Implement
     // ...
+    return [];
 }
 function showPairs(pairs, context, size) { // TODO: Implement
-    // ...
+    for(pair of pairs) {
+        showPair(pair, context. size);
+    }
 }
 function showPair(pair, context, size) { // TODO: Implement
     // ...
@@ -83,14 +86,19 @@ class Paradox {
         this.canvas.addEventListener('click', (event) => canvasClick(event, this.canvas, this.game), false);
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
-        let cells = getCells(this.game);
-        showCells(cells, this.context, this.size, this.cellRadius);
-        let pairs = getPairs(this.game, cells);
-        showPairs(pairs, this.context, this.size);
+        this.game.state = new State(this.game);
+        showCells(this.game.state.cells, this.context, this.size, this.cellRadius);
+        showPairs(this.game.state.pairs, this.context, this.size);
     }
     playWithRobot(playerColor) { // TODO: Implement
     }
     playOnline() { // TODO: Implement
+    }
+}
+class State {
+    constructor(game) {
+        this.cells = getCells(game);
+        this.pairs = getPairs(game, this.cells);
     }
 }
 
