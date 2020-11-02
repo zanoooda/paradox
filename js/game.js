@@ -22,7 +22,9 @@ function getNeighbors(cell) { //
     let neighbors = [];
     for (const direction of directions) {
         let neighbor = getNeighbor(cell, direction);
-        if (Math.max(...[...neighbor, -neighbor[0] - neighbor[1]].map(Math.abs)) <= radius) { //:
+        neighbor.push(-neighbor[0] - neighbor[1]);
+        if (Math.max(...neighbor.map(Math.abs)) <= radius) {
+            neighbor.pop();
             neighbors.push(neighbor);
         }
     }
