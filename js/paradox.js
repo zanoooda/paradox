@@ -26,7 +26,7 @@ function canvasClick(event, canvas, game) { // TODO: Implement
     ];
     console.log(`${point[0]}, ${point[1]}`);
 }
-function getCells(game) {
+function getCells(game) { // TODO: Attach point to each cell
     return Grid.cells.map(cell => {
         let itemsIndex = game.findItem(cell);
         if(itemsIndex != -1) {
@@ -61,14 +61,14 @@ function showCell(cell, context, size, cellRadius) {
         context.fillText(`id: ${cell[3]}`, point[0], point[1] + 12);
     }
 }
-function getPairs(game) {
-
+function getPairs(game, cells) { // TODO: Implement
+    // ...
 }
-function showPairs(pairs, context, size) {
-
+function showPairs(pairs, context, size) { // TODO: Implement
+    // ...
 }
-function showPair(pair, context, size) {
-    
+function showPair(pair, context, size) { // TODO: Implement
+    // ...
 }
 class Paradox {
     constructor(container) {
@@ -83,8 +83,10 @@ class Paradox {
         this.canvas.addEventListener('click', (event) => canvasClick(event, this.canvas, this.game), false);
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
-        showCells(getCells(this.game), this.context, this.size, this.cellRadius);
-        showPairs(getPairs(this.game), this.context, this.size);
+        let cells = getCells(this.game);
+        showCells(cells, this.context, this.size, this.cellRadius);
+        let pairs = getPairs(this.game, cells);
+        showPairs(pairs, this.context, this.size);
     }
     playWithRobot(playerColor) { // TODO: Implement
     }
