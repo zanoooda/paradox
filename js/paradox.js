@@ -1,4 +1,4 @@
-import Game from './game.js';
+import { Game, Grid } from './game.js';
 
 const colors = ['red', 'blue'];
 
@@ -26,6 +26,14 @@ function canvasClick(event, canvas, game) { // TODO: Implement
     ];
     console.log(`${point[0]}, ${point[1]}`);
 }
+function getCells(game) {
+    return Grid.cells.map(cell => {
+        let itemsIndex = game.findItem(cell);
+        let itemIndex = itemsIndex == -1 ? null : game.findItemIndex(cell, itemsIndex);
+        return [...cell, itemsIndex, itemIndex];
+    });
+    
+}
 function showCells(cells, context, size, cellRadius) {
     for (const cell of cells) {
         showCell(cell, context, size, cellRadius);
@@ -46,6 +54,7 @@ function showCell(cell, context, size, cellRadius) { // TODO: Show index from ga
     context.fillStyle = 'black';
     context.font = '10px Arial';
     context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
+    context.fillText(`id: ${cell[3]}`, point[0], point[1] + 12);
 }
 class Paradox {
     constructor(container) {
@@ -60,7 +69,7 @@ class Paradox {
         this.canvas.addEventListener('click', (event) => canvasClick(event, this.canvas, this.game), false);
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
-        showCells(this.game.getCells(), this.context, this.size, this.cellRadius);
+        showCells(getCells(this.game), this.context, this.size, this.cellRadius);
     }
     playWithRobot(playerColor) { // TODO: Implement
     }

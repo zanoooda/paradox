@@ -106,9 +106,15 @@ class Game {
             this.pairs = findPairs(this.items, move);
         }
     }
-    getCells() { // TODO: Wrap grid class and move this method to canvas/paradox.js?
-        return cells.map(cell => [...cell, findItem(cell, this.items)]);
+    findItem(cell) {
+        return findItem(cell, this.items);
+    }
+    findItemIndex(cell, itemsIndex) {
+        return findItemIndex(cell, this.items[itemsIndex]);
     }
 }
+class Grid {
+    static cells = cells;
+}
 
-export default Game;
+export { Game, Grid }
