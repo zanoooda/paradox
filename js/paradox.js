@@ -54,19 +54,21 @@ function showCell(cell, context, cellRadius) {
         context.strokeStyle = 'lightgray'
         context.stroke();
     }
-    context.fillStyle = 'black';
-    context.font = '10px Arial';
+    context.fillStyle = 'black'; // dublicated
+    context.font = '10px Arial'; // dublicated
     context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
     if (typeof cell[5] !== 'undefined') {
         context.fillText(`id: ${cell[5]}`, point[0], point[1] + 12);
     }
 }
 function getPairs(game, size) { // TODO: Implement
-    // ...
     let res = game.pairs.map((pair) => {
         let c0 = game.items[0][pair[0]];
-        let p0 = getPoint(c0, size);
-        return [pair[0], pair[1], ...p0];
+        let c1 = game.items[1][pair[1]];
+        let p0 = getPoint(c0, size); // can take from state.cells
+        let p1 = getPoint(c1, size); // ...
+        let pp = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
+        return [pair[0], pair[1], ...pp];
     });
     return res;
 }
@@ -75,9 +77,16 @@ function showPairs(pairs, context, clickRadius) { // TODO: Implement
         showPair(pair, context, clickRadius);
     }
 }
-function showPair(pair, context, clickRadius) { // TODO: Implement
-    console.log(`${pair[0]}, ${pair[1]}, ${pair[2]}, ${pair[3]}`)
-    // ...
+function showPair(pair, context, clickRadius) {
+    let point = [pair[2], pair[3]];
+    context.beginPath();
+    context.arc(...point, clickRadius, 0, 2 * Math.PI);
+    context.closePath();
+    context.strokeStyle = 'black'
+    context.stroke();
+    context.fillStyle = 'black'; // dublicated
+    context.font = '10px Arial'; // dublicated
+    context.fillText(`${pair[0]}, ${pair[1]}, ${pair[2]}, ${pair[3]}`, ...point);
 }
 class Paradox {
     constructor(container) {
@@ -86,7 +95,7 @@ class Paradox {
     playHotSeat() {
         this.game = new Game();
         this.size = getSize(this.container);
-        this.clickRadius = this.size / 20;
+        this.clickRadius = this.size / 24;
         this.cellRadius = this.size / 18;
         this.canvas = createCanvas(this.size);
         this.context = this.canvas.getContext('2d');
@@ -105,7 +114,7 @@ class Paradox {
 class State {
     constructor(game, size) {
         this.cells = getCells(game, size);
-        this.pairs = getPairs(game, size);
+        this.pairs = getPairs(game, size); // size or cells?
     }
 }
 
