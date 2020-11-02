@@ -29,8 +29,11 @@ function canvasClick(event, canvas, game) { // TODO: Implement
 function getCells(game) {
     return Grid.cells.map(cell => {
         let itemsIndex = game.findItem(cell);
-        let itemIndex = itemsIndex == -1 ? null : game.findItemIndex(cell, itemsIndex);
-        return [...cell, itemsIndex, itemIndex];
+        if(itemsIndex != -1) {
+            let itemIndex = itemsIndex == -1 ? itemsIndex : game.findItemIndex(cell, itemsIndex);
+            return [...cell, itemsIndex, itemIndex];
+        }
+        return cell;
     });
     
 }
@@ -39,12 +42,12 @@ function showCells(cells, context, size, cellRadius) {
         showCell(cell, context, size, cellRadius);
     }
 }
-function showCell(cell, context, size, cellRadius) { // TODO: Show index from game.items
+function showCell(cell, context, size, cellRadius) {
     let point = getPoint([cell[0], cell[1]], size);
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
     context.closePath();
-    if (cell[2] != -1) {
+    if (typeof cell[2] !== 'undefined') {
         context.fillStyle = colors[cell[2]];
         context.fill();
     } else {
@@ -54,7 +57,9 @@ function showCell(cell, context, size, cellRadius) { // TODO: Show index from ga
     context.fillStyle = 'black';
     context.font = '10px Arial';
     context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
-    context.fillText(`id: ${cell[3]}`, point[0], point[1] + 12);
+    if(typeof cell[3] !== 'undefined') {
+        context.fillText(`id: ${cell[3]}`, point[0], point[1] + 12);
+    }
 }
 class Paradox {
     constructor(container) {
