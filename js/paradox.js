@@ -28,15 +28,14 @@ function canvasClick(event, canvas, game) { // TODO: Implement
 }
 function getCells(game, size) {
     return Grid.cells.map(cell => {
-        cell.push(...getPoint([cell[0], cell[1]], size));
+        let point = getPoint([cell[0], cell[1]], size);
         let itemsIndex = game.findItem(cell);
         if (itemsIndex != -1) {
-            let itemIndex = itemsIndex == -1 ? itemsIndex : game.findItemIndex(cell, itemsIndex);
-            return [...cell, itemsIndex, itemIndex];
+            let itemIndex = game.findItemIndex(cell, itemsIndex);
+            return [...cell, ...point, itemsIndex, itemIndex];
         }
-        return cell;
+        return [...cell, ...point];
     });
-
 }
 function showCells(cells, context, cellRadius) {
     for (const cell of cells) {
