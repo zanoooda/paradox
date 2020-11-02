@@ -97,8 +97,20 @@ function findItemIndex(cell, items) {
     return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
 function isLegal(move, items, prevMove) { // TODO: Implement
-    // ...  use isExist(cell)
-    return true;
+    // ... switch vs if/else
+    switch (move[2]) {
+        case -1: // switch
+            // ...
+            return true;
+            break;
+        default:
+            // ...
+            if (isExist(getNeighbor(items[0][move[0]], directions[move[2]])) && isExist(getNeighbor(items[1][move[1]], directions[move[2]]))) {
+                return true;
+            }
+            break;
+    }
+    return false;
 }
 class Game {
     constructor() {
