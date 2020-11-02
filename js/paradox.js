@@ -86,7 +86,7 @@ function showPair(pair, context, clickRadius) {
     context.stroke();
     context.fillStyle = 'black'; // dublicated
     context.font = '10px Arial'; // dublicated
-    context.fillText(`${pair[0]}, ${pair[1]}, ${pair[2]}, ${pair[3]}`, ...point);
+    context.fillText(`${pair[0]}, ${pair[1]}`, ...point);
 }
 class Paradox {
     constructor(container) {
