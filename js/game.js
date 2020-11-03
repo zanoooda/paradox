@@ -104,8 +104,8 @@ function findItemWithIndex(cell, items) { // TODO: Test/Improve
     });
     return [playerIndex, itemIndex];
 }
-function findItemIndex(cell, items) { // samePlayerItems
-    return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
+function findItemIndex(cell, samePlayersItems) {
+    return samePlayersItems.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
 function isLegal(move, items, prevMove) { // TODO: Test/Improve
     if (move[2] == -1) { // swap
