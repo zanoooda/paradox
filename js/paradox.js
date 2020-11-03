@@ -19,11 +19,18 @@ function createCanvas(size) {
     canvas.height = size;
     return canvas;
 }
-function canvasClick(event, canvas, game) { // TODO: Implement
+function canvasClick(event, canvas, context, game, size, cellRadius, clickRadius) { // TODO: Implement
     const point = [
         event.pageX - canvas.offsetLeft - canvas.clientLeft,
         event.pageY - canvas.offsetTop - canvas.clientTop
     ];
+    
+    game.move([1, 1], -1);
+    game.state = new State(game, size);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    showCells(game.state.cells, context, cellRadius);
+    showPairs(game.state.pairs, context, clickRadius);
+
     console.log(`${point[0]}, ${point[1]}`);
 }
 function getCells(game, size) {
@@ -96,7 +103,9 @@ class Paradox {
         this.cellRadius = this.size / 18;
         this.canvas = createCanvas(this.size);
         this.context = this.canvas.getContext('2d');
-        this.canvas.addEventListener('click', (event) => canvasClick(event, this.canvas, this.game), false);
+        this.canvas.addEventListener('click', (event) => {
+            canvasClick(event, this.canvas, this.context, this.game, this.size, this.cellRadius, this.clickRadius) // too many params
+        }, false);
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
         this.game.state = new State(this.game, this.size);
