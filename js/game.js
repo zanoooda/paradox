@@ -20,13 +20,13 @@ function isExist(cell) {
     const cube = [...cell, -(cell[0] + cell[1])];
     return Math.max(...cube.map(Math.abs)) <= radius
 }
-function getInverseDirection(directionIndex) { // Test
+function getInverseDirection(directionIndex) {
     return inverseDirectionsIndexes[directionIndex];
 }
-function getNeighbor(cell, direction) { // direction => directionIndex!
+function getNeighbor(cell, direction) { // direction => directionIndex
     return cell.map((n, i) => n + direction[i]);
 }
-function getNeighbors(cell) { // Improve
+function getNeighbors(cell) {
     let neighbors = [];
     for (const direction of directions) {
         const neighbor = getNeighbor(cell, direction);
@@ -79,7 +79,7 @@ function findMoves(pair, items, prevMove) {
         moves.push(-1);
     }
     for (const [directionIndex, direction] of directions.entries()) {
-        let move = [...pair, directionIndex];
+        const move = [...pair, directionIndex];
         if (isLegal(move, items, prevMove)) {
             moves.push(directionIndex);
         }
@@ -102,10 +102,10 @@ function findWinner(items) { // TODO: Implement (-1 (no one), 0, 1, 2 if draw)
     // ...
     return -1;
 }
-function findPlayerIndex(cell, items) { // findPlayer? (playerA, playerB)
+function findPlayerIndex(cell, items) {
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
 }
-function findItemWithIndex(cell, items) { // TODO: Test/Improve
+function findItemWithIndex(cell, items) {
     let itemIndex, playerIndex = items.findIndex((sameItems) => {
         itemIndex = findItemIndex(cell, sameItems);
         return itemIndex != -1;
@@ -116,7 +116,7 @@ function findItemIndex(cell, samePlayersItems) {
     return samePlayersItems.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
 function isLegal(move, items, prevMove) { // TODO: Test/Improve
-    if (move[2] == -1) { // swap
+    if (move[2] == -1) {
         if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && move[2] == prevMove[2]) { // isEqual(move, prevMove)
             return false;
         }

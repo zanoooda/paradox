@@ -25,6 +25,8 @@ function canvasClick(event, canvas, context, game, size, cellRadius, clickRadius
         event.pageY - canvas.offsetTop - canvas.clientTop
     ];
 
+    // select or move ...
+
     game.move([3, 2], -1); // ...
     game.state = new State(game, size);
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -57,7 +59,7 @@ function showCell(cell, context, cellRadius) {
     if (typeof cell[4] !== 'undefined') {
         context.fillStyle = colors[cell[4]];
         context.fill();
-    } 
+    }
     else {
         context.strokeStyle = 'lightgray'
         context.stroke();
