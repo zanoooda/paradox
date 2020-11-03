@@ -2,7 +2,7 @@ import { Game, Grid } from './game.js';
 // TODO: Describe structs
 const colors = ['red', 'blue'];
 
-function getPoint(cell, size) { // TODO: Improve
+function getPoint(cell, size) { // TODO: Improve and fix
     const cell2 = -cell[1] - cell[0]; //:
     const distance = size / 12;
     const x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell2 / 2)); // TODO: Math.sqrt(3) to const
@@ -109,7 +109,8 @@ class Paradox {
         }, false);
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
-        this.game.state = new State(this.game, this.size);
+
+        this.game.state = new State(this.game, this.size); // let state?
         showCells(this.game.state.cells, this.context, this.cellRadius);
         showPairs(this.game.state.pairs, this.context, this.clickRadius);
     }
