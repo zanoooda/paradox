@@ -108,7 +108,7 @@ class Paradox {
     playOnline() { // TODO: Implement
     }
 }
-class State {
+class State { // Can be struct
     constructor(game, size) {
         this.cells = getCells(game, size);
         this.pairs = getPairs(game, size); // size or cells?

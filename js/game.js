@@ -108,8 +108,8 @@ function findItemIndex(cell, items) { // samePlayerItems
     return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
 function isLegal(move, items, prevMove) { // TODO: Test/Improve
-    if (move[2] == -1) {
-        if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && move[2] == prevMove[2]) { // move.equals(prevMove)
+    if (move[2] == -1) { // swap
+        if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && move[2] == prevMove[2]) { // isEqual(move, prevMove)
             return false;
         }
         return true;
@@ -122,9 +122,9 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
         if ((itemsWithIndex[0][0] == -1 || (itemsWithIndex[0][0] == 1 && itemsWithIndex[0][1] == move[1])) &&
             (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0])) &&
             (
-                (prevMove == null) || 
+                (prevMove == null) ||
                 (move[0] != prevMove[0] && move[1] != prevMove[1] && getInverseDirection(move[3]) != prevMove[3])) // !
-            ) {
+        ) {
             return true;
         }
     }
