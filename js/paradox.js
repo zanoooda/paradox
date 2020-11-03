@@ -25,7 +25,7 @@ function canvasClick(event, canvas, context, game, size, cellRadius, clickRadius
         event.pageY - canvas.offsetTop - canvas.clientTop
     ];
 
-    game.move([3, 2], -1);
+    game.move([3, 2], -1); // ...
     game.state = new State(game, size);
     context.clearRect(0, 0, canvas.width, canvas.height);
     showCells(game.state.cells, context, cellRadius);

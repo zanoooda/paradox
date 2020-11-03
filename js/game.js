@@ -129,14 +129,10 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
         ];
         if ((itemsWithIndex[0][0] == -1 || (itemsWithIndex[0][0] == 1 && itemsWithIndex[0][1] == move[1])) &&
             (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0]))) {
-            if ((prevMove == null) ||
-                (move[0] != prevMove[0] && move[1] != prevMove[1] && getInverseDirection(move[2]) != prevMove[2])) {
+            if (prevMove == null) {
                 return true;
             }
-            if(prevMove == null) {
-                return true;
-            }
-            if(move[0] == prevMove[0] && move[1] == prevMove[1] && getInverseDirection(move[2]) == prevMove[2]) {
+            if (move[0] == prevMove[0] && move[1] == prevMove[1] && getInverseDirection(move[2]) == prevMove[2]) {
                 return false;
             }
             return true;
