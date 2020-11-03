@@ -1,16 +1,16 @@
 import { Game, Grid } from './game.js';
-
+// TODO: Describe structs
 const colors = ['red', 'blue'];
 
-function getPoint(cell, size) { // TODO: Fix distance
-    let cell2 = -cell[1] - cell[0]; //:
-    let distance = size / 12;
-    let x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell2 / 2));
-    let y = (size / 2) + (distance * 3 / 2 * cell2);
+function getPoint(cell, size) { // TODO: Improve
+    const cell2 = -cell[1] - cell[0]; //:
+    const distance = size / 12;
+    const x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell2 / 2)); // TODO: Math.sqrt(3) to const
+    const y = (size / 2) + (distance * 3 / 2 * cell2);
     return [x, y];
 }
 function getSize(container) {
-    let containerRect = container.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
     return Math.min(containerRect.width, containerRect.height);
 }
 function createCanvas(size) {
@@ -20,7 +20,7 @@ function createCanvas(size) {
     return canvas;
 }
 function canvasClick(event, canvas, game) { // TODO: Implement
-    let point = [
+    const point = [
         event.pageX - canvas.offsetLeft - canvas.clientLeft,
         event.pageY - canvas.offsetTop - canvas.clientTop
     ];
@@ -28,10 +28,10 @@ function canvasClick(event, canvas, game) { // TODO: Implement
 }
 function getCells(game, size) {
     return Grid.cells.map(cell => {
-        let point = getPoint([cell[0], cell[1]], size);
-        let itemsIndex = game.findItem(cell);
+        const point = getPoint([cell[0], cell[1]], size);
+        const itemsIndex = game.findItem(cell);
         if (itemsIndex != -1) {
-            let itemIndex = game.findItemIndex(cell, itemsIndex);
+            const itemIndex = game.findItemIndex(cell, itemsIndex);
             return [...cell, ...point, itemsIndex, itemIndex];
         }
         return [...cell, ...point];
@@ -43,7 +43,7 @@ function showCells(cells, context, cellRadius) {
     }
 }
 function showCell(cell, context, cellRadius) {
-    let point = [cell[2], cell[3]];
+    const point = [cell[2], cell[3]];
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
     context.closePath();
@@ -54,8 +54,8 @@ function showCell(cell, context, cellRadius) {
         context.strokeStyle = 'lightgray'
         context.stroke();
     }
-    context.fillStyle = 'black'; // dublicated
-    context.font = '10px Arial'; // dublicated
+    context.fillStyle = 'black'; // duplicated
+    context.font = '10px Arial'; // duplicated
     context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
     if (typeof cell[5] !== 'undefined') {
         context.fillText(`id: ${cell[5]}`, point[0], point[1] + 12);
@@ -63,9 +63,9 @@ function showCell(cell, context, cellRadius) {
 }
 function getPairs(game, size) { // Another option is to get point by pairs and cells (with points)
     return game.pairs.map((pair) => {
-        let cells = [game.items[0][pair[0]], game.items[1][pair[1]]];
-        let points = [getPoint(cells[0], size), getPoint(cells[1], size)];
-        let point = [(points[0][0] + points[1][0]) / 2, (points[0][1] + points[1][1]) / 2];
+        const cells = [game.items[0][pair[0]], game.items[1][pair[1]]];
+        const points = [getPoint(cells[0], size), getPoint(cells[1], size)];
+        const point = [(points[0][0] + points[1][0]) / 2, (points[0][1] + points[1][1]) / 2];
         return [...pair, ...point];
     });
 }
@@ -75,14 +75,14 @@ function showPairs(pairs, context, clickRadius) {
     }
 }
 function showPair(pair, context, clickRadius) {
-    let point = [pair[3], pair[4]];
+    const point = [pair[3], pair[4]];
     context.beginPath();
     context.arc(...point, clickRadius, 0, 2 * Math.PI);
     context.closePath();
     context.strokeStyle = 'black'
     context.stroke();
-    context.fillStyle = 'black'; // dublicated
-    context.font = '10px Arial'; // dublicated
+    context.fillStyle = 'black'; // duplicated
+    context.font = '10px Arial'; // duplicated
     context.fillText(`${pair[0]}, ${pair[1]}, [${pair[2]}]`, ...point);
 }
 class Paradox {

@@ -17,7 +17,7 @@ function mult(array, scalar) {
     return array.map(i => i * scalar);
 }
 function isExist(cell) {
-    let cube = [...cell, -(cell[0] + cell[1])];
+    const cube = [...cell, -(cell[0] + cell[1])];
     return Math.max(...cube.map(Math.abs)) <= radius
 }
 function getInverseDirection(directionIndex) { // Test
@@ -29,7 +29,7 @@ function getNeighbor(cell, direction) { // direction => directionIndex!
 function getNeighbors(cell) { // Improve
     let neighbors = [];
     for (const direction of directions) {
-        let neighbor = getNeighbor(cell, direction);
+        const neighbor = getNeighbor(cell, direction);
         if (isExist(neighbor)) {
             neighbors.push(neighbor);
         }
@@ -58,14 +58,14 @@ function createItems() {
     }
     return items;
 }
-function findPairs(items, prevMove) {
+function findPairs(items, prevMove) { // findPairsWithMoves()
     let pairs = [];
     for (const [itemIndex, item] of items[0].entries()) {
-        let neighbors = getNeighbors(item);
+        const neighbors = getNeighbors(item);
         for (const neighborCell of neighbors) {
-            let neighborIndex = findItemIndex(neighborCell, items[1]);
+            const neighborIndex = findItemIndex(neighborCell, items[1]);
             if (neighborIndex != -1) {
-                let moves = findMoves([itemIndex, neighborIndex], items, prevMove);
+                const moves = findMoves([itemIndex, neighborIndex], items, prevMove);
                 pairs.push([itemIndex, neighborIndex, moves]);
             }
         }
@@ -74,8 +74,8 @@ function findPairs(items, prevMove) {
 }
 function findMoves(pair, items, prevMove) {
     let moves = [];
-    let switchMove = [...pair, -1];
-    if (isLegal(switchMove, items, prevMove)) {
+    const swapMove = [...pair, -1];
+    if (isLegal(swapMove, items, prevMove)) {
         moves.push(-1);
     }
     for (const [directionIndex, direction] of directions.entries()) {
@@ -94,7 +94,7 @@ function findWinner(items) { // TODO: Implement (-1 (no one), 0, 1, 2 if draw)
     // ...
     return -1;
 }
-function findItem(cell, items) {
+function findItem(cell, items) { // findColor? findPlayer? (playerA, playerB)
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
 }
 function findItemWithIndex(cell, items) { // TODO: Test/Improve
@@ -104,7 +104,7 @@ function findItemWithIndex(cell, items) { // TODO: Test/Improve
     });
     return [itemsIndex, itemIndex];
 }
-function findItemIndex(cell, items) {
+function findItemIndex(cell, items) { // samePlayerItems
     return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
 function isLegal(move, items, prevMove) { // TODO: Test/Improve
@@ -115,13 +115,16 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
         return true;
     }
     else if (isExist(getNeighbor(items[0][move[0]], directions[move[2]])) && isExist(getNeighbor(items[1][move[1]], directions[move[2]]))) {
-        let itemsWithIndex = [
-            findItemWithIndex(getNeighbor(items[0][move[0]], directions[move[2]]), items),
+        const itemsWithIndex = [
+            findItemWithIndex(getNeighbor(items[0][move[0]], directions[move[2]]), items), // items[0][move[0]] wrap to const
             findItemWithIndex(getNeighbor(items[1][move[1]], directions[move[2]]), items)
         ];
         if ((itemsWithIndex[0][0] == -1 || (itemsWithIndex[0][0] == 1 && itemsWithIndex[0][1] == move[1])) &&
             (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0])) &&
-            (prevMove && move[0] != prevMove[0] && move[1] != prevMove[1] && getInverseDirection(move[3]) != prevMove[3])) { // TODO: Test
+            (
+                (prevMove == null) || 
+                (move[0] != prevMove[0] && move[1] != prevMove[1] && getInverseDirection(move[3]) != prevMove[3])) // !
+            ) {
             return true;
         }
     }
@@ -139,7 +142,7 @@ class Game {
     }
     move(pair, direction) { // TODO: Test/Improve
         //if(!isLegal([...pair, direction], this.items, this.history.length > 0 ? this.history[this.history.length - 1] : null)) return;
-        let move = [...pair, direction];
+        const move = [...pair, direction];
         this.history.push(move); // this.history.push([move, items, pairs]);
         this.items = updateItems(move, this.items);
         this.winner = findWinner(this.items);
