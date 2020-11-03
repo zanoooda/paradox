@@ -111,10 +111,12 @@ function isLegal(move, items, prevMove) { // Test/Improve
         return true;
     }
     else if (isExist(getNeighbor(items[0][move[0]], directions[move[2]])) && isExist(getNeighbor(items[1][move[1]], directions[move[2]]))) {
-        let itemWithIndex0 = findItemWithIndex(getNeighbor(items[0][move[0]], directions[move[2]]), items),
-            itemWithIndex1 = findItemWithIndex(getNeighbor(items[1][move[1]], directions[move[2]]), items);
-        if ((itemWithIndex0[0] == -1 || (itemWithIndex0[0] == 1 && itemWithIndex0[1] == move[1])) &&
-            (itemWithIndex1[0] == -1 || (itemWithIndex1[0] == 0 && itemWithIndex1[1] == move[0]))) {
+        let itemsWithIndex = [ 
+            findItemWithIndex(getNeighbor(items[0][move[0]], directions[move[2]]), items),
+            findItemWithIndex(getNeighbor(items[1][move[1]], directions[move[2]]), items)
+        ];
+        if ((itemsWithIndex[0][0] == -1 || (itemsWithIndex[0][0] == 1 && itemsWithIndex[0][1] == move[1])) &&
+            (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0]))) {
             return true;
         }
     }
