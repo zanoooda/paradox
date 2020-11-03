@@ -60,8 +60,8 @@ function createItems() {
 }
 function findPairs(items, prevMove) { // findPairsWithMoves()
     let pairs = [];
-    for (const [itemIndex, item] of items[0].entries()) {
-        const neighbors = getNeighbors(item);
+    for (const [itemIndex, cell] of items[0].entries()) {
+        const neighbors = getNeighbors(cell);
         for (const neighborCell of neighbors) {
             const neighborIndex = findItemIndex(neighborCell, items[1]);
             if (neighborIndex != -1) {
@@ -94,15 +94,15 @@ function findWinner(items) { // TODO: Implement (-1 (no one), 0, 1, 2 if draw)
     // ...
     return -1;
 }
-function findItem(cell, items) { // findColor? findPlayer? (playerA, playerB)
+function findPlayerIndex(cell, items) { // findPlayer? (playerA, playerB)
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
 }
 function findItemWithIndex(cell, items) { // TODO: Test/Improve
-    let itemIndex, itemsIndex = items.findIndex((sameItems) => {
+    let itemIndex, playerIndex = items.findIndex((sameItems) => {
         itemIndex = findItemIndex(cell, sameItems);
         return itemIndex != -1;
     });
-    return [itemsIndex, itemIndex];
+    return [playerIndex, itemIndex];
 }
 function findItemIndex(cell, items) { // samePlayerItems
     return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
@@ -133,7 +133,7 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
 class Game {
     constructor() {
         this.items = initialItems;
-        this.pairs = findPairs(this.items, null);
+        this.pairs = findPairs(this.items, null); // pairsWithMoves
         this.history = [];
         this.winner = -1;
     }
@@ -150,11 +150,11 @@ class Game {
             this.pairs = findPairs(this.items, move);
         }
     }
-    findItem(cell) {
-        return findItem(cell, this.items);
+    findPlayerIndex(cell) {
+        return findPlayerIndex(cell, this.items);
     }
-    findItemIndex(cell, itemsIndex) {
-        return findItemIndex(cell, this.items[itemsIndex]);
+    findItemIndex(cell, playerIndex) {
+        return findItemIndex(cell, this.items[playerIndex]);
     }
 }
 class Grid {

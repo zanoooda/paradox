@@ -1,5 +1,5 @@
 import { Game, Grid } from './game.js';
-// TODO: Describe structs, itemsIndex => color | player
+// TODO: Describe structs
 const colors = ['red', 'blue'];
 
 function getPoint(cell, size) { // TODO: Improve
@@ -29,10 +29,10 @@ function canvasClick(event, canvas, game) { // TODO: Implement
 function getCells(game, size) {
     return Grid.cells.map(cell => {
         const point = getPoint([cell[0], cell[1]], size);
-        const itemsIndex = game.findItem(cell);
-        if (itemsIndex != -1) {
-            const itemIndex = game.findItemIndex(cell, itemsIndex);
-            return [...cell, ...point, itemsIndex, itemIndex];
+        const playerIndex = game.findPlayerIndex(cell);
+        if (playerIndex != -1) {
+            const itemIndex = game.findItemIndex(cell, playerIndex);
+            return [...cell, ...point, playerIndex, itemIndex];
         }
         return [...cell, ...point];
     });
@@ -103,7 +103,7 @@ class Paradox {
         showCells(this.game.state.cells, this.context, this.cellRadius);
         showPairs(this.game.state.pairs, this.context, this.clickRadius);
     }
-    playWithRobot(playerColor) { // TODO: Implement
+    playWithRobot(playerIndex) { // TODO: Implement
     }
     playOnline() { // TODO: Implement
     }
@@ -111,7 +111,7 @@ class Paradox {
 class State { // Can be struct
     constructor(game, size) {
         this.cells = getCells(game, size);
-        this.pairs = getPairs(game, size); // size or cells?
+        this.pairs = getPairs(game, size); // size or cells? pairs => pairsWithMoves
     }
 }
 
