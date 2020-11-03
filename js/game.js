@@ -133,6 +133,13 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
                 (move[0] != prevMove[0] && move[1] != prevMove[1] && getInverseDirection(move[2]) != prevMove[2])) {
                 return true;
             }
+            if(prevMove == null) {
+                return true;
+            }
+            if(move[0] == prevMove[0] && move[1] == prevMove[1] && getInverseDirection(move[2]) == prevMove[2]) {
+                return false;
+            }
+            return true;
         }
     }
     return false;
