@@ -103,7 +103,7 @@ function findItemWithIndex(cell, items) { // TODO: Test/Improve
 function findItemIndex(cell, items) {
     return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
-function isLegal(move, items, prevMove) { // Test/Improve
+function isLegal(move, items, prevMove) { // TODO: Test/Improve
     if (move[2] == -1) {
         if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && move[2] == prevMove[2]) { // move.equals(prevMove)
             return false;
@@ -111,7 +111,7 @@ function isLegal(move, items, prevMove) { // Test/Improve
         return true;
     }
     else if (isExist(getNeighbor(items[0][move[0]], directions[move[2]])) && isExist(getNeighbor(items[1][move[1]], directions[move[2]]))) {
-        let itemsWithIndex = [ 
+        let itemsWithIndex = [
             findItemWithIndex(getNeighbor(items[0][move[0]], directions[move[2]]), items),
             findItemWithIndex(getNeighbor(items[1][move[1]], directions[move[2]]), items)
         ];
@@ -129,10 +129,13 @@ class Game {
         this.history = [];
         this.winner = -1;
     }
-    move(pair, direction) { // Test // direction is directions index or -1|6 for switch
+    isLegal(move) { // TODO: Test
+        return isLegal(move, this.items, this.history[this.history.length - 1]);
+    }
+    move(pair, direction) { // TODO: Test/Improve
         //if(!isLegal([...pair, direction], this.items, this.history.length > 0 ? this.history[this.history.length - 1] : null)) return;
         let move = [...pair, direction];
-        this.history.push([move, items, pairs]);
+        this.history.push(move); // this.history.push([move, items, pairs]);
         this.items = updateItems(move, this.items);
         this.winner = findWinner(this.items);
         if (this.winner == -1) {
