@@ -8,7 +8,7 @@ const radius = 3,
         [1, -1], // →
         [0, -1]  // ↘
     ],
-    inverseDirectionsIndexes = [3, 4, 5, 0, 1, 3],
+    inverseDirectionsIndexes = [3, 4, 5, 0, 1, 2],
     forward = directions[4],
     initialItems = createItems(),
     cells = createCells();
