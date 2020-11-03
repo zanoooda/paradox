@@ -8,6 +8,7 @@ const radius = 3,
         [1, -1], // →
         [0, -1]  // ↘
     ],
+    inverseDirectionsIndexes = [3, 4, 5, 0, 1, 3],
     forward = directions[4],
     initialItems = createItems(),
     cells = createCells();
@@ -19,7 +20,10 @@ function isExist(cell) {
     let cube = [...cell, -(cell[0] + cell[1])];
     return Math.max(...cube.map(Math.abs)) <= radius
 }
-function getNeighbor(cell, direction) { // direction => directionIndex ?
+function getInverseDirection(directionIndex) { // Test
+    return inverseDirectionsIndexes[directionIndex];
+}
+function getNeighbor(cell, direction) { // direction => directionIndex!
     return cell.map((n, i) => n + direction[i]);
 }
 function getNeighbors(cell) { // Improve
@@ -116,7 +120,8 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
             findItemWithIndex(getNeighbor(items[1][move[1]], directions[move[2]]), items)
         ];
         if ((itemsWithIndex[0][0] == -1 || (itemsWithIndex[0][0] == 1 && itemsWithIndex[0][1] == move[1])) &&
-            (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0]))) { // && not last move inverse!
+            (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0])) &&
+            (prevMove && move[0] != prevMove[0] && move[1] != prevMove[1] && getInverseDirection(move[3]) != prevMove[3])) { // TODO: Test
             return true;
         }
     }
