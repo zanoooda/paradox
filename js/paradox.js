@@ -1,5 +1,5 @@
 import { Game, Grid } from './game.js';
-// TODO: Describe structs
+// TODO: Describe structs, itemsIndex => color | player
 const colors = ['red', 'blue'];
 
 function getPoint(cell, size) { // TODO: Improve
