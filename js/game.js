@@ -116,7 +116,7 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
             findItemWithIndex(getNeighbor(items[1][move[1]], directions[move[2]]), items)
         ];
         if ((itemsWithIndex[0][0] == -1 || (itemsWithIndex[0][0] == 1 && itemsWithIndex[0][1] == move[1])) &&
-            (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0]))) {
+            (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0]))) { // && not last move inverse!
             return true;
         }
     }
