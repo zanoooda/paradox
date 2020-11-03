@@ -94,8 +94,7 @@ function findItem(cell, items) {
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
 }
 function findItemWithIndex(cell, items) { // TODO: Test/Improve
-    let itemIndex = -1;
-    let itemsIndex = items.findIndex((sameItems) => {
+    let itemIndex, itemsIndex = items.findIndex((sameItems) => {
         itemIndex = findItemIndex(cell, sameItems);
         return itemIndex != -1;
     });
