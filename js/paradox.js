@@ -26,13 +26,16 @@ function canvasClick(event, that) { // TODO: Implement
     ];
 
     // select or move ...
+    let selectedPair = null; // [9, 9] ?
 
     that.game.move([3, 2], -1);
 
-    let state = new State(that.game, that.size);
+    that.state = new State(that.game, that.size, selectedPair);
+    // showState()
     that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
-    showCells(state.cells, that.context, that.cellRadius);
-    showPairs(state.pairs, that.context, that.clickRadius);
+    showCells(that.state.cells, that.context, that.cellRadius); // showCellsAndItems()
+    showPairs(that.state.pairs, that.context, that.clickRadius);
+    // showSelectedPair();
 
     console.log(`${point[0]}, ${point[1]}`);
 }
@@ -113,9 +116,9 @@ class Paradox {
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
 
-        let state = new State(this.game, this.size);
-        showCells(state.cells, this.context, this.cellRadius);
-        showPairs(state.pairs, this.context, this.clickRadius);
+        this.game.state = new State(this.game, this.size, null); // this.state | game.state ?
+        showCells(this.game.state.cells, this.context, this.cellRadius);
+        showPairs(this.game.state.pairs, this.context, this.clickRadius);
     }
     playWithRobot(playerIndex) { // TODO: Implement
     }
@@ -123,9 +126,10 @@ class Paradox {
     }
 }
 class State { // Can be struct
-    constructor(game, size) {
+    constructor(game, size, selectedPair) {
         this.cells = getCells(game, size);
         this.pairs = getPairs(game, size); // size or cells? pairs => pairsWithMoves
+        this.selectedPair = selectedPair;
     }
 }
 
