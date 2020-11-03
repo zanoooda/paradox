@@ -87,11 +87,11 @@ function findMoves(pair, items, prevMove) {
     return moves;
 }
 function updateItems(move, items) { // TODO: Test/Improve
-    if(move[2] == -1) {
+    if (move[2] == -1) {
         const cell0 = items[0][move[0]];
         items[0][move[0]] = items[1][move[1]];
         items[1][move[1]] = cell0;
-    } 
+    }
     else {
         items[0][move[0]] = getNeighbor(items[0][move[0]], move[2]);
         items[0][move[0]] = getNeighbor(items[0][move[0]], move[2]);
@@ -127,13 +127,12 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
             findItemWithIndex(getNeighbor(items[0][move[0]], directions[move[2]]), items), // items[0][move[0]] wrap to const
             findItemWithIndex(getNeighbor(items[1][move[1]], directions[move[2]]), items)
         ];
-        if ((itemsWithIndex[0][0] == -1 || (itemsWithIndex[0][0] == 1 && itemsWithIndex[0][1] == move[1])) && // !
-            (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0])) &&
-            (
-                (prevMove == null) ||
-                (move[0] != prevMove[0] && move[1] != prevMove[1] && getInverseDirection(move[3]) != prevMove[3])) // !
-        ) {
-            return true;
+        if ((itemsWithIndex[0][0] == -1 || (itemsWithIndex[0][0] == 1 && itemsWithIndex[0][1] == move[1])) &&
+            (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0]))) {
+            if ((prevMove == null) ||
+                (move[0] != prevMove[0] && move[1] != prevMove[1] && getInverseDirection(move[2]) != prevMove[2])) {
+                return true;
+            }
         }
     }
     return false;
