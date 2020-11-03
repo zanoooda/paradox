@@ -93,18 +93,18 @@ function findWinner(items) { // TODO: Implement (-1 (no one), 0, 1, 2 if draw)
 function findItem(cell, items) {
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
 }
-function findItemWithIndex(cell, items) { // TODO: Improve (!)
-    let itemsIndex = findItem(cell, items);
+function findItemWithIndex(cell, items) { // TODO: Test/Improve
     let itemIndex = -1;
-    if (itemsIndex != -1) {
-        itemIndex = findItemIndex(cell, items[itemsIndex])
-    }
+    let itemsIndex = items.findIndex((sameItems) => {
+        itemIndex = findItemIndex(cell, sameItems);
+        return itemIndex != -1;
+    });
     return [itemsIndex, itemIndex];
 }
 function findItemIndex(cell, items) {
     return items.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
-function isLegal(move, items, prevMove) { // Test
+function isLegal(move, items, prevMove) { // Test/Improve
     if (move[2] == -1) {
         if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && move[2] == prevMove[2]) { // move.equals(prevMove)
             return false;
