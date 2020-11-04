@@ -29,16 +29,15 @@ function canvasClick(event, that) { // TODO: Implement
     ];
 
     // select or move ...
-    //let clickedPairIndex = -1;
-    let clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
-    let clickedMoveDirection = null; // if(clickedPairIndex == direction of that.game.state.selectedPairIndex)
+    const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
+    const clickedMoveDirection = null; // cklicked point close to allowed direction's (move) point of that.game.state.selectedPairIndex ? value : null
+    const unselected = -1;
 
     if (clickedPairIndex != -1) {
         if (clickedPairIndex === that.game.state.selectedPairIndex) {
-            let pair = [that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]];
-            let selectedPairIndex = -1;
+            const pair = [that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]];
             that.game.move(pair, Grid.swap);
-            that.game.state = new State(that.game, that.size, selectedPairIndex);
+            that.game.state = new State(that.game, that.size, unselected);
             // ...
         }
         else { // select
@@ -47,10 +46,9 @@ function canvasClick(event, that) { // TODO: Implement
         }
     }
     else if (clickedMoveDirection != null) {
-        let pair = [thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]];
-        let selectedPairIndex = -1;
+        const pair = [thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]];
         that.game.move(pair, clickedMoveDirection);
-        that.game.state = new State(that.game, that.size, selectedPairIndex);
+        that.game.state = new State(that.game, that.size, unselected);
         // ...
     }
     // ...
@@ -58,7 +56,7 @@ function canvasClick(event, that) { // TODO: Implement
     that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
     showCells(that.game.state.cells, that.context, that.cellRadius);
     showPairs(that.game.state.pairs, that.context, that.clickRadius);
-    // showSelectedPair();
+    showSelectedPair(that.game.state, that.context, that.cellRadius);
 
     console.log(`${point[0]}, ${point[1]}`);
 }
@@ -121,6 +119,28 @@ function showPair(pair, context, clickRadius) {
     context.fillStyle = 'black'; // duplicated
     context.font = '10px Arial'; // duplicated
     context.fillText(`${pair[0]}, ${pair[1]}, [${pair[2]}]`, ...point);
+}
+function showSelectedPair(state, context, cellRadius) { // Improve
+    if (state.selectedPairIndex != -1) {
+        const pair = state.pairs[state.selectedPairIndex];
+        const selectedCells = [
+            state.cells.find(cell => typeof cell[5] !== 'undefined' && cell[4] == 0 && cell[5] == pair[0]),
+            state.cells.find(cell => typeof cell[5] !== 'undefined' && cell[4] == 1 && cell[5] == pair[1])
+        ];
+        for(const cell of selectedCells) {
+            showSelectedCell(cell, context, cellRadius);
+        }
+    }
+}
+function showSelectedCell(cell, context, cellRadius) { // Improve
+    const point = [cell[2], cell[3]];
+    context.beginPath();
+    context.arc(...point, cellRadius, 0, 2 * Math.PI);
+    context.closePath();
+    context.lineWidth = cellRadius / 2;
+    context.strokeStyle = 'purple'
+    context.stroke();
+    context.lineWidth = 1; //:
 }
 class Paradox {
     constructor(container) {
