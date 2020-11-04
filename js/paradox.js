@@ -26,11 +26,11 @@ function canvasClick(event, that) { // TODO: Implement
     ];
 
     // select or move ...
-    let selectedPair = null; // [9, 9] ?
+    let selectedPairIndex = -1; // ...that.pairs[selectedPairIndex]
 
     that.game.move([3, 2], -1);
 
-    that.state = new State(that.game, that.size, selectedPair);
+    that.state = new State(that.game, that.size, selectedPairIndex);
     // showState()
     that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
     showCells(that.state.cells, that.context, that.cellRadius); // showCellsAndItems()
@@ -116,7 +116,7 @@ class Paradox {
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
 
-        this.game.state = new State(this.game, this.size, null); // this.state | game.state ?
+        this.game.state = new State(this.game, this.size, -1); // this.state | game.state ?
         showCells(this.game.state.cells, this.context, this.cellRadius);
         showPairs(this.game.state.pairs, this.context, this.clickRadius);
     }
@@ -126,10 +126,10 @@ class Paradox {
     }
 }
 class State { // Can be struct
-    constructor(game, size, selectedPair) {
+    constructor(game, size, selectedPairIndex) {
         this.cells = getCells(game, size);
         this.pairs = getPairs(game, size); // size or cells? pairs => pairsWithMoves
-        this.selectedPair = selectedPair;
+        this.selectedPairIndex = selectedPairIndex;
     }
 }
 
