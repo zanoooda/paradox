@@ -3,6 +3,7 @@ import { Game, Grid } from './game.js';
 // TODO: Wrap unreadable struct manipulations to readable variables/methods
 // State can be recreated on each click and not be saved at the game
 // Cell's points can be calculated only once (also pairs and moves)
+// new State can be crated by old one and [move] (pair and direction) (state.updateState(move))
 // ...
 const colors = ['red', 'blue'];
 
@@ -40,7 +41,7 @@ function canvasClick(event, that) { // TODO: Implement
         if (clickedPairIndex === that.game.state.selectedPairIndex) {
             const pair = [that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]];
             that.game.move(pair, Grid.swap);
-            that.game.state = new State(that.game, that.size, unselected);
+            that.game.state = new State(that.game, that.size, unselected); // that.game.state.updateState([...pair], Grid.swap);
             // ...
         }
         else { // select
@@ -51,7 +52,7 @@ function canvasClick(event, that) { // TODO: Implement
     else if (clickedMoveDirection != null) {
         const pair = [thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]];
         that.game.move(pair, clickedMoveDirection);
-        that.game.state = new State(that.game, that.size, unselected);
+        that.game.state = new State(that.game, that.size, unselected); // that.game.state.updateState([...pair], clickedMoveDirection);
         // ...
     }
     // ...
