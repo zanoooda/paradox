@@ -20,26 +20,46 @@ function createCanvas(size) {
     return canvas;
 }
 function canvasClick(event, that) { // TODO: Implement
+    event.preventDefault();
+    event.stopPropagation();
+
     const point = [
         event.pageX - that.canvas.offsetLeft - that.canvas.clientLeft,
         event.pageY - that.canvas.offsetTop - that.canvas.clientTop
     ];
 
     // select or move ...
-    let selectedPairIndex = -1; // ...that.pairs[selectedPairIndex]
-
-    that.game.move([3, 2], -1);
-
-    that.state = new State(that.game, that.size, selectedPairIndex);
-    // showState()
+    let clickedPairIndex = 0;
+    let clickedMoveDirection = -1;
+    if (clickedPairIndex != -1) {
+        if (clickedPairIndex === that.game.state.selectedPairIndex) { // swap
+            that.game.move([that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]], -1);
+            that.game.state = new State(that.game, that.size, -1);
+            // ...
+            // show
+        }
+        else { // select
+            that.game.state.selectedPairIndex = clickedPairIndex;
+            // ...
+            // show
+        }
+    }
+    else if (clickedMoveDirection) {
+        that.game.move([thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]], clickedMoveDirection);
+        that.game.state = new State(that.game, that.size, -1);
+        // ...
+        // show
+    }
+    // ...
+    // showState(state, context, cellRadius, clickRadius)
     that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
-    showCells(that.state.cells, that.context, that.cellRadius); // showCellsAndItems()
-    showPairs(that.state.pairs, that.context, that.clickRadius);
+    showCells(that.game.state.cells, that.context, that.cellRadius);
+    showPairs(that.game.state.pairs, that.context, that.clickRadius);
     // showSelectedPair();
 
     console.log(`${point[0]}, ${point[1]}`);
 }
-function getCells(game, size) {
+function getCells(game, size) { // showCellsAndItems
     return Grid.cells.map(cell => {
         const point = getPoint([cell[0], cell[1]], size);
         const playerIndex = game.findPlayerIndex(cell);
@@ -117,8 +137,11 @@ class Paradox {
         this.container.prepend(this.canvas);
 
         this.game.state = new State(this.game, this.size, -1); // this.state | game.state ?
+        // showState(state, context, cellRadius, clickRadius)
+        //this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         showCells(this.game.state.cells, this.context, this.cellRadius);
         showPairs(this.game.state.pairs, this.context, this.clickRadius);
+        // showSelectedPair();
     }
     playWithRobot(playerIndex) { // TODO: Implement
     }
