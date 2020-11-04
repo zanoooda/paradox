@@ -26,8 +26,9 @@ function canvasClick(event, that) { // TODO: Implement
     ];
 
     // select or move ...
-    let clickedPairIndex = 0;
-    let clickedMoveDirection = Grid.swap;
+    let clickedPairIndex = -1;
+    let clickedMoveDirection = null; // if(clickedPairIndex == direction of that.game.state.selectedPairIndex)
+
     if (clickedPairIndex != -1) {
         if (clickedPairIndex === that.game.state.selectedPairIndex) {
             let pair = [that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]];
@@ -41,7 +42,7 @@ function canvasClick(event, that) { // TODO: Implement
             // ...
         }
     }
-    else if (clickedMoveDirection) {
+    else if (clickedMoveDirection != null) {
         let pair = [thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]];
         let selectedPairIndex = -1;
         that.game.move(pair, clickedMoveDirection);
