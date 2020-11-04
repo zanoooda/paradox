@@ -170,7 +170,7 @@ class Game {
 }
 class Grid {
     static cells = cells;
-    static swap = swap;
+    static swap = swap; // game.swap? swapDirection?
 }
 
 export { Game, Grid }
