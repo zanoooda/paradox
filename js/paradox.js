@@ -30,25 +30,24 @@ function canvasClick(event, that) { // TODO: Implement
 
     // select or move ...
     let clickedPairIndex = 0;
-    let clickedMoveDirection = -1;
+    let clickedMoveDirection = Grid.swap;
     if (clickedPairIndex != -1) {
-        if (clickedPairIndex === that.game.state.selectedPairIndex) { // swap
+        if (clickedPairIndex === that.game.state.selectedPairIndex) {
+            let pair = [that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]];
             that.game.move([that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]], -1);
             that.game.state = new State(that.game, that.size, -1);
             // ...
-            // show
         }
         else { // select
             that.game.state.selectedPairIndex = clickedPairIndex;
             // ...
-            // show
         }
     }
     else if (clickedMoveDirection) {
-        that.game.move([thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]], clickedMoveDirection);
+        let pair = [thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]];
+        that.game.move(pair, clickedMoveDirection);
         that.game.state = new State(that.game, that.size, -1);
         // ...
-        // show
     }
     // ...
     // showState(state, context, cellRadius, clickRadius)

@@ -10,6 +10,7 @@ const radius = 3,
     ],
     inverseDirectionsIndexes = [3, 4, 5, 0, 1, 2],
     forward = directions[4],
+    swap = -1,
     initialItems = createItems(),
     cells = createCells();
 
@@ -74,9 +75,9 @@ function findPairs(items, prevMove) { // findPairsWithMoves()
 }
 function findMoves(pair, items, prevMove) {
     let moves = [];
-    const swapMove = [...pair, -1];
+    const swapMove = [...pair, swap];
     if (isLegal(swapMove, items, prevMove)) {
-        moves.push(-1);
+        moves.push(swap);
     }
     for (const [directionIndex, direction] of directions.entries()) {
         const move = [...pair, directionIndex];
@@ -87,7 +88,7 @@ function findMoves(pair, items, prevMove) {
     return moves;
 }
 function updateItems(move, items) { // TODO: Test/Improve
-    if (move[2] == -1) {
+    if (move[2] == swap) {
         const cell0 = items[0][move[0]];
         items[0][move[0]] = items[1][move[1]];
         items[1][move[1]] = cell0;
@@ -116,7 +117,7 @@ function findItemIndex(cell, samePlayersItems) {
     return samePlayersItems.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
 function isLegal(move, items, prevMove) { // TODO: Test/Improve
-    if (move[2] == -1) {
+    if (move[2] == swap) {
         if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && move[2] == prevMove[2]) { // isEqual(move, prevMove)
             return false;
         }
@@ -169,6 +170,7 @@ class Game {
 }
 class Grid {
     static cells = cells;
+    static swap = swap;
 }
 
 export { Game, Grid }
