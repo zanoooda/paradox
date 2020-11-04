@@ -9,6 +9,9 @@ function getPoint(cell, size) { // TODO: Improve and fix
     const y = (size / 2) + (distance * 3 / 2 * cell2);
     return [x, y];
 }
+function getDistance(pointA, pointB) { // Test
+    return Math.sqrt(Math.pow(pointA[0] - pointB[0], 2) + Math.pow(pointA[1] - pointB[1], 2));
+}
 function getSize(container) {
     const containerRect = container.getBoundingClientRect();
     return Math.min(containerRect.width, containerRect.height);
@@ -26,7 +29,8 @@ function canvasClick(event, that) { // TODO: Implement
     ];
 
     // select or move ...
-    let clickedPairIndex = -1;
+    //let clickedPairIndex = -1;
+    let clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
     let clickedMoveDirection = null; // if(clickedPairIndex == direction of that.game.state.selectedPairIndex)
 
     if (clickedPairIndex != -1) {
