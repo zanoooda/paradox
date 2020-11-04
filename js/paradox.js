@@ -32,7 +32,6 @@ function canvasClick(event, that) { // TODO: Implement
     const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
     const clickedMoveDirection = null; // cklicked point close to allowed direction's (move) point of that.game.state.selectedPairIndex ? value : null
     const unselected = -1;
-
     if (clickedPairIndex != -1) {
         if (clickedPairIndex === that.game.state.selectedPairIndex) {
             const pair = [that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]];
@@ -52,6 +51,9 @@ function canvasClick(event, that) { // TODO: Implement
         // ...
     }
     // ...
+    // moves = getSelectedPairMoves(state) [ [[9, 9, -1|5], [x, y]], ... ]
+    // if clicked on a move => game.move()
+    // else if clicked on a pair => select()
     // showState(state, context, cellRadius, clickRadius)
     that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
     showCells(that.game.state.cells, that.context, that.cellRadius);
