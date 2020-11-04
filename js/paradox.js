@@ -51,7 +51,7 @@ function canvasClick(event, that) { // TODO: Implement
         // ...
     }
     // ...
-    // moves = getSelectedPairMoves(state) [ [[9, 9, -1|5], [x, y]], ... ]
+    // moves = getSelectedPairMoves(state) [ [[9, 9, -1|5], [x, y]], ... ] // right way because if swap can be last move
     // if clicked on a move => game.move()
     // else if clicked on a pair => select()
     // showState(state, context, cellRadius, clickRadius)
