@@ -1,5 +1,9 @@
 import { Game, Grid } from './game.js';
 // TODO: Describe structs
+// TODO: Wrap unreadable struct manipulations to readable variables/methods
+// State can be recreated on each click and not be saved at the game
+// Cell's points can be calculated only once (also pairs and moves)
+// ...
 const colors = ['red', 'blue'];
 
 function getPoint(cell, size) { // TODO: Improve and fix
@@ -9,8 +13,8 @@ function getPoint(cell, size) { // TODO: Improve and fix
     const y = (size / 2) + (distance * 3 / 2 * cell2);
     return [x, y];
 }
-function getDistance(pointA, pointB) { // Test
-    return Math.sqrt(Math.pow(pointA[0] - pointB[0], 2) + Math.pow(pointA[1] - pointB[1], 2));
+function getDistance(point0, point1) {
+    return Math.sqrt(Math.pow(point0[0] - point1[0], 2) + Math.pow(point0[1] - point1[1], 2));
 }
 function getSize(container) {
     const containerRect = container.getBoundingClientRect();
@@ -51,7 +55,8 @@ function canvasClick(event, that) { // TODO: Implement
         // ...
     }
     // ...
-    // moves = getSelectedPairMoves(state) [ [[9, 9, -1|5], [x, y]], ... ] // right way because if swap can be last move
+    // moves = getSelectedPairMoves(state) [ directionIndex, x, y ], ... ] // right way because if swap can be last move
+    const moves = getSelectedPairMoves(that.state);
     // if clicked on a move => game.move()
     // else if clicked on a pair => select()
     // showState(state, context, cellRadius, clickRadius)
@@ -59,6 +64,7 @@ function canvasClick(event, that) { // TODO: Implement
     showCells(that.game.state.cells, that.context, that.cellRadius);
     showPairs(that.game.state.pairs, that.context, that.clickRadius);
     showSelectedPair(that.game.state, that.context, that.cellRadius);
+    showSelectedPairMoves(moves, that.context, that.clickRadius);
 
     console.log(`${point[0]}, ${point[1]}`);
 }
@@ -102,7 +108,7 @@ function getPairs(game, size) { // Another option is to get point by pairs and c
     return game.pairs.map((pair) => {
         const cells = [game.items[0][pair[0]], game.items[1][pair[1]]];
         const points = [getPoint(cells[0], size), getPoint(cells[1], size)];
-        const point = [(points[0][0] + points[1][0]) / 2, (points[0][1] + points[1][1]) / 2];
+        const point = [(points[0][0] + points[1][0]) / 2, (points[0][1] + points[1][1]) / 2]; // wrap to function
         return [...pair, ...point];
     });
 }
@@ -144,6 +150,14 @@ function showSelectedCell(cell, context, cellRadius) { // Improve
     context.stroke();
     context.lineWidth = 1; //:
 }
+function getSelectedPairMoves(state) { // Implement
+    const movesWithPoint = [];
+    // ...
+    return movesWithPoint;
+}
+function showSelectedPairMoves(moves, context, clickRadius) { // Implement
+    // ...
+}
 class Paradox {
     constructor(container) {
         this.container = container;
@@ -161,19 +175,20 @@ class Paradox {
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
 
-        this.game.state = new State(this.game, this.size, -1); // this.state | game.state ?
+        this.game.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
         // showState(state, context, cellRadius, clickRadius)
         //this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         showCells(this.game.state.cells, this.context, this.cellRadius);
         showPairs(this.game.state.pairs, this.context, this.clickRadius);
         // showSelectedPair();
+        // showSelectedPairMoves();
     }
     playWithRobot(playerIndex) { // TODO: Implement
     }
     playOnline() { // TODO: Implement
     }
 }
-class State { // Can be struct
+class State { // Can be struct but another way cells, pairs and moves can be classes
     constructor(game, size, selectedPairIndex) {
         this.cells = getCells(game, size);
         this.pairs = getPairs(game, size); // size or cells? pairs => pairsWithMoves
