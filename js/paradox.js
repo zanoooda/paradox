@@ -20,9 +20,6 @@ function createCanvas(size) {
     return canvas;
 }
 function canvasClick(event, that) { // TODO: Implement
-    event.preventDefault();
-    event.stopPropagation();
-
     const point = [
         event.pageX - that.canvas.offsetLeft - that.canvas.clientLeft,
         event.pageY - that.canvas.offsetTop - that.canvas.clientTop
@@ -34,8 +31,9 @@ function canvasClick(event, that) { // TODO: Implement
     if (clickedPairIndex != -1) {
         if (clickedPairIndex === that.game.state.selectedPairIndex) {
             let pair = [that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]];
-            that.game.move([that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]], -1);
-            that.game.state = new State(that.game, that.size, -1);
+            let selectedPairIndex = -1;
+            that.game.move(pair, Grid.swap);
+            that.game.state = new State(that.game, that.size, selectedPairIndex);
             // ...
         }
         else { // select
@@ -45,8 +43,9 @@ function canvasClick(event, that) { // TODO: Implement
     }
     else if (clickedMoveDirection) {
         let pair = [thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]];
+        let selectedPairIndex = -1;
         that.game.move(pair, clickedMoveDirection);
-        that.game.state = new State(that.game, that.size, -1);
+        that.game.state = new State(that.game, that.size, selectedPairIndex);
         // ...
     }
     // ...
