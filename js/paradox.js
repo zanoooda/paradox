@@ -36,9 +36,9 @@ function canvasClick(event, that) { // TODO: Implement
     const clickedMoveDirection = null; // => that.game.state.selectedPairIndex != -1
     const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
     // TODO: Find clothest to click pair that in radius 
-    if(clickedMoveDirection != null) { // that.game.state.selectedPairIndex != -1
+    if (clickedMoveDirection != null) { // that.game.state.selectedPairIndex != -1
         const selectedPair = [
-            that.game.state.pairs[that.game.state.selectedPairIndex][0], 
+            that.game.state.pairs[that.game.state.selectedPairIndex][0],
             that.game.state.pairs[that.game.state.selectedPairIndex][1]
         ];
         that.game.move(selectedPair, clickedMoveDirection);
@@ -127,7 +127,7 @@ function showSelectedPair(state, context, cellRadius) { // Improve
             state.cells.find(cell => typeof cell[5] !== 'undefined' && cell[4] == 0 && cell[5] == pair[0]),
             state.cells.find(cell => typeof cell[5] !== 'undefined' && cell[4] == 1 && cell[5] == pair[1])
         ];
-        for(const cell of selectedCells) {
+        for (const cell of selectedCells) {
             showSelectedCell(cell, context, cellRadius);
         }
     }
@@ -142,10 +142,18 @@ function showSelectedCell(cell, context, cellRadius) { // Improve
     context.stroke();
     context.lineWidth = 1; //:
 }
-function getSelectedPairMoves(selectedPairIndex, pairs, cells) { // Implement // getSelectedPairMoveDirectionsWithPoints()
-    const movesWithPoint = [];
+function getSelectedPairMoves(selectedPairIndex, pairs, cells) { // Implement/Improve // getSelectedPairMoveDirectionsWithPoints()
+    const moves = [];
     // ...
-    return movesWithPoint;
+    return moves;
+    if (selectedPairIndex == -1) {
+        return [];
+    }
+    return pairs[selectedPairIndex][2].map(directionIndex => {
+        const x = null;
+        const y = null;
+        return [directionIndex, x, y];
+    });
 }
 function showSelectedPairMoves(moves, context, clickRadius) { // Test
     for (const move of moves) {

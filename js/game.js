@@ -25,13 +25,13 @@ function isExist(cell) {
 function getInverseDirection(directionIndex) {
     return inverseDirectionsIndexes[directionIndex];
 }
-function getNeighbor(cell, direction) { // direction => directionIndex
-    return cell.map((n, i) => n + direction[i]);
+function getNeighbor(cell, directionIndex) {
+    return cell.map((n, i) => n + directions[directionIndex][i]);
 }
 function getNeighbors(cell) {
     let neighbors = [];
-    for (const direction of directions) {
-        const neighbor = getNeighbor(cell, direction);
+    for (const [directionIndex, direction] of directions.entries()) {
+        const neighbor = getNeighbor(cell, directionIndex);
         if (isExist(neighbor)) {
             neighbors.push(neighbor);
         }
@@ -41,7 +41,7 @@ function getNeighbors(cell) {
 function getPerimeter(radius) {
     let perimeter = [mult(forward, radius)];
     for (let diameterIndex = 1, directionIndex = 0; diameterIndex < radius * 6; directionIndex += diameterIndex % radius == 0, diameterIndex++) {
-        perimeter.push(getNeighbor(perimeter[perimeter.length - 1], directions[directionIndex]));
+        perimeter.push(getNeighbor(perimeter[perimeter.length - 1], directionIndex));
     }
     return perimeter;
 }
@@ -95,8 +95,8 @@ function updateItems(move, items) { // TODO: Test/Improve
         items[1][move[1]] = cell0;
     }
     else {
-        items[0][move[0]] = getNeighbor(items[0][move[0]], directions[move[2]]);
-        items[1][move[1]] = getNeighbor(items[1][move[1]], directions[move[2]]);
+        items[0][move[0]] = getNeighbor(items[0][move[0]], move[2]);
+        items[1][move[1]] = getNeighbor(items[1][move[1]], move[2]);
     }
     return items;
 }
@@ -124,10 +124,10 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
         }
         return true;
     }
-    else if (isExist(getNeighbor(items[0][move[0]], directions[move[2]])) && isExist(getNeighbor(items[1][move[1]], directions[move[2]]))) {
+    else if (isExist(getNeighbor(items[0][move[0]], move[2])) && isExist(getNeighbor(items[1][move[1]], move[2]))) {
         const itemsWithIndex = [
-            findItemWithIndex(getNeighbor(items[0][move[0]], directions[move[2]]), items), // items[0][move[0]] wrap to const
-            findItemWithIndex(getNeighbor(items[1][move[1]], directions[move[2]]), items)
+            findItemWithIndex(getNeighbor(items[0][move[0]], move[2]), items), // items[0][move[0]] wrap to const
+            findItemWithIndex(getNeighbor(items[1][move[1]], move[2]), items)
         ];
         if ((itemsWithIndex[0][0] == -1 || (itemsWithIndex[0][0] == 1 && itemsWithIndex[0][1] == move[1])) &&
             (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0]))) {
@@ -172,6 +172,9 @@ class Game {
 class Grid {
     static cells = cells;
     static swap = swap;
+    static getNeighbor(cell, directionIndex) {
+        return getNeighbor(cell, directionIndex)
+    }
 }
 
 export { Game, Grid }
