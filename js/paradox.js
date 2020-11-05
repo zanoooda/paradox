@@ -132,8 +132,8 @@ function showSelectedPair(state, context, cellRadius) { // Improve
     if (state.selectedPairIndex != -1) {
         const pair = state.pairs[state.selectedPairIndex];
         const selectedCells = [
-            state.cells.find(cell => typeof cell[5] !== 'undefined' && cell[4] == 0 && cell[5] == pair[0]),
-            state.cells.find(cell => typeof cell[5] !== 'undefined' && cell[4] == 1 && cell[5] == pair[1])
+            state.cells.find(cell => cell[4] == 0 && cell[5] == pair[0]),
+            state.cells.find(cell => cell[4] == 1 && cell[5] == pair[1])
         ];
         for (const cell of selectedCells) {
             showSelectedCell(cell, context, cellRadius);
@@ -159,8 +159,8 @@ function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // Test/I
             const point = [pairs[selectedPairIndex][3], pairs[selectedPairIndex][4]]
             return [directionIndex, ...point];
         }
-        const cell0 = cells.find(cell => typeof cell[4] !== 'undefined' && cell[4] == 0 && cell[5] == pairs[selectedPairIndex][0]);
-        const cell1 = cells.find(cell => typeof cell[4] !== 'undefined' && cell[4] == 1 && cell[5] == pairs[selectedPairIndex][1]);
+        const cell0 = cells.find(cell => cell[4] == 0 && cell[5] == pairs[selectedPairIndex][0]);
+        const cell1 = cells.find(cell => cell[4] == 1 && cell[5] == pairs[selectedPairIndex][1]);
         const cell0NewPoint = getPoint(Grid.getNeighbor(cell0, directionIndex), size);
         const cell1NewPoint = getPoint(Grid.getNeighbor(cell1, directionIndex), size);
         const point = [(cell0NewPoint[0] + cell1NewPoint[0]) / 2, (cell0NewPoint[1] + cell1NewPoint[1]) / 2];
