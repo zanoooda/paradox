@@ -60,6 +60,7 @@ function canvasClick(event, that) { // TODO: Implement
     const moves = getSelectedPairMoves(that.state);
     // if clicked on a move => game.move()
     // else if clicked on a pair => select()
+
     // showState(state, context, cellRadius, clickRadius)
     that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
     showCells(that.game.state.cells, that.context, that.cellRadius);
@@ -123,7 +124,7 @@ function showPair(pair, context, clickRadius) {
     context.beginPath();
     context.arc(...point, clickRadius, 0, 2 * Math.PI);
     context.closePath();
-    context.strokeStyle = 'black'
+    context.strokeStyle = 'purple'
     context.stroke();
     context.fillStyle = 'black'; // duplicated
     context.font = '10px Arial'; // duplicated
