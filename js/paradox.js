@@ -4,6 +4,7 @@ import { Game, Grid } from './game.js';
 // State can be recreated on each click and not be saved at the game but need to save information about selectedPair
 // Cell's points can be calculated only once (also pairs and moves)
 // new State can be crated by old one and [move] (pair and direction) (state.updateState(move))
+// -0
 // ...
 const colors = ['red', 'blue'];
 
@@ -33,7 +34,13 @@ function canvasClick(event, that) { // TODO: Implement
         event.pageY - that.canvas.offsetTop - that.canvas.clientTop
     ];
     // move or select ...
-    const clickedMoveDirection = null; // => that.game.state.selectedPairIndex != -1
+    let clickedMoveDirection = null; // => that.game.state.selectedPairIndex != -1
+    for (const move of that.game.state.moves) {
+        if (getDistance([move[1], move[2]], point) < that.clickRadius) {
+            clickedMoveDirection = move[0];
+            break;
+        }
+    }
     const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
     // TODO: Find clothest to click pair that in radius 
     if (clickedMoveDirection != null) { // that.game.state.selectedPairIndex != -1
@@ -47,6 +54,7 @@ function canvasClick(event, that) { // TODO: Implement
     }
     else if (clickedPairIndex != -1) {
         that.game.state.selectedPairIndex = clickedPairIndex;
+        that.game.state.moves = getSelectedPairMoves(that.game.state.selectedPairIndex, that.game.state.pairs, that.game.state.cells, that.size);
         // ...
     }
     // ...
@@ -142,17 +150,21 @@ function showSelectedCell(cell, context, cellRadius) { // Improve
     context.stroke();
     context.lineWidth = 1; //:
 }
-function getSelectedPairMoves(selectedPairIndex, pairs, cells) { // Implement/Improve // getSelectedPairMoveDirectionsWithPoints()
-    const moves = [];
-    // ...
-    return moves;
+function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // Test/Improve!!! // getSelectedPairMoveDirectionsWithPoints()
     if (selectedPairIndex == -1) {
         return [];
     }
     return pairs[selectedPairIndex][2].map(directionIndex => {
-        const x = null;
-        const y = null;
-        return [directionIndex, x, y];
+        if (directionIndex == Grid.swap) {
+            const point = [pairs[selectedPairIndex][3], pairs[selectedPairIndex][4]]
+            return [directionIndex, ...point];
+        }
+        const cell0 = cells.find(cell => typeof cell[4] !== 'undefined' && cell[4] == 0 && cell[5] == pairs[selectedPairIndex][0]);
+        const cell1 = cells.find(cell => typeof cell[4] !== 'undefined' && cell[4] == 1 && cell[5] == pairs[selectedPairIndex][1]);
+        const cell0NewPoint = getPoint(Grid.getNeighbor(cell0, directionIndex), size);
+        const cell1NewPoint = getPoint(Grid.getNeighbor(cell1, directionIndex), size);
+        const point = [(cell0NewPoint[0] + cell1NewPoint[0]) / 2, (cell0NewPoint[1] + cell1NewPoint[1]) / 2];
+        return [directionIndex, ...point];
     });
 }
 function showSelectedPairMoves(moves, context, clickRadius) { // Test
@@ -206,7 +218,7 @@ class State { // Can be struct but another way cells, pairs and moves can be cla
         this.cells = getCells(game, size); // [[cell0, cell1, x, y (optonal), playerIndex, itemIndex], ...]
         this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...] // size or cells?
         this.selectedPairIndex = selectedPairIndex; // -1|0...
-        this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells); // [[directionIndex, x, y], ...]
+        this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells, size); // [[directionIndex, x, y], ...]
     }
 }
 
