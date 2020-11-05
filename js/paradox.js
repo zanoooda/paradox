@@ -1,5 +1,5 @@
 import { Game, Grid } from './game.js';
-// TODO: Describe structs
+// TODO: Describe structs or wrap structs to classes with readable props
 // TODO: Wrap unreadable struct manipulations to readable variables/methods
 // State can be recreated on each click and not be saved at the game
 // Cell's points can be calculated only once (also pairs and moves)
