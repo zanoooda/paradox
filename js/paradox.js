@@ -5,6 +5,7 @@ import { Game, Grid } from './game.js';
 // Cell's points can be calculated only once (also pairs and moves)
 // new State can be crated by old one and [move] (pair and direction) (state.updateState(move))
 // -0
+// Use nullish coalescing operator (??)
 // ...
 const colors = ['red', 'blue'];
 
