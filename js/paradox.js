@@ -35,6 +35,7 @@ function canvasClick(event, that) { // TODO: Implement
     // move or select ...
     const clickedMoveDirection = null; // => that.game.state.selectedPairIndex != -1
     const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
+    // TODO: Find clothest to click pair that in radius 
     if(clickedMoveDirection != null) { // that.game.state.selectedPairIndex != -1
         const selectedPair = [
             that.game.state.pairs[that.game.state.selectedPairIndex][0], 
@@ -146,8 +147,21 @@ function getSelectedPairMoves(selectedPairIndex, pairs, cells) { // Implement //
     // ...
     return movesWithPoint;
 }
-function showSelectedPairMoves(moves, context, clickRadius) { // Implement
-    // ...
+function showSelectedPairMoves(moves, context, clickRadius) { // Test
+    for (const move of moves) {
+        showSelectedPairMove(move, context, clickRadius);
+    }
+}
+function showSelectedPairMove(move, context, clickRadius) { // Test/Improve
+    const point = [move[1], move[2]];
+    context.beginPath();
+    context.arc(...point, clickRadius, 0, 2 * Math.PI);
+    context.closePath();
+    context.strokeStyle = 'green'
+    context.stroke();
+    context.fillStyle = 'black'; // duplicated
+    context.font = '10px Arial'; // duplicated
+    context.fillText(`${move[0]}`, ...point);
 }
 class Paradox {
     constructor(container) {
