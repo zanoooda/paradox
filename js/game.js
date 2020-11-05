@@ -172,9 +172,7 @@ class Game {
 class Grid {
     static cells = cells;
     static swap = swap;
-    static getNeighbor(cell, directionIndex) {
-        return getNeighbor(cell, directionIndex)
-    }
+    static getNeighbor = getNeighbor;
 }
 
 export { Game, Grid }
