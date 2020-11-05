@@ -55,19 +55,18 @@ function canvasClick(event, that) { // TODO: Implement
     }
     else if (clickedPairIndex != -1) {
         that.game.state.selectedPairIndex = clickedPairIndex;
+        // that.game.state = new State(that.game, that.size, clickedPairIndex);
         that.game.state.moves = getSelectedPairMoves(that.game.state.selectedPairIndex, that.game.state.pairs, that.game.state.cells, that.size);
         // ...
     }
     // ...
 
-    // showState(state, context, cellRadius, clickRadius)
+    // show(state, context, cellRadius, clickRadius)
     that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
     showCells(that.game.state.cells, that.context, that.cellRadius);
     showPairs(that.game.state.pairs, that.context, that.clickRadius);
     showSelectedPair(that.game.state, that.context, that.cellRadius);
     showSelectedPairMoves(that.game.state.moves, that.context, that.clickRadius);
-
-    console.log(`${point[0]}, ${point[1]}`);
 }
 function getCells(game, size) { // getCellsWithItemsAndPoints()
     return Grid.cells.map(cell => {
