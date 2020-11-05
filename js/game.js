@@ -155,7 +155,7 @@ class Game {
     move(pair, directionIndex) { // TODO: Test/Improve
         //if(!isLegal([...pair, direction], this.items, this.history.length > 0 ? this.history[this.history.length - 1] : null)) return;
         const move = [...pair, directionIndex];
-        this.history.push(move); // this.history.push([move, items, pairs]);
+        this.history.push(move); // this.history.push([...move, items, pairs]);
         this.items = updateItems(move, this.items);
         this.winner = findWinner(this.items);
         if (this.winner == -1) {
