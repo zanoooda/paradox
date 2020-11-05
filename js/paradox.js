@@ -57,19 +57,30 @@ function canvasClick(event, that) { // TODO: Implement
     // }
     // ...
     // moves = getSelectedPairMoves(state) [ directionIndex, x, y ], ... ] // right way because if swap can be last move
-    const moves = getSelectedPairMoves(that.game.state);
+    // const moves = getSelectedPairMoves(that.game.state);
     // ...
-    const clickedMoveDirection = null;
-
-    // if clicked on a move => game.move()
-    // else if clicked on a pair => select()
+    const clickedMoveDirection = null; // => that.game.state.selectedPairIndex != -1
+    const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
+    if(clickedMoveDirection != null) { // that.game.state.selectedPairIndex != -1
+        const selectedPair = [ // Test
+            that.game.state.pairs[that.game.state.selectedPairIndex][0], 
+            that.game.state.pairs[that.game.state.selectedPairIndex][1]
+        ];
+        that.game.move(selectedPair, clickedMoveDirection);
+        that.game.state = new State(that.game, that.size, -1); // that.game.state.updateState([...pair], clickedMoveDirection);
+        // ...
+    }
+    else if (clickedPairIndex != -1) {
+        that.game.state.selectedPairIndex = clickedPairIndex;
+        // ...
+    }
 
     // showState(state, context, cellRadius, clickRadius)
     that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
     showCells(that.game.state.cells, that.context, that.cellRadius);
     showPairs(that.game.state.pairs, that.context, that.clickRadius);
     showSelectedPair(that.game.state, that.context, that.cellRadius);
-    showSelectedPairMoves(moves, that.context, that.clickRadius);
+    showSelectedPairMoves(that.game.state.moves, that.context, that.clickRadius);
 
     console.log(`${point[0]}, ${point[1]}`);
 }

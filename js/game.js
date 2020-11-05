@@ -95,8 +95,8 @@ function updateItems(move, items) { // TODO: Test/Improve
         items[1][move[1]] = cell0;
     }
     else {
-        items[0][move[0]] = getNeighbor(items[0][move[0]], move[2]);
-        items[0][move[0]] = getNeighbor(items[0][move[0]], move[2]);
+        items[0][move[0]] = getNeighbor(items[0][move[0]], directions[move[2]]);
+        items[1][move[1]] = getNeighbor(items[1][move[1]], directions[move[2]]);
     }
     return items;
 }
