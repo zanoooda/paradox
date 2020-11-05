@@ -35,38 +35,36 @@ function canvasClick(event, that) { // TODO: Implement
         event.pageY - that.canvas.offsetTop - that.canvas.clientTop
     ];
     // move or select ...
-    let clickedMoveDirection = null; // => that.game.state.selectedPairIndex != -1
-    for (const move of that.game.state.moves) {
+    let clickedMoveDirection = null; // => that.state.selectedPairIndex != -1
+    for (const move of that.state.moves) {
         if (getDistance([move[1], move[2]], point) < that.clickRadius) {
             clickedMoveDirection = move[0];
             break;
         }
     }
-    const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
+    const clickedPairIndex = that.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
     // TODO: Find clothest to click pair that in radius 
-    if (clickedMoveDirection != null) { // that.game.state.selectedPairIndex != -1
+    if (clickedMoveDirection != null) { // that.state.selectedPairIndex != -1
         const selectedPair = [
-            that.game.state.pairs[that.game.state.selectedPairIndex][0],
-            that.game.state.pairs[that.game.state.selectedPairIndex][1]
+            that.state.pairs[that.state.selectedPairIndex][0],
+            that.state.pairs[that.state.selectedPairIndex][1]
         ];
         that.game.move(selectedPair, clickedMoveDirection);
-        that.game.state = new State(that.game, that.size, -1); // that.game.state.updateState([...pair], clickedMoveDirection);
+        that.state = new State(that.game, that.size, -1); // that.state.updateState([...pair], clickedMoveDirection)?
         // ...
     }
     else if (clickedPairIndex != -1) {
-        that.game.state.selectedPairIndex = clickedPairIndex;
-        // that.game.state = new State(that.game, that.size, clickedPairIndex);
-        that.game.state.moves = getSelectedPairMoves(that.game.state.selectedPairIndex, that.game.state.pairs, that.game.state.cells, that.size);
+        that.state = new State(that.game, that.size, clickedPairIndex); // that.state.updateState([...pair], clickedMoveDirection)?
         // ...
     }
     // ...
 
     // show(state, context, cellRadius, clickRadius)
     that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
-    showCells(that.game.state.cells, that.context, that.cellRadius);
-    showPairs(that.game.state.pairs, that.context, that.clickRadius);
-    showSelectedPair(that.game.state, that.context, that.cellRadius);
-    showSelectedPairMoves(that.game.state.moves, that.context, that.clickRadius);
+    showCells(that.state.cells, that.context, that.cellRadius);
+    showPairs(that.state.pairs, that.context, that.clickRadius);
+    showSelectedPair(that.state, that.context, that.cellRadius);
+    showSelectedPairMoves(that.state.moves, that.context, that.clickRadius);
 }
 function getCells(game, size) { // getCellsWithItemsAndPoints()
     return Grid.cells.map(cell => {
@@ -172,7 +170,7 @@ function showSelectedPairMoves(moves, context, clickRadius) { // Test
         showSelectedPairMove(move, context, clickRadius);
     }
 }
-function showSelectedPairMove(move, context, clickRadius) { // Test/Improve
+function showSelectedPairMove(move, context, clickRadius) { // Improve
     const point = [move[1], move[2]];
     context.beginPath();
     context.arc(...point, clickRadius, 0, 2 * Math.PI);
@@ -199,12 +197,11 @@ class Paradox {
         }, false);
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
-
-        this.game.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
-        // showState(state, context, cellRadius, clickRadius)
+        this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
+        // show(state, context, cellRadius, clickRadius)
         //this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        showCells(this.game.state.cells, this.context, this.cellRadius);
-        showPairs(this.game.state.pairs, this.context, this.clickRadius);
+        showCells(this.state.cells, this.context, this.cellRadius);
+        showPairs(this.state.pairs, this.context, this.clickRadius);
         // showSelectedPair();
         // showSelectedPairMoves();
     }
