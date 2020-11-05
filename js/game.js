@@ -87,7 +87,7 @@ function findMoves(pair, items, prevMove) {
     }
     return moves;
 }
-function updateItems(move, items) { // TODO: Test/Improve
+function updateItems(move, items) { // TODO: Improve
     if (move[2] == swap) {
         const cell0 = items[0][move[0]];
         items[0][move[0]] = items[1][move[1]];
