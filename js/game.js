@@ -1,3 +1,4 @@
+// TODO: Hash (findItem(), findItemIndex(), findItemWithIndex())
 //#region grid
 const radius = 3,
     directions = [

@@ -9,7 +9,7 @@ import { Game, Grid } from './game.js';
 
 const colors = ['red', 'blue'];
 
-function getPoint(cell, size) { // TODO: Improve and fix
+function getPoint(cell, size) { // TODO: Improve (width larger than height of the grid)
     const cell2 = -cell[1] - cell[0]; //:
     const distance = size / 12; // ?
     const x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell2 / 2)); // TODO: Math.sqrt(3) to const
