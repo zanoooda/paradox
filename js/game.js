@@ -116,7 +116,7 @@ function findItemWithIndex(cell, items) {
 function findItemIndex(cell, samePlayersItems) {
     return samePlayersItems.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
-function isLegal(move, items, prevMove) { // TODO: Test/Improve
+function isLegal(move, items, prevMove) { // TODO: Improve
     if (move[2] == swap) {
         if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && move[2] == prevMove[2]) { // isEqual(move, prevMove)
             return false;
@@ -141,7 +141,7 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
     }
     return false;
 }
-function getAllMoves(pairs) { // Test/Improve
+function getAllMoves(pairs) { // TODO: Test
     let moves = [];
     for (const pair of pairs) {
         for (const directionIndex of pair[2]) {
@@ -157,7 +157,7 @@ class Game {
         this.history = []; // [...move]; move: [...pair, directionIndex (optional), items, pairs]
         this.winner = -1;
     }
-    isLegal(move) { // TODO: Test
+    isLegal(move) {
         return isLegal(move, this.items, this.history[this.history.length - 1]);
     }
     move(pair, directionIndex) { // TODO: Test/Improve

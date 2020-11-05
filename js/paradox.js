@@ -87,12 +87,12 @@ function showCell(cell, context, cellRadius) {
         context.strokeStyle = 'lightgray'
         context.stroke();
     }
-    context.fillStyle = 'black'; // duplicated
-    context.font = '10px Arial'; // duplicated
-    context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
-    if (typeof cell[5] !== 'undefined') {
-        context.fillText(`id: ${cell[5]}`, point[0], point[1] + 12);
-    }
+    // context.fillStyle = 'black'; // duplicated
+    // context.font = '10px Arial'; // duplicated
+    // context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
+    // if (typeof cell[5] !== 'undefined') {
+    //     context.fillText(`id: ${cell[5]}`, point[0], point[1] + 12);
+    // }
 }
 function getPairs(game, size) { // getPairsWithPoints() Another option is to get point by pairs and cells (with points)
     return game.pairs.map((pair) => {
@@ -109,14 +109,14 @@ function showPairs(pairs, context, clickRadius) {
 }
 function showPair(pair, context, clickRadius) {
     const point = [pair[3], pair[4]];
-    context.beginPath();
-    context.arc(...point, clickRadius, 0, 2 * Math.PI);
-    context.closePath();
-    context.strokeStyle = 'purple'
-    context.stroke();
-    context.fillStyle = 'black'; // duplicated
-    context.font = '10px Arial'; // duplicated
-    context.fillText(`${pair[0]}, ${pair[1]}, [${pair[2]}]`, ...point);
+    // context.beginPath();
+    // context.arc(...point, clickRadius, 0, 2 * Math.PI);
+    // context.closePath();
+    // context.strokeStyle = 'purple'
+    // context.stroke();
+    // context.fillStyle = 'black'; // duplicated
+    // context.font = '10px Arial'; // duplicated
+    // context.fillText(`${pair[0]}, ${pair[1]}, [${pair[2]}]`, ...point);
 }
 function showSelectedPair(state, context, cellRadius) {
     if (state.selectedPairIndex != -1) {
@@ -162,16 +162,23 @@ function showSelectedPairMoves(moves, context, clickRadius) {
         showSelectedPairMove(move, context, clickRadius);
     }
 }
-function showSelectedPairMove(move, context, clickRadius) {
+function showSelectedPairMove(move, context, clickRadius) { // TODO: Improve
     const point = [move[1], move[2]];
     context.beginPath();
-    context.arc(...point, clickRadius, 0, 2 * Math.PI);
+    context.arc(...point, clickRadius / 3, 0, 2 * Math.PI);
     context.closePath();
-    context.strokeStyle = 'green'
-    context.stroke();
-    context.fillStyle = 'black'; // duplicated
+    context.fillStyle = 'green'
+    context.fill();
+    const unicodeDirections = ['↙', '←', '↖', '↗', '→', '↘'];
+    const swap = '↔';
+    context.fillStyle = 'white'; // duplicated
     context.font = '10px Arial'; // duplicated
-    context.fillText(`${move[0]}`, ...point);
+    context.fillText(`${move[0] == Grid.swap ? swap : unicodeDirections[move[0]]}`, point[0] - 4, point[1]);
+    // context.beginPath();
+    // context.arc(...point, clickRadius, 0, 2 * Math.PI);
+    // context.closePath();
+    // context.strokeStyle = 'green'
+    // context.stroke();
 }
 function show(state, context, size, cellRadius, clickRadius) {
     context.clearRect(0, 0, size, size);
