@@ -169,11 +169,13 @@ function showSelectedPairMove(move, context, clickRadius) { // TODO: Improve
     context.closePath();
     context.fillStyle = 'green'
     context.fill();
-    const unicodeDirections = ['↙', '←', '↖', '↗', '→', '↘'];
-    const swap = '↔';
+    // const unicodeDirections = ['↙', '←', '↖', '↗', '→', '↘'];
+    // const swap = '↔';
+    const unicodeDirections = ['⬋', '⬅', '⬉', '⬈', '➡', '⬊'];
+    const swap = '⬌';
     context.fillStyle = 'white'; // duplicated
     context.font = '10px Arial'; // duplicated
-    context.fillText(`${move[0] == Grid.swap ? swap : unicodeDirections[move[0]]}`, point[0] - 4, point[1]);
+    context.fillText(`${move[0] == Grid.swap ? swap : unicodeDirections[move[0]]}`, point[0] - 4, point[1] + 2);
     // context.beginPath();
     // context.arc(...point, clickRadius, 0, 2 * Math.PI);
     // context.closePath();
