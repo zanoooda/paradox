@@ -50,21 +50,12 @@ function canvasClick(event, that) { // TODO: Implement
             that.state.pairs[that.state.selectedPairIndex][1]
         ];
         that.game.move(selectedPair, clickedMoveDirection);
-        that.state = new State(that.game, that.size, -1); // that.state.updateState([...pair], clickedMoveDirection)?
-        // ...
+        that.state = new State(that.game, that.size, -1); // that.state.updateState([...pair], clickedMoveDirection)
     }
     else if (clickedPairIndex != -1) {
-        that.state = new State(that.game, that.size, clickedPairIndex); // that.state.updateState([...pair], clickedMoveDirection)?
-        // ...
+        that.state = new State(that.game, that.size, clickedPairIndex); // that.state.updateState([...pair], clickedMoveDirection)
     }
-    // ...
-
-    // show(state, context, cellRadius, clickRadius)
-    that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
-    showCells(that.state.cells, that.context, that.cellRadius);
-    showPairs(that.state.pairs, that.context, that.clickRadius);
-    showSelectedPair(that.state, that.context, that.cellRadius);
-    showSelectedPairMoves(that.state.moves, that.context, that.clickRadius);
+    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius);
 }
 function getCells(game, size) { // getCellsWithItemsAndPoints()
     return Grid.cells.map(cell => {
@@ -148,7 +139,7 @@ function showSelectedCell(cell, context, cellRadius) { // Improve
     context.stroke();
     context.lineWidth = 1; //:
 }
-function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // Test/Improve!!! // getSelectedPairMoveDirectionsWithPoints()
+function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // Test/Improve // getSelectedPairMoveDirectionsWithPoints()
     if (selectedPairIndex == -1) {
         return [];
     }
@@ -165,7 +156,7 @@ function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // Test/I
         return [directionIndex, ...point];
     });
 }
-function showSelectedPairMoves(moves, context, clickRadius) { // Test
+function showSelectedPairMoves(moves, context, clickRadius) {
     for (const move of moves) {
         showSelectedPairMove(move, context, clickRadius);
     }
@@ -180,6 +171,13 @@ function showSelectedPairMove(move, context, clickRadius) { // Improve
     context.fillStyle = 'black'; // duplicated
     context.font = '10px Arial'; // duplicated
     context.fillText(`${move[0]}`, ...point);
+}
+function show(state, context, size, cellRadius, clickRadius) {
+    context.clearRect(0, 0, size, size);
+    showCells(state.cells, context, cellRadius);
+    showPairs(state.pairs, context, clickRadius);
+    showSelectedPair(state, context, cellRadius);
+    showSelectedPairMoves(state.moves, context, clickRadius);
 }
 class Paradox {
     constructor(container) {
@@ -198,12 +196,7 @@ class Paradox {
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
-        // show(state, context, cellRadius, clickRadius)
-        //this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        showCells(this.state.cells, this.context, this.cellRadius);
-        showPairs(this.state.pairs, this.context, this.clickRadius);
-        // showSelectedPair();
-        // showSelectedPairMoves();
+        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius);
     }
     playWithRobot(playerIndex) { // TODO: Implement
     }
