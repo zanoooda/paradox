@@ -1,7 +1,7 @@
 import { Game, Grid } from './game.js';
 // TODO: Describe structs or wrap structs to classes with readable props
 // TODO: Wrap unreadable struct manipulations to readable variables/methods
-// State can be recreated on each click and not be saved at the game
+// State can be recreated on each click and not be saved at the game but need to save information about selectedPair
 // Cell's points can be calculated only once (also pairs and moves)
 // new State can be crated by old one and [move] (pair and direction) (state.updateState(move))
 // ...
@@ -32,37 +32,11 @@ function canvasClick(event, that) { // TODO: Implement
         event.pageX - that.canvas.offsetLeft - that.canvas.clientLeft,
         event.pageY - that.canvas.offsetTop - that.canvas.clientTop
     ];
-
-    // select or move ...
-    // const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
-    // const clickedMoveDirection = null; // cklicked point close to allowed direction's (move) point of that.game.state.selectedPairIndex ? value : null
-    // const unselected = -1;
-    // if (clickedPairIndex != -1) {
-    //     if (clickedPairIndex === that.game.state.selectedPairIndex) {
-    //         const pair = [that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]];
-    //         that.game.move(pair, Grid.swap);
-    //         that.game.state = new State(that.game, that.size, unselected); // that.game.state.updateState([...pair], Grid.swap);
-    //         // ...
-    //     }
-    //     else { // select
-    //         that.game.state.selectedPairIndex = clickedPairIndex;
-    //         // ...
-    //     }
-    // }
-    // else if (clickedMoveDirection != null) {
-    //     const pair = [thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]];
-    //     that.game.move(pair, clickedMoveDirection);
-    //     that.game.state = new State(that.game, that.size, unselected); // that.game.state.updateState([...pair], clickedMoveDirection);
-    //     // ...
-    // }
-    // ...
-    // moves = getSelectedPairMoves(state) [ directionIndex, x, y ], ... ] // right way because if swap can be last move
-    // const moves = getSelectedPairMoves(that.game.state);
-    // ...
+    // move or select ...
     const clickedMoveDirection = null; // => that.game.state.selectedPairIndex != -1
     const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
     if(clickedMoveDirection != null) { // that.game.state.selectedPairIndex != -1
-        const selectedPair = [ // Test
+        const selectedPair = [
             that.game.state.pairs[that.game.state.selectedPairIndex][0], 
             that.game.state.pairs[that.game.state.selectedPairIndex][1]
         ];
@@ -74,6 +48,7 @@ function canvasClick(event, that) { // TODO: Implement
         that.game.state.selectedPairIndex = clickedPairIndex;
         // ...
     }
+    // ...
 
     // showState(state, context, cellRadius, clickRadius)
     that.context.clearRect(0, 0, that.canvas.width, that.canvas.height);
