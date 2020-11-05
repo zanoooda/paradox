@@ -1,3 +1,4 @@
+// TODO: Describe structs
 //#region grid
 const radius = 3,
     directions = [
@@ -143,9 +144,9 @@ function isLegal(move, items, prevMove) { // TODO: Test/Improve
 }
 class Game {
     constructor() {
-        this.items = initialItems;
-        this.pairs = findPairs(this.items, null); // pairsWithMoves
-        this.history = [];
+        this.items = initialItems; // [plyer0Cells, player1Cells]
+        this.pairs = findPairs(this.items, null); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections]], ...] // pairsWithMoves
+        this.history = []; // [...move]; move: [...pair, directionIndex (optional), items, pairs]
         this.winner = -1;
     }
     isLegal(move) { // TODO: Test
@@ -170,7 +171,7 @@ class Game {
 }
 class Grid {
     static cells = cells;
-    static swap = swap; // game.swap? swapDirection?
+    static swap = swap;
 }
 
 export { Game, Grid }

@@ -34,30 +34,33 @@ function canvasClick(event, that) { // TODO: Implement
     ];
 
     // select or move ...
-    const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
-    const clickedMoveDirection = null; // cklicked point close to allowed direction's (move) point of that.game.state.selectedPairIndex ? value : null
-    const unselected = -1;
-    if (clickedPairIndex != -1) {
-        if (clickedPairIndex === that.game.state.selectedPairIndex) {
-            const pair = [that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]];
-            that.game.move(pair, Grid.swap);
-            that.game.state = new State(that.game, that.size, unselected); // that.game.state.updateState([...pair], Grid.swap);
-            // ...
-        }
-        else { // select
-            that.game.state.selectedPairIndex = clickedPairIndex;
-            // ...
-        }
-    }
-    else if (clickedMoveDirection != null) {
-        const pair = [thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]];
-        that.game.move(pair, clickedMoveDirection);
-        that.game.state = new State(that.game, that.size, unselected); // that.game.state.updateState([...pair], clickedMoveDirection);
-        // ...
-    }
+    // const clickedPairIndex = that.game.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
+    // const clickedMoveDirection = null; // cklicked point close to allowed direction's (move) point of that.game.state.selectedPairIndex ? value : null
+    // const unselected = -1;
+    // if (clickedPairIndex != -1) {
+    //     if (clickedPairIndex === that.game.state.selectedPairIndex) {
+    //         const pair = [that.game.state.pairs[clickedPairIndex][0], that.game.state.pairs[clickedPairIndex][1]];
+    //         that.game.move(pair, Grid.swap);
+    //         that.game.state = new State(that.game, that.size, unselected); // that.game.state.updateState([...pair], Grid.swap);
+    //         // ...
+    //     }
+    //     else { // select
+    //         that.game.state.selectedPairIndex = clickedPairIndex;
+    //         // ...
+    //     }
+    // }
+    // else if (clickedMoveDirection != null) {
+    //     const pair = [thst.game.state.pairs[clickedPairIndex][0], thst.game.state.pairs[clickedPairIndex][1]];
+    //     that.game.move(pair, clickedMoveDirection);
+    //     that.game.state = new State(that.game, that.size, unselected); // that.game.state.updateState([...pair], clickedMoveDirection);
+    //     // ...
+    // }
     // ...
     // moves = getSelectedPairMoves(state) [ directionIndex, x, y ], ... ] // right way because if swap can be last move
-    const moves = getSelectedPairMoves(that.state);
+    const moves = getSelectedPairMoves(that.game.state);
+    // ...
+    const clickedMoveDirection = null;
+
     // if clicked on a move => game.move()
     // else if clicked on a pair => select()
 
@@ -70,7 +73,7 @@ function canvasClick(event, that) { // TODO: Implement
 
     console.log(`${point[0]}, ${point[1]}`);
 }
-function getCells(game, size) { // showCellsAndItems
+function getCells(game, size) { // getCellsWithItemsAndPoints()
     return Grid.cells.map(cell => {
         const point = getPoint([cell[0], cell[1]], size);
         const playerIndex = game.findPlayerIndex(cell);
@@ -106,7 +109,7 @@ function showCell(cell, context, cellRadius) {
         context.fillText(`id: ${cell[5]}`, point[0], point[1] + 12);
     }
 }
-function getPairs(game, size) { // Another option is to get point by pairs and cells (with points)
+function getPairs(game, size) { // getPairsWithPoints() Another option is to get point by pairs and cells (with points)
     return game.pairs.map((pair) => {
         const cells = [game.items[0][pair[0]], game.items[1][pair[1]]];
         const points = [getPoint(cells[0], size), getPoint(cells[1], size)];
@@ -152,7 +155,7 @@ function showSelectedCell(cell, context, cellRadius) { // Improve
     context.stroke();
     context.lineWidth = 1; //:
 }
-function getSelectedPairMoves(state) { // Implement
+function getSelectedPairMoves(selectedPairIndex, pairs, cells) { // Implement // getSelectedPairMoveDirectionsWithPoints()
     const movesWithPoint = [];
     // ...
     return movesWithPoint;
@@ -190,11 +193,12 @@ class Paradox {
     playOnline() { // TODO: Implement
     }
 }
-class State { // Can be struct but another way cells, pairs and moves can be classes
+class State { // Can be struct but another way cells, pairs and moves can be classes. Anyway describe structs
     constructor(game, size, selectedPairIndex) {
-        this.cells = getCells(game, size);
-        this.pairs = getPairs(game, size); // size or cells? pairs => pairsWithMoves
-        this.selectedPairIndex = selectedPairIndex;
+        this.cells = getCells(game, size); // [[cell0, cell1, x, y (optonal), playerIndex, itemIndex], ...]
+        this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...] // size or cells?
+        this.selectedPairIndex = selectedPairIndex; // -1|0...
+        this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells); // [[directionIndex, x, y], ...]
     }
 }
 
