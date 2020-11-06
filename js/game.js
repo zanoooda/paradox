@@ -102,14 +102,14 @@ function updateItems(move, items) { // TODO: Improve
     return items;
 }
 function findWinner(items) { // TODO: Implement (-1 (no one), 0, 1, 2 if draw)
-    const player1Items = items[0].map(cell => [cell[0], cell[1], -cell[0] - cell[1]]);
-    let player1SortedByX = [...player1Items].sort(function (a, b) {
+    const player0Items = items[0].map(cell => [cell[0], cell[1], -cell[0] - cell[1]]);
+    let player1SortedByX = [...player0Items].sort(function (a, b) {
         return a[0] - b[0];
     });
-    let player1SortedByY = [...player1Items].sort(function (a, b) {
+    let player1SortedByY = [...player0Items].sort(function (a, b) {
         return a[1] - b[1];
     });
-    let player1SortedByZ = [...player1Items].sort(function (a, b) {
+    let player1SortedByZ = [...player0Items].sort(function (a, b) {
         return a[2] - b[2];
     });
     // TODO: Find to each diagonal, second that must be incremented
