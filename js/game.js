@@ -1,4 +1,5 @@
-// TODO: Hash (findItem(), findItemIndex(), findItemWithIndex())
+// TODO: Hash (findPlayerIndex(), findItemIndex(), findItemWithIndex())
+// findWinner: sort items by x, y, z!
 //#region grid
 const radius = 3,
     directions = [
@@ -103,6 +104,43 @@ function updateItems(move, items) { // TODO: Improve
 function findWinner(items) { // TODO: Implement (-1 (no one), 0, 1, 2 if draw)
     // ...
     return -1;
+    // let winners = [];
+    // let itemsCount = 0;
+    // let prevPlayerIndex = -1;
+    // for (const line of lines) {
+    //     for (const cell of line) {
+    //         const playerIndex = findPlayerIndex(cell, items);
+    //         if (playerIndex == -1) {
+    //             prevPlayerIndex = -1;
+    //             itemsCount = 0; 
+    //         }
+    //         else {
+    //             if (playerIndex == prevPlayerIndex) {
+    //                 itemsCount++;
+    //                 if (itemsCount == 4) {
+    //                     winners.push(playerIndex);
+    //                     itemsCount = 0;
+    //                     prevPlayerIndex = -1;
+    //                     break;
+    //                 }
+    //             }
+    //             else {
+    //                 itemsCount = 1;
+    //                 prevPlayerIndex = playerIndex;
+    //             }
+    //         }
+    //     }
+    //     itemsCount = 0;
+    //     prevPlayerIndex = -1;
+    // }
+    // let winner = -1;
+    // if (winners.length > 0 && winners.every(playerIndex => playerIndex == winners[0])) {
+    //     winner = winners[0];
+    // }
+    // else if (winners.length > 0) {
+    //     winner = 2;
+    // }
+    // return winner;
 }
 function findPlayerIndex(cell, items) {
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
@@ -169,6 +207,9 @@ class Game {
         this.winner = findWinner(this.items);
         if (this.winner == -1) {
             this.pairs = findPairs(this.items, move);
+        }
+        if (this.winner != -1) {
+            console.log(`Player ${this.winner} is winner`);
         }
     }
     getAllMoves() { // Test
