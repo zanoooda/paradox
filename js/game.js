@@ -102,45 +102,19 @@ function updateItems(move, items) { // TODO: Improve
     return items;
 }
 function findWinner(items) { // TODO: Implement (-1 (no one), 0, 1, 2 if draw)
+    const player1Items = items[0].map(cell => [cell[0], cell[1], -cell[0] - cell[1]]);
+    let player1SortedByX = [...player1Items].sort(function (a, b) {
+        return a[0] - b[0];
+    });
+    let player1SortedByY = [...player1Items].sort(function (a, b) {
+        return a[1] - b[1];
+    });
+    let player1SortedByZ = [...player1Items].sort(function (a, b) {
+        return a[2] - b[2];
+    });
+    // TODO: Find to each diagonal, second that must be incremented
     // ...
     return -1;
-    // let winners = [];
-    // let itemsCount = 0;
-    // let prevPlayerIndex = -1;
-    // for (const line of lines) {
-    //     for (const cell of line) {
-    //         const playerIndex = findPlayerIndex(cell, items);
-    //         if (playerIndex == -1) {
-    //             prevPlayerIndex = -1;
-    //             itemsCount = 0; 
-    //         }
-    //         else {
-    //             if (playerIndex == prevPlayerIndex) {
-    //                 itemsCount++;
-    //                 if (itemsCount == 4) {
-    //                     winners.push(playerIndex);
-    //                     itemsCount = 0;
-    //                     prevPlayerIndex = -1;
-    //                     break;
-    //                 }
-    //             }
-    //             else {
-    //                 itemsCount = 1;
-    //                 prevPlayerIndex = playerIndex;
-    //             }
-    //         }
-    //     }
-    //     itemsCount = 0;
-    //     prevPlayerIndex = -1;
-    // }
-    // let winner = -1;
-    // if (winners.length > 0 && winners.every(playerIndex => playerIndex == winners[0])) {
-    //     winner = winners[0];
-    // }
-    // else if (winners.length > 0) {
-    //     winner = 2;
-    // }
-    // return winner;
 }
 function findPlayerIndex(cell, items) {
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);

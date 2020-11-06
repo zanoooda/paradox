@@ -87,12 +87,12 @@ function showCell(cell, context, cellRadius) {
         context.strokeStyle = 'lightgray'
         context.stroke();
     }
-    // context.fillStyle = 'black'; // duplicated
-    // context.font = '10px Arial'; // duplicated
-    // context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
-    // if (typeof cell[5] !== 'undefined') {
-    //     context.fillText(`id: ${cell[5]}`, point[0], point[1] + 12);
-    // }
+    context.fillStyle = 'black'; // duplicated
+    context.font = '10px Arial'; // duplicated
+    context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
+    if (typeof cell[5] !== 'undefined') {
+        context.fillText(`id: ${cell[5]}`, point[0], point[1] + 12);
+    }
 }
 function getPairs(game, size) { // getPairsWithPoints() Another option is to get point by pairs and cells (with points)
     return game.pairs.map((pair) => {
