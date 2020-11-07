@@ -23,7 +23,7 @@ function isExist(cell) {
     const cube = [...cell, -(cell[0] + cell[1])];
     return Math.max(...cube.map(Math.abs)) <= radius
 }
-function getInverseDirection(directionIndex) {
+function getInverseDirectionIndex(directionIndex) {
     return inverseDirectionsIndexes[directionIndex];
 }
 function getNeighbor(cell, directionIndex) {
@@ -146,7 +146,7 @@ function isLegal(move, items, prevMove) { // TODO: Improve
             if (prevMove == null) {
                 return true;
             }
-            if (move[0] == prevMove[0] && move[1] == prevMove[1] && getInverseDirection(move[2]) == prevMove[2]) {
+            if (move[0] == prevMove[0] && move[1] == prevMove[1] && getInverseDirectionIndex(move[2]) == prevMove[2]) {
                 return false;
             }
             return true;
