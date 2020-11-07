@@ -170,8 +170,8 @@ class Game {
         this.history = []; // [...move]; move: [...pair, directionIndex (optional), items, pairs]
         this.winner = -1;
     }
-    isLegal(move) {
-        return isLegal(move, this.items, this.history?.[this.history.length - 1] ?? null); // TODO: Test if history.length = 0
+    isLegal(move) { // TODO: Test if history.length = 0
+        return isLegal(move, this.items, this.history?.[this.history.length - 1] ?? null);
     }
     move(pair, directionIndex) { // TODO: Test/Improve
         //if(!isLegal([...pair, directionIndex], this.items, this.history.length > 0 ? this.history[this.history.length - 1] : null)) return;
