@@ -171,7 +171,7 @@ class Game {
         this.winner = -1;
     }
     isLegal(move) {
-        return isLegal(move, this.items, this.history[this.history.length - 1]);
+        return isLegal(move, this.items, this.history?.[this.history.length - 1] ?? null); // TODO: Test
     }
     move(pair, directionIndex) { // TODO: Test/Improve
         //if(!isLegal([...pair, directionIndex], this.items, this.history.length > 0 ? this.history[this.history.length - 1] : null)) return;
