@@ -186,7 +186,7 @@ class Game {
             console.log(`Player ${this.winner} is winner`);
         }
     }
-    getAllMoves() { // Test
+    getAllMoves() {
         return getAllMoves(this.pairs);
     }
     findPlayerIndex(cell) {
