@@ -30,18 +30,18 @@ function createCanvas(size) {
     return canvas;
 }
 function canvasClick(event, that) { // TODO: Improve (Find clothest to click pair that in radius)
-    const point = [
+    const clickPoint = [
         event.pageX - that.canvas.offsetLeft - that.canvas.clientLeft,
         event.pageY - that.canvas.offsetTop - that.canvas.clientTop
     ];
     let clickedMoveDirection = null; // => that.state.selectedPairIndex != -1
     for (const move of that.state.moves) { // TODO: Wrap to getClickedMoveDirection()
-        if (getDistance([move[1], move[2]], point) < that.clickRadius) {
+        if (getDistance([move[1], move[2]], clickPoint) < that.clickRadius) {
             clickedMoveDirection = move[0];
             break;
         }
     }
-    const clickedPairIndex = that.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], point) < that.clickRadius);
+    const clickedPairIndex = that.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], clickPoint) < that.clickRadius);
     // TODO: Find clothest to click pair that in radius (Click can be overlapped by two pairs)
     if (clickedMoveDirection != null) { // that.state.selectedPairIndex != -1
         const selectedPair = [
