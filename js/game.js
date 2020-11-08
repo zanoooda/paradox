@@ -219,9 +219,6 @@ class Game {
         this.items = updateItems(move, this.items);
         this.winner = findWinner(this.items);
         this.pairs = findPairs(this.items, move);
-        if (this.winner != -1) {
-            console.log(`Player ${this.winner} is winner`);
-        }
     }
     getAllMoves() {
         return getAllMoves(this.pairs);

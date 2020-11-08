@@ -51,9 +51,11 @@ function canvasClick(event, that) { // TODO: Improve (Find clothest to click pai
             that.state.pairs[that.state.selectedPairIndex][1]
         ];
         that.game.move(selectedPair, clickedMoveDirection);
-        // TODO: Check winner
-        // ...
         that.state = new State(that.game, that.size, -1);
+        // ...
+        if (that.game.winner != -1) {
+            console.log(`Player ${that.game.winner} is winner`);
+        }
     }
     else if (clickedPairIndex != -1) {
         that.state = new State(that.game, that.size, clickedPairIndex);
@@ -166,18 +168,26 @@ function showSelectedPairMoves(moves, context, clickRadius) {
 }
 function showSelectedPairMove(move, context, clickRadius) { // TODO: Improve
     const point = [move[1], move[2]];
+
     context.beginPath();
-    context.arc(...point, clickRadius / 3, 0, 2 * Math.PI);
+    context.arc(...point, clickRadius / 6, 0, 2 * Math.PI);
     context.closePath();
-    context.fillStyle = 'green'
-    context.fill();
-    // const unicodeDirections = ['↙', '←', '↖', '↗', '→', '↘'];
-    // const swap = '↔';
-    const unicodeDirections = ['⬋', '⬅', '⬉', '⬈', '➡', '⬊'];
-    const swap = '⬌';
-    context.fillStyle = 'white'; // duplicated
-    context.font = '10px Arial'; // duplicated
-    context.fillText(`${move[0] == Grid.swap ? swap : unicodeDirections[move[0]]}`, point[0] - 4, point[1] + 2);
+    context.fillStyle = 'black'
+    context.fill(); 
+
+    // context.beginPath();
+    // context.arc(...point, clickRadius / 3, 0, 2 * Math.PI);
+    // context.closePath();
+    // context.fillStyle = 'green'
+    // context.fill(); 
+    // // // const unicodeDirections = ['↙', '←', '↖', '↗', '→', '↘'];
+    // // // const swap = '↔';
+    // const unicodeDirections = ['⬋', '⬅', '⬉', '⬈', '➡', '⬊'];
+    // const swap = '⬌';
+    // context.fillStyle = 'white'; // duplicated
+    // context.font = '10px Arial'; // duplicated
+    // context.fillText(`${move[0] == Grid.swap ? swap : unicodeDirections[move[0]]}`, point[0] - 4, point[1] + 2);
+
     // context.beginPath();
     // context.arc(...point, clickRadius, 0, 2 * Math.PI);
     // context.closePath();
