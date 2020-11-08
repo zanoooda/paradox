@@ -6,8 +6,6 @@
 // Points can be calculated only once
 // New state can be crated by old one and [move] (pair and direction) (state.updateState(move))
 
-// TODO: getMidPoint(), use Grid.extendCell()
-
 import { Game, Grid } from './game.js';
 
 const colors = ['red', 'blue'];
@@ -18,6 +16,9 @@ function getPoint(cell, size) { // TODO: Improve (width larger than height of th
     const x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + _cell[2] / 2)); // TODO: Math.sqrt(3) to const
     const y = (size / 2) + (distance * 3 / 2 * _cell[2]);
     return [x, y];
+}
+function getMidPoint(point0, point1) {
+    return [(point0[0] + point1[0]) / 2, (point0[1] + point1[1]) / 2];
 }
 function getDistance(point0, point1) {
     return Math.sqrt(Math.pow(point0[0] - point1[0], 2) + Math.pow(point0[1] - point1[1], 2));
@@ -101,7 +102,7 @@ function getPairs(game, size) { // getPairsWithPoints() Another option is to get
     return game.pairs.map((pair) => {
         const cells = [game.items[0][pair[0]], game.items[1][pair[1]]];
         const points = [getPoint(cells[0], size), getPoint(cells[1], size)];
-        const point = [(points[0][0] + points[1][0]) / 2, (points[0][1] + points[1][1]) / 2]; // TODO: Wrap
+        const point = getMidPoint(points[0], points[1]);
         return [...pair, ...point];
     });
 }
@@ -156,7 +157,7 @@ function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // TODO: 
         const cell1 = cells.find(cell => cell[4] == 1 && cell[5] == pairs[selectedPairIndex][1]);
         const cell0NewPoint = getPoint(Grid.getNeighbor(cell0, directionIndex), size);
         const cell1NewPoint = getPoint(Grid.getNeighbor(cell1, directionIndex), size);
-        const point = [(cell0NewPoint[0] + cell1NewPoint[0]) / 2, (cell0NewPoint[1] + cell1NewPoint[1]) / 2]; // TODO: Wrap
+        const point = getMidPoint(cell0NewPoint, cell1NewPoint);
         return [directionIndex, ...point];
     });
 }
