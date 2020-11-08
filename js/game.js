@@ -129,7 +129,7 @@ function findWinner(items) { // TODO: Improve
                     count++;
                 }
                 else {
-                    count = 1
+                    count = 1;
                 }
                 if (count == 4) {
                     winners.push(playerIndex);
