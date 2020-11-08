@@ -91,8 +91,8 @@ function showCell(cell, context, cellRadius) {
         context.strokeStyle = 'lightgray'
         context.stroke();
     }
-    // context.fillStyle = 'black'; // duplicated
-    // context.font = '10px Arial'; // duplicated
+    // context.fillStyle = 'black';
+    // context.font = '10px sans';
     // context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
     // if (typeof cell[5] !== 'undefined') {
     //     context.fillText(`index: ${cell[5]}`, point[0], point[1] + 12);
@@ -118,11 +118,11 @@ function showPair(pair, context, clickRadius) {
     // context.closePath();
     // context.strokeStyle = 'purple'
     // context.stroke();
-    // context.fillStyle = 'black'; // duplicated
-    // context.font = '10px Arial'; // duplicated
+    // context.fillStyle = 'black';
+    // context.font = '10px sans';
     // context.fillText(`${pair[0]}, ${pair[1]}, [${pair[2]}]`, ...point);
 }
-function showSelectedPair(state, context, cellRadius) {
+function showSelectedPair(state, context, size, cellRadius) {
     if (state.selectedPairIndex != -1) {
         const pair = state.pairs[state.selectedPairIndex];
         const selectedCells = [
@@ -130,19 +130,19 @@ function showSelectedPair(state, context, cellRadius) {
             state.cells.find(cell => cell[4] == 1 && cell[5] == pair[1])
         ];
         for (const cell of selectedCells) {
-            showSelectedCell(cell, context, cellRadius);
+            showSelectedCell(cell, context, size, cellRadius);
         }
     }
 }
-function showSelectedCell(cell, context, cellRadius) {
+function showSelectedCell(cell, context, size, cellRadius) {
     const point = [cell[2], cell[3]];
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
     context.closePath();
-    context.lineWidth = cellRadius / 2;
+    context.lineWidth = size / 36;
     context.strokeStyle = 'purple'
     context.stroke();
-    context.lineWidth = 1; //:
+    context.lineWidth = 1;
 }
 function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // TODO: Improve // getSelectedPairMoveDirectionsWithPoints()
     if (selectedPairIndex == -1) {
@@ -161,45 +161,30 @@ function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // TODO: 
         return [directionIndex, ...point];
     });
 }
-function showSelectedPairMoves(moves, context, clickRadius) {
+function showSelectedPairMoves(moves, context, size, clickRadius) {
     for (const move of moves) {
-        showSelectedPairMove(move, context, clickRadius);
+        showSelectedPairMove(move, context, size, clickRadius);
     }
 }
-function showSelectedPairMove(move, context, clickRadius) {
+function showSelectedPairMove(move, context, size, clickRadius) {
     const point = [move[1], move[2]];
-
     context.beginPath();
-    context.arc(...point, clickRadius / 6, 0, 2 * Math.PI);
+    context.arc(...point, size / 144, 0, 2 * Math.PI);
     context.closePath();
-    context.fillStyle = 'black'
+    context.fillStyle = 'black';
     context.fill();
-
-    // context.beginPath();
-    // context.arc(...point, clickRadius / 3, 0, 2 * Math.PI);
-    // context.closePath();
-    // context.fillStyle = 'green'
-    // context.fill(); 
-    // // const unicodeDirections = ['↙', '←', '↖', '↗', '→', '↘'];
-    // // const swap = '↔';
-    // const unicodeDirections = ['⬋', '⬅', '⬉', '⬈', '➡', '⬊'];
-    // const swap = '⬌';
-    // context.fillStyle = 'white'; // duplicated
-    // context.font = '10px Arial'; // duplicated
-    // context.fillText(`${move[0] == Grid.swap ? swap : unicodeDirections[move[0]]}`, point[0] - 4, point[1] + 2);
-
     // context.beginPath();
     // context.arc(...point, clickRadius, 0, 2 * Math.PI);
     // context.closePath();
-    // context.strokeStyle = 'green'
+    // context.strokeStyle = 'green';
     // context.stroke();
 }
 function show(state, context, size, cellRadius, clickRadius) {
     context.clearRect(0, 0, size, size);
     showCells(state.cells, context, cellRadius);
     showPairs(state.pairs, context, clickRadius);
-    showSelectedPair(state, context, cellRadius);
-    showSelectedPairMoves(state.moves, context, clickRadius);
+    showSelectedPair(state, context, size, cellRadius);
+    showSelectedPairMoves(state.moves, context, size, clickRadius);
 }
 function showWinner(winner, context, size) {
     const midPoint = [size / 2, size / 2];
@@ -215,7 +200,6 @@ function showWinner(winner, context, size) {
     context.textAlign = "center";
     context.textBaseline = "middle";
     context.fillText(message, ...midPoint);
-    // console.log(`winner: ${winner}`);
 }
 class Paradox {
     constructor(container) {
