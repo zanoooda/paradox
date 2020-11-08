@@ -1,8 +1,6 @@
 // TODO: Describe structs or wrap structs to classes with readable props
 // TODO: Wrap unreadable/similar/duplicated struct manipulations to readable variables/methods
 
-// TODO: Fix -0
-
 // Points can be calculated only once
 // New state can be crated by old one and [move] (pair and direction) (state.updateState(move))
 

@@ -25,7 +25,7 @@ const radius = 3,
     cells = createCells();
 
 function mult(array, scalar) {
-    return array.map(i => i * scalar);
+    return array.map(i => scalar == 0 ? 0 : i * scalar);
 }
 function isExist(cell) {
     return Math.max(...getExtendedCell(cell).map(Math.abs)) <= radius
