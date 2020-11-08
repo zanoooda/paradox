@@ -28,7 +28,7 @@ function mult(array, scalar) {
     return array.map(i => i * scalar);
 }
 function isExist(cell) {
-    return Math.max(...getExstendedCell(cell).map(Math.abs)) <= radius
+    return Math.max(...getExtendedCell(cell).map(Math.abs)) <= radius
 }
 function getInverseDirectionIndex(directionIndex) {
     return inverseDirectionsIndexes[directionIndex];
@@ -60,7 +60,7 @@ function createCells() {
     }
     return cells;
 }
-function getExstendedCell(cell) {
+function getExtendedCell(cell) {
     return [...cell, -cell[0] - cell[1]];
 }
 //#endregion
@@ -224,7 +224,7 @@ class Grid {
     static cells = cells;
     static swap = swap;
     static getNeighbor = getNeighbor;
-    static getExstendedCell = getExstendedCell;
+    static getExtendedCell = getExtendedCell;
 }
 
 export { Game, Grid }

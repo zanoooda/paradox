@@ -11,7 +11,7 @@ import { Game, Grid } from './game.js';
 const colors = ['red', 'blue'];
 
 function getPoint(cell, size) { // TODO: Improve (width larger than height of the grid)
-    const _cell = Grid.getExstendedCell([cell[0], cell[1]]); //:
+    const _cell = Grid.getExtendedCell([cell[0], cell[1]]); //:
     const distance = size / 12; // ?
     const x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + _cell[2] / 2)); // TODO: Math.sqrt(3) to const
     const y = (size / 2) + (distance * 3 / 2 * _cell[2]);
