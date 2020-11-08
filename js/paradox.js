@@ -203,7 +203,7 @@ function show(state, context, size, cellRadius, clickRadius) {
 }
 function showWinner(winner, context, size) {
     const midPoint = [size / 2, size / 2];
-    const name = colors[winner].charAt(0).toUpperCase() + colors[winner].slice(1);
+    const name = colors?.[winner]?.charAt(0)?.toUpperCase() + colors?.[winner]?.slice(1);
     const message = winner == 2 ? `Draw!` : `${name} player win!`;
     const fontSize = size / 10;
     context.fillStyle = 'white';
