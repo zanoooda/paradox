@@ -117,9 +117,9 @@ function findWinner(items) { // TODO: Improve
     let _items = [[...items[0].map(cell => Grid.getExtendedCell(cell))], [...items[1].map(cell => Grid.getExtendedCell(cell))]];
     let found = false;
     for (const [playerIndex, cells] of _items.entries()) {
+        found = false;
         for (let diagonal = 0; diagonal < 3; diagonal++) {
             if (found) {
-                found = false;
                 break;
             }
             const nextDiagonal = diagonal == 2 ? 0 : diagonal + 1;
