@@ -111,7 +111,7 @@ function updateItems(move, items) {
     }
     return items;
 }
-function findWinner(items) { // TODO: Implement/Improve
+function findWinner(items) { // TODO: Improve
     let winners = [];
     let _items = [[...items[0].map(cell => Grid.getExtendedCell(cell))], [...items[1].map(cell => Grid.getExtendedCell(cell))]];
     let found = false;
