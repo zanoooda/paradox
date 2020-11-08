@@ -142,13 +142,13 @@ function findWinner(items) { // TODO: Improve
     switch (winners.length) {
         case 1: // win
             return winners[0];
-        //break;
+            break;
         case 2: // draw
             return 2;
-        //break;
+            break;
         default: // no winner
             return -1;
-        //break;
+            break;
     }
 }
 function findPlayerIndex(cell, items) {
