@@ -1,9 +1,8 @@
-// TODO: 
-// move must be [cell0, cell1, direction] (not [index0, index1, direction]) 
+// TODO: Decide about ability to change order of items.
+// move can be [cell0, cell1, direction] (not [index0, index1, direction]) 
 // otherwise sort items by cell0 than by cell1
 
 // TODO: Hash (findPlayerIndex(), findItemIndex(), findItemWithIndex())
-
 // Learn about keyed collections (Map, Set, WeakMap, WeakSet),
 // structured data (ArrayBuffer, SharedArrayBuffer, Atomics, DataView),
 // WebAssembly
@@ -61,7 +60,7 @@ function createCells() {
     return cells;
 }
 function getExtendedCell(cell) {
-    return [...cell, -cell[0] - cell[1]];
+    return [...cell, (cell[0] == 0 ? 0 : -cell[0]) - cell[1]];
 }
 //#endregion
 function createItems() {
