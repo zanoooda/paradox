@@ -1,3 +1,5 @@
+// TODO: findWinner() find player0 when was draw
+
 // TODO: Decide about ability to change order of items.
 // move can be [cell0, cell1, direction] (not [index0, index1, direction]) 
 // otherwise sort items by cell0 than by cell1

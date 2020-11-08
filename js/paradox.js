@@ -52,15 +52,15 @@ function canvasClick(event, that) { // TODO: Improve (Find clothest to click pai
         ];
         that.game.move(selectedPair, clickedMoveDirection);
         that.state = new State(that.game, that.size, -1);
-        // ...
-        if (that.game.winner != -1) {
-            console.log(`Player ${that.game.winner} is winner`);
-        }
     }
     else if (clickedPairIndex != -1) {
         that.state = new State(that.game, that.size, clickedPairIndex);
     }
     show(that.state, that.context, that.size, that.cellRadius, that.clickRadius);
+    // ...
+    if (that.game.winner != -1) {
+        showWinner(that.game.winner, that.context, that.size);
+    }
 }
 function getCells(game, size) { // getCellsWithItemsAndPoints()
     return Grid.cells.map(cell => {
@@ -173,7 +173,7 @@ function showSelectedPairMove(move, context, clickRadius) { // TODO: Improve
     context.arc(...point, clickRadius / 6, 0, 2 * Math.PI);
     context.closePath();
     context.fillStyle = 'black'
-    context.fill(); 
+    context.fill();
 
     // context.beginPath();
     // context.arc(...point, clickRadius / 3, 0, 2 * Math.PI);
@@ -200,6 +200,15 @@ function show(state, context, size, cellRadius, clickRadius) {
     showPairs(state.pairs, context, clickRadius);
     showSelectedPair(state, context, cellRadius);
     showSelectedPairMoves(state.moves, context, clickRadius);
+}
+function showWinner(winner, context, size) {
+    const midPoint = [size / 2, size / 2];
+    context.fillStyle = 'black'; // duplicated
+    context.font = '50px Arial'; // duplicated
+    context.fillText(winner == 2 ? `draw` : `${colors[winner]} player win!`, ...midPoint);
+    // ...
+
+    console.log(`Player ${winner} win`);
 }
 class Paradox {
     constructor(container) {
