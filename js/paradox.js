@@ -1,9 +1,12 @@
 // TODO: Describe structs or wrap structs to classes with readable props
 // TODO: Wrap unreadable/similar/duplicated struct manipulations to readable variables/methods
+
 // TODO: Fix -0
+
 // Points can be calculated only once
 // New state can be crated by old one and [move] (pair and direction) (state.updateState(move))
-// ...
+
+// TODO: getMidPoint(), use Grid.extendCell()
 
 import { Game, Grid } from './game.js';
 
@@ -213,7 +216,7 @@ class Paradox {
     playOnline() { // TODO: Implement
     }
 }
-class State { // Can be struct but another way cells, pairs and moves can be classes. Anyway describe structs
+class State { // Can be struct. Otherwise: cells, pairs and moves can be classes. Anyway describe structs
     constructor(game, size, selectedPairIndex) {
         this.cells = getCells(game, size); // [[cell0, cell1, x, y (optonal), playerIndex, itemIndex], ...]
         this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...] // size or cells?

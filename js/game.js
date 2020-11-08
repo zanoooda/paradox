@@ -1,5 +1,15 @@
+// TODO: 
+// move must be [cell0, cell1, direction] (not [index0, index1, direction]) 
+// otherwise sort items by cell0 than by cell1
+
 // TODO: Hash (findPlayerIndex(), findItemIndex(), findItemWithIndex())
-// findWinner: sort items by x, y, z!
+
+// TODO: extendCell(), Grid.extendCell()
+
+// Use keyed collections (Map, Set, WeakMap, WeakSet) or structured data (ArrayBuffer, SharedArrayBuffer, Atomics, DataView)
+
+// WebAssembly
+
 //#region grid
 const radius = 3,
     directions = [
@@ -101,20 +111,28 @@ function updateItems(move, items) {
     }
     return items;
 }
-function findWinner(items) { // TODO: Implement (-1 (no one), 0, 1, 2 if draw)
-    const player0Items = items[0].map(cell => [cell[0], cell[1], -cell[0] - cell[1]]);
-    let player1SortedByX = [...player0Items].sort(function (a, b) {
-        return a[0] - b[0];
-    });
-    let player1SortedByY = [...player0Items].sort(function (a, b) {
-        return a[1] - b[1];
-    });
-    let player1SortedByZ = [...player0Items].sort(function (a, b) {
-        return a[2] - b[2];
-    });
-    // TODO: Find to each diagonal, second that must be incremented
-    // ...
-    return -1;
+function findWinner(items) { // TODO: Implement
+    let winners = [];
+    let _items = [[...items[0]], [...items[1]]];
+    for (const [playerIndex, cells] of _items.entries()) {
+        for (let diagonal = 0; diagonal < 3; diagonal++) {
+            const nextDiagonal = diagonal == 2 ? 0 : diagonal++;
+            cells.sort((a, b) => a[diagonal] - b[diagonal] || a[nextDiagonal] - b[nextDiagonal]);
+            // ...
+        }
+        // ...
+    }
+    switch (winners.length) {
+        case 1: // win
+            return winners[0];
+            //break;
+        case 2: // draw
+            return 2;
+            //break;
+        default: // no winner
+            return -1;
+            //break;
+    }
 }
 function findPlayerIndex(cell, items) {
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
@@ -130,23 +148,27 @@ function findItemIndex(cell, samePlayersItems) {
     return samePlayersItems.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
 function isLegal(move, items, prevMove) { // TODO: Improve
-    if (move[2] == swap) {
-        if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && move[2] == prevMove[2]) { // isEqual(move, prevMove)
+    const cell0 = items[0][move[0]], 
+        cell1 = items[1][move[1]],
+        direction = move[2],
+        prevMoveDirection = prevMove?.[2];
+    if (direction == swap) {
+        if (prevMove && move[0] == prevMove[0] && move[1] == prevMove[1] && direction == prevMoveDirection) { // isEqual(move, prevMove)
             return false;
         }
         return true;
     }
-    else if (isExist(getNeighbor(items[0][move[0]], move[2])) && isExist(getNeighbor(items[1][move[1]], move[2]))) {
+    else if (isExist(getNeighbor(cell0, direction)) && isExist(getNeighbor(cell1, direction))) {
         const itemsWithIndex = [
-            findItemWithIndex(getNeighbor(items[0][move[0]], move[2]), items), // items[0][move[0]] wrap to const
-            findItemWithIndex(getNeighbor(items[1][move[1]], move[2]), items)
+            findItemWithIndex(getNeighbor(cell0, direction), items),
+            findItemWithIndex(getNeighbor(cell1, direction), items)
         ];
         if ((itemsWithIndex[0][0] == -1 || (itemsWithIndex[0][0] == 1 && itemsWithIndex[0][1] == move[1])) &&
             (itemsWithIndex[1][0] == -1 || (itemsWithIndex[1][0] == 0 && itemsWithIndex[1][1] == move[0]))) {
             if (prevMove == null) {
                 return true;
             }
-            if (move[0] == prevMove[0] && move[1] == prevMove[1] && getInverseDirectionIndex(move[2]) == prevMove[2]) {
+            if (move[0] == prevMove[0] && move[1] == prevMove[1] && getInverseDirectionIndex(direction) == prevMoveDirection) {
                 return false;
             }
             return true;
