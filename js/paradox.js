@@ -13,10 +13,10 @@ import { Game, Grid } from './game.js';
 const colors = ['red', 'blue'];
 
 function getPoint(cell, size) { // TODO: Improve (width larger than height of the grid)
-    const cell2 = -cell[1] - cell[0]; //:
+    const _cell = Grid.getExstendedCell([cell[0], cell[1]]); //:
     const distance = size / 12; // ?
-    const x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + cell2 / 2)); // TODO: Math.sqrt(3) to const
-    const y = (size / 2) + (distance * 3 / 2 * cell2);
+    const x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + _cell[2] / 2)); // TODO: Math.sqrt(3) to const
+    const y = (size / 2) + (distance * 3 / 2 * _cell[2]);
     return [x, y];
 }
 function getDistance(point0, point1) {
@@ -94,7 +94,7 @@ function showCell(cell, context, cellRadius) {
     context.font = '10px Arial'; // duplicated
     context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
     if (typeof cell[5] !== 'undefined') {
-        context.fillText(`id: ${cell[5]}`, point[0], point[1] + 12);
+        context.fillText(`index: ${cell[5]}`, point[0], point[1] + 12);
     }
 }
 function getPairs(game, size) { // getPairsWithPoints() Another option is to get point by pairs and cells (with points)

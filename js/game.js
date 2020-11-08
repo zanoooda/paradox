@@ -4,10 +4,8 @@
 
 // TODO: Hash (findPlayerIndex(), findItemIndex(), findItemWithIndex())
 
-// TODO: extendCell(), Grid.extendCell()
-
-// Use keyed collections (Map, Set, WeakMap, WeakSet) or structured data (ArrayBuffer, SharedArrayBuffer, Atomics, DataView)
-
+// Learn about keyed collections (Map, Set, WeakMap, WeakSet),
+// structured data (ArrayBuffer, SharedArrayBuffer, Atomics, DataView),
 // WebAssembly
 
 //#region grid
@@ -30,8 +28,7 @@ function mult(array, scalar) {
     return array.map(i => i * scalar);
 }
 function isExist(cell) {
-    const cube = [...cell, -(cell[0] + cell[1])];
-    return Math.max(...cube.map(Math.abs)) <= radius
+    return Math.max(...getExstendedCell(cell).map(Math.abs)) <= radius
 }
 function getInverseDirectionIndex(directionIndex) {
     return inverseDirectionsIndexes[directionIndex];
@@ -62,6 +59,9 @@ function createCells() {
         cells.push(...getPerimeter(r));
     }
     return cells;
+}
+function getExstendedCell(cell) {
+    return [...cell, -cell[0] - cell[1]];
 }
 //#endregion
 function createItems() {
@@ -116,8 +116,10 @@ function findWinner(items) { // TODO: Implement
     let _items = [[...items[0]], [...items[1]]];
     for (const [playerIndex, cells] of _items.entries()) {
         for (let diagonal = 0; diagonal < 3; diagonal++) {
-            const nextDiagonal = diagonal == 2 ? 0 : diagonal++;
+            const nextDiagonal = diagonal == 2 ? 0 : diagonal + 1;
             cells.sort((a, b) => a[diagonal] - b[diagonal] || a[nextDiagonal] - b[nextDiagonal]);
+
+            console.log('');
             // ...
         }
         // ...
@@ -222,6 +224,7 @@ class Grid {
     static cells = cells;
     static swap = swap;
     static getNeighbor = getNeighbor;
+    static getExstendedCell = getExstendedCell;
 }
 
 export { Game, Grid }
