@@ -166,7 +166,7 @@ function showSelectedPairMoves(moves, context, clickRadius) {
         showSelectedPairMove(move, context, clickRadius);
     }
 }
-function showSelectedPairMove(move, context, clickRadius) { // TODO: Improve
+function showSelectedPairMove(move, context, clickRadius) {
     const point = [move[1], move[2]];
 
     context.beginPath();
@@ -180,8 +180,8 @@ function showSelectedPairMove(move, context, clickRadius) { // TODO: Improve
     // context.closePath();
     // context.fillStyle = 'green'
     // context.fill(); 
-    // // // const unicodeDirections = ['↙', '←', '↖', '↗', '→', '↘'];
-    // // // const swap = '↔';
+    // // const unicodeDirections = ['↙', '←', '↖', '↗', '→', '↘'];
+    // // const swap = '↔';
     // const unicodeDirections = ['⬋', '⬅', '⬉', '⬈', '➡', '⬊'];
     // const swap = '⬌';
     // context.fillStyle = 'white'; // duplicated
@@ -203,12 +203,19 @@ function show(state, context, size, cellRadius, clickRadius) {
 }
 function showWinner(winner, context, size) {
     const midPoint = [size / 2, size / 2];
-    context.fillStyle = 'black'; // duplicated
-    context.font = '50px Arial'; // duplicated
-    context.fillText(winner == 2 ? `draw` : `${colors[winner]} player win!`, ...midPoint);
-    // ...
-
-    console.log(`Player ${winner} win`);
+    const name = colors[winner].charAt(0).toUpperCase() + colors[winner].slice(1);
+    const message = winner == 2 ? `Draw!` : `${name} player win!`;
+    const fontSize = size / 10;
+    context.fillStyle = 'white';
+    context.globalAlpha = 0.6;
+    context.fillRect(0, 0, size, size);
+    context.globalAlpha = 1.0;
+    context.fillStyle = 'black';
+    context.font = `bold ${fontSize}px serif`;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(message, ...midPoint);
+    // console.log(`winner: ${winner}`);
 }
 class Paradox {
     constructor(container) {
