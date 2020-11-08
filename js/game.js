@@ -193,11 +193,11 @@ function isLegal(move, items, prevMove) { // TODO: Improve
     }
     return false;
 }
-function getAllMoves(pairs) { // TODO: Test
+function getAllMoves(pairs) {
     let moves = [];
     for (const pair of pairs) {
         for (const directionIndex of pair[2]) {
-            moves.push([...pair, directionIndex]);
+            moves.push([pair[1], pair[0], directionIndex]);
         }
     }
     return moves;
