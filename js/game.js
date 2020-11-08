@@ -222,6 +222,9 @@ class Game {
         this.winner = findWinner(this.items);
         this.pairs = findPairs(this.items, move);
     }
+    undo() { // Implement
+        // ...
+    }
     getAllMoves() {
         return getAllMoves(this.pairs);
     }
