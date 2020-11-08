@@ -123,9 +123,9 @@ function findWinner(items) { // TODO: Improve
             }
             const nextDiagonal = diagonal == 2 ? 0 : diagonal + 1;
             cells.sort((a, b) => a[diagonal] - b[diagonal] || a[nextDiagonal] - b[nextDiagonal]);
-            let count = 1, prev, prevNext;
+            let count = 1, prevCell;
             for (const cell of cells) {
-                if (cell[diagonal] == prev && cell[nextDiagonal] == prevNext + 1) {
+                if (cell[diagonal] == prevCell?.[diagonal] && cell[nextDiagonal] == prevCell?.[nextDiagonal] + 1) {
                     count++;
                 }
                 else {
@@ -136,8 +136,7 @@ function findWinner(items) { // TODO: Improve
                     found = true;
                     break;
                 }
-                prev = cell[diagonal];
-                prevNext = cell[nextDiagonal];
+                prevCell = cell;
             }
         }
     }
