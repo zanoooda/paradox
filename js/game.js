@@ -111,29 +111,46 @@ function updateItems(move, items) {
     }
     return items;
 }
-function findWinner(items) { // TODO: Implement
+function findWinner(items) { // TODO: Implement/Improve
     let winners = [];
-    let _items = [[...items[0]], [...items[1]]];
+    let _items = [[...items[0].map(cell => Grid.getExtendedCell(cell))], [...items[1].map(cell => Grid.getExtendedCell(cell))]];
+    let found = false;
     for (const [playerIndex, cells] of _items.entries()) {
         for (let diagonal = 0; diagonal < 3; diagonal++) {
+            if (found) {
+                found = false;
+                break;
+            }
             const nextDiagonal = diagonal == 2 ? 0 : diagonal + 1;
             cells.sort((a, b) => a[diagonal] - b[diagonal] || a[nextDiagonal] - b[nextDiagonal]);
-
-            console.log('');
-            // ...
+            let count = 1, prev, prevNext;
+            for (const cell of cells) {
+                if (cell[diagonal] == prev && cell[nextDiagonal] == prevNext + 1) {
+                    count++;
+                }
+                else {
+                    count = 1
+                }
+                if (count == 4) {
+                    winners.push(playerIndex);
+                    found = true;
+                    break;
+                }
+                prev = cell[diagonal];
+                prevNext = cell[nextDiagonal];
+            }
         }
-        // ...
     }
     switch (winners.length) {
         case 1: // win
             return winners[0];
-            //break;
+        //break;
         case 2: // draw
             return 2;
-            //break;
+        //break;
         default: // no winner
             return -1;
-            //break;
+        //break;
     }
 }
 function findPlayerIndex(cell, items) {
@@ -150,7 +167,7 @@ function findItemIndex(cell, samePlayersItems) {
     return samePlayersItems.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
 function isLegal(move, items, prevMove) { // TODO: Improve
-    const cell0 = items[0][move[0]], 
+    const cell0 = items[0][move[0]],
         cell1 = items[1][move[1]],
         direction = move[2],
         prevMoveDirection = prevMove?.[2];
@@ -203,9 +220,7 @@ class Game {
         this.history.push(move); // this.history.push([...move, items, pairs]);
         this.items = updateItems(move, this.items);
         this.winner = findWinner(this.items);
-        if (this.winner == -1) {
-            this.pairs = findPairs(this.items, move);
-        }
+        this.pairs = findPairs(this.items, move);
         if (this.winner != -1) {
             console.log(`Player ${this.winner} is winner`);
         }
