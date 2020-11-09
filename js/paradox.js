@@ -179,12 +179,16 @@ function showSelectedPairMove(move, context, size, clickRadius) {
     // context.strokeStyle = 'green';
     // context.stroke();
 }
+function showCurrentPlayer(currentPlayerIndex, context, size) {
+    // console.log(currentPlayerIndex);
+}
 function show(state, context, size, cellRadius, clickRadius) {
     context.clearRect(0, 0, size, size);
     showCells(state.cells, context, cellRadius);
     showPairs(state.pairs, context, clickRadius);
     showSelectedPair(state, context, size, cellRadius);
     showSelectedPairMoves(state.moves, context, size, clickRadius);
+    showCurrentPlayer(state.currentPlayerIndex, context, size);
 }
 function showWinner(winner, context, size) {
     const midPoint = [size / 2, size / 2];
@@ -231,6 +235,7 @@ class State { // Can be struct. Otherwise: cells, pairs and moves can be classes
         this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...] // size or cells?
         this.selectedPairIndex = selectedPairIndex; // -1|0...
         this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells, size); // [[directionIndex, x, y], ...]
+        this.currentPlayerIndex = game.getCurrentPlayer();
     }
 }
 

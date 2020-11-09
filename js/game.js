@@ -212,6 +212,9 @@ class Game {
     isLegal(move) { // TODO: Test if history.length = 0
         return isLegal(move, this.items, this.history?.[this.history.length - 1] ?? null);
     }
+    getCurrentPlayer() {
+        return this.history.length % 2;
+    }
     move(pair, directionIndex) { // TODO: Test/Improve
         //if(!isLegal([...pair, directionIndex], this.items, this.history.length > 0 ? this.history[this.history.length - 1] : null)) return;
         const move = [...pair, directionIndex];
