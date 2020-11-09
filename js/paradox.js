@@ -56,8 +56,7 @@ function canvasClick(event, that) { // TODO: Improve (Find clothest to click pai
     else if (clickedPairIndex != -1) {
         that.state = new State(that.game, that.size, clickedPairIndex);
     }
-    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius);
-    // ...
+    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
     if (that.game.winner != -1) {
         showWinner(that.game.winner, that.context, that.size);
     }
@@ -179,16 +178,17 @@ function showSelectedPairMove(move, context, size, clickRadius) {
     // context.strokeStyle = 'green';
     // context.stroke();
 }
-function showCurrentPlayer(currentPlayerIndex, context, size) {
+function showCurrentPlayer(currentPlayerIndex, context, size, indicator) {
+    indicator.style.backgroundColor = colors[currentPlayerIndex];
     // console.log(currentPlayerIndex);
 }
-function show(state, context, size, cellRadius, clickRadius) {
+function show(state, context, size, cellRadius, clickRadius, indicator) {
     context.clearRect(0, 0, size, size);
     showCells(state.cells, context, cellRadius);
     showPairs(state.pairs, context, clickRadius);
     showSelectedPair(state, context, size, cellRadius);
     showSelectedPairMoves(state.moves, context, size, clickRadius);
-    showCurrentPlayer(state.currentPlayerIndex, context, size);
+    showCurrentPlayer(state.currentPlayerIndex, context, size, indicator);
 }
 function showWinner(winner, context, size) {
     const midPoint = [size / 2, size / 2];
@@ -206,8 +206,9 @@ function showWinner(winner, context, size) {
     context.fillText(message, ...midPoint);
 }
 class Paradox {
-    constructor(container) {
+    constructor(container, indicator) {
         this.container = container;
+        this.indicator = indicator;
     }
     playHotSeat() {
         this.game = new Game();
@@ -222,7 +223,7 @@ class Paradox {
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
-        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius);
+        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
     playWithRobot(playerIndex) { // TODO: Implement
     }
