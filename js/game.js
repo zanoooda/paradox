@@ -64,7 +64,7 @@ function getExtendedCell(cell) {
 }
 //#endregion
 function createItems() {
-    let items = [[mult(forward, -1)], [mult(forward, 1)]];
+    let items = [[mult(directions[3], 1)], [mult(directions[3], -1)]];
     for (const [index, cell] of getPerimeter(radius).entries()) {
         items[index % 2].push(cell);
     }
