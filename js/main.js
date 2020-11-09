@@ -1,4 +1,5 @@
 import Paradox from './paradox.js';
 
-let paradox = new Paradox(document.body);
+let container = document.getElementById('container');
+let paradox = new Paradox(container);
 paradox.playHotSeat();
