@@ -209,19 +209,20 @@ class Paradox {
     constructor(container, indicator) {
         this.container = container;
         this.indicator = indicator;
-    }
-    playHotSeat() {
-        this.game = new Game();
+
         this.size = getSize(this.container);
         this.clickRadius = this.size / 24;
         this.cellRadius = this.size / 18;
         this.canvas = createCanvas(this.size);
         this.context = this.canvas.getContext('2d');
+        // this.container.innerHTML = '';
+        this.container.prepend(this.canvas);
+    }
+    playHotSeat() {
+        this.game = new Game();
         this.canvas.addEventListener('click', (event) => {
             canvasClick(event, this);
         }, false);
-        this.container.innerHTML = '';
-        this.container.prepend(this.canvas);
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
         show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
