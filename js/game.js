@@ -197,7 +197,7 @@ function getAllMoves(pairs) {
     let moves = [];
     for (const pair of pairs) {
         for (const directionIndex of pair[2]) {
-            moves.push([pair[1], pair[0], directionIndex]);
+            moves.push([pair[0], pair[1], directionIndex]);
         }
     }
     return moves;
