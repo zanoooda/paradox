@@ -4,6 +4,9 @@
 // Points can be calculated only once
 // New state can be crated by old one and [move] (pair and direction) (state.updateState(move))
 
+// TODO: Evaluation: (game) => -100|100
+// Zobrist hashing for game state comparsing
+
 import { Game, Grid } from './game.js';
 
 const colors = ['red', 'blue'];
@@ -18,6 +21,27 @@ function getPoint(cell, size) { // TODO: Improve (width larger than height of th
 function getMidPoint(point0, point1) {
     return [(point0[0] + point1[0]) / 2, (point0[1] + point1[1]) / 2];
 }
+function getClickPoint(event, canvas) {
+    return [
+        event.pageX - canvas.offsetLeft - canvas.clientLeft,
+        event.pageY - canvas.offsetTop - canvas.clientTop
+    ];
+}
+function getClickedMoveDirection(clickPoint, state, clickRadius) {
+    let clickedMoveDirection = null;
+    if (state.selectedPairIndex != -1) {
+        for (const move of state.moves) {
+            if (getDistance([move[1], move[2]], clickPoint) < clickRadius) {
+                clickedMoveDirection = move[0];
+                break;
+            }
+        }
+    }
+    return clickedMoveDirection;
+}
+function getClickedPairIndex(clickPoint, pairs, clickRadius) { // TODO: Find clothest to click pair that in radius (Click can be overlapped by two pairs)
+    return pairs.findIndex(pair => getDistance([pair[3], pair[4]], clickPoint) < clickRadius);
+}
 function getDistance(point0, point1) {
     return Math.sqrt(Math.pow(point0[0] - point1[0], 2) + Math.pow(point0[1] - point1[1], 2));
 }
@@ -31,21 +55,11 @@ function createCanvas(size) {
     canvas.height = size;
     return canvas;
 }
-function canvasClick(event, that) { // TODO: Improve (Find clothest to click pair that in radius)
-    const clickPoint = [
-        event.pageX - that.canvas.offsetLeft - that.canvas.clientLeft,
-        event.pageY - that.canvas.offsetTop - that.canvas.clientTop
-    ];
-    let clickedMoveDirection = null; // => that.state.selectedPairIndex != -1
-    for (const move of that.state.moves) { // TODO: Wrap to getClickedMoveDirection()
-        if (getDistance([move[1], move[2]], clickPoint) < that.clickRadius) {
-            clickedMoveDirection = move[0];
-            break;
-        }
-    }
-    const clickedPairIndex = that.state.pairs.findIndex(pair => getDistance([pair[3], pair[4]], clickPoint) < that.clickRadius);
-    // TODO: Find clothest to click pair that in radius (Click can be overlapped by two pairs)
-    if (clickedMoveDirection != null) { // that.state.selectedPairIndex != -1
+function canvasClick(event, that) {
+    const clickPoint = getClickPoint(event, that.canvas);
+    let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
+    const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
+    if (clickedMoveDirection != null) {
         const selectedPair = [
             that.state.pairs[that.state.selectedPairIndex][0],
             that.state.pairs[that.state.selectedPairIndex][1]
@@ -57,9 +71,40 @@ function canvasClick(event, that) { // TODO: Improve (Find clothest to click pai
         that.state = new State(that.game, that.size, clickedPairIndex);
     }
     show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
-    if (that.game.winner != -1) {
-        showWinner(that.game.winner, that.context, that.size);
+}
+async function canvasClickWithRobot(event, that) { // TODO: Wrap dublications
+    if (that.game.getCurrentPlayer() == that.me) {
+        const clickPoint = getClickPoint(event, that.canvas);
+        let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
+        const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
+        if (clickedMoveDirection != null) {
+            const selectedPair = [
+                that.state.pairs[that.state.selectedPairIndex][0],
+                that.state.pairs[that.state.selectedPairIndex][1]
+            ];
+            that.game.move(selectedPair, clickedMoveDirection);
+            that.state = new State(that.game, that.size, -1);
+
+            //#region robot move
+            const allMoves = that.game.getAllMoves();
+            const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+            const randomMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == randomMove[0] && pair[1] == randomMove[1]);
+            that.state = new State(that.game, that.size, randomMovePairIndex);
+            show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+            await delay(1000);
+
+            that.game.move([randomMove[0], randomMove[1]], randomMove[2]);
+            that.state = new State(that.game, that.size, -1);
+            //#endregion
+        }
+        else if (clickedPairIndex != -1) {
+            that.state = new State(that.game, that.size, clickedPairIndex);
+        }
+        show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
     }
+}
+function delay(ms) {
+    return new Promise(res => setTimeout(res, ms));
 }
 function getCells(game, size) { // getCellsWithItemsAndPoints()
     return Grid.cells.map(cell => {
@@ -189,21 +234,24 @@ function show(state, context, size, cellRadius, clickRadius, indicator) {
     showSelectedPair(state, context, size, cellRadius);
     showSelectedPairMoves(state.moves, context, size, clickRadius);
     showCurrentPlayer(state.currentPlayerIndex, context, size, indicator);
+    showWinner(state.winner, context, size);
 }
 function showWinner(winner, context, size) {
-    const midPoint = [size / 2, size / 2];
-    const name = colors?.[winner]?.charAt(0)?.toUpperCase() + colors?.[winner]?.slice(1);
-    const message = winner == 2 ? `Draw!` : `${name} player win!`;
-    const fontSize = size / 10;
-    context.fillStyle = 'white';
-    context.globalAlpha = 0.6;
-    context.fillRect(0, 0, size, size);
-    context.globalAlpha = 1.0;
-    context.fillStyle = 'black';
-    context.font = `bold ${fontSize}px serif`;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillText(message, ...midPoint);
+    if (winner != -1) {
+        const midPoint = [size / 2, size / 2];
+        const name = colors?.[winner]?.charAt(0)?.toUpperCase() + colors?.[winner]?.slice(1);
+        const message = winner == 2 ? `Draw!` : `${name} player win!`;
+        const fontSize = size / 10;
+        context.fillStyle = 'white';
+        context.globalAlpha = 0.6;
+        context.fillRect(0, 0, size, size);
+        context.globalAlpha = 1.0;
+        context.fillStyle = 'black';
+        context.font = `bold ${fontSize}px serif`;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(message, ...midPoint);
+    }
 }
 class Paradox {
     constructor(container, indicator) {
@@ -226,7 +274,27 @@ class Paradox {
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
         show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
-    playWithRobot(playerIndex) { // TODO: Implement
+    async playWithRobot(playerIndex) { // TODO: Implement
+        this.game = new Game();
+        this.me = playerIndex;
+        this.canvas.addEventListener('click', (event) => {
+            canvasClickWithRobot(event, this);
+        }, false);
+        this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
+        if (this.me != 0) {
+            //#region robot move
+            const allMoves = this.game.getAllMoves();
+            const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+            const randomMovePairIndex = this.state.pairs.findIndex(pair => pair[0] == randomMove[0] && pair[1] == randomMove[1]);
+            this.state = new State(this.game, this.size, randomMovePairIndex);
+            show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
+            await delay(1000);
+
+            this.game.move([randomMove[0], randomMove[1]], randomMove[2]);
+            this.state = new State(this.game, this.size, -1);
+            //#endregion
+        }
+        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
     playOnline() { // TODO: Implement
     }
@@ -238,6 +306,7 @@ class State { // Can be struct. Otherwise: cells, pairs and moves can be classes
         this.selectedPairIndex = selectedPairIndex; // -1|0...
         this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells, size); // [[directionIndex, x, y], ...]
         this.currentPlayerIndex = game.getCurrentPlayer();
+        this.winner = game.winner;
     }
 }
 
