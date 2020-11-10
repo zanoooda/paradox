@@ -114,7 +114,7 @@ function updateItems(move, items) {
 }
 function findWinner(items) { // TODO: Improve
     let winners = [];
-    let _items = [[...items[0].map(cell => Grid.getExtendedCell(cell))], [...items[1].map(cell => Grid.getExtendedCell(cell))]];
+    let _items = [[...items[0].map(cell => getExtendedCell(cell))], [...items[1].map(cell => getExtendedCell(cell))]];
     let found = false;
     for (const [playerIndex, cells] of _items.entries()) {
         found = false;
