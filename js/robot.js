@@ -1,12 +1,15 @@
 // TODO: Deep clone
 // Zobrist hashing
 
-import { Game } from './game.js';
+import { Game, getExtendedCell } from './game.js';
 
 function evaluate(game, player) { // -100 <= result <= 100
     let result = 0;
     if (game.winner == -1) {
-        // ...
+        const partner = !!+player ? 0 : 1;
+        const playerWeight = game.items[player].map(cell => Math.max(...getExtendedCell(cell).map(Math.abs))).reduce((a, b) => a + b);
+        const partnerWeight = game.items[partner].map(cell => Math.max(...getExtendedCell(cell).map(Math.abs))).reduce((a, b) => a + b);
+        result = partnerWeight - playerWeight;
     }
     else if (game.winner == player) {
         result = 100;
@@ -32,7 +35,6 @@ function findMove(game) {
     }
     (a, b) => a[diagonal] - b[diagonal] || a[nextDiagonal] - b[nextDiagonal]
     moves.sort((a, b) => a[3] - b[3]);
-    console.log(moves[moves.length - 1]);
 
     return moves[moves.length - 1].slice(0, -1);
 }
