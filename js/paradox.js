@@ -8,7 +8,7 @@
 // Zobrist hashing for game state comparsing
 
 import { Game, Grid } from './game.js';
-// import { Robot } from './robot.js';
+import { findMove as findRobotMove } from './robot.js';
 
 const colors = ['red', 'blue'];
 const type = { hotSeat: 0, withRobot: 1, online: 2 };
@@ -112,14 +112,13 @@ async function continueWithRobot(event, that) {
     }
 }
 async function robotPlay(that) {
-    const allMoves = that.game.getAllMoves();
-    const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
-    const randomMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == randomMove[0] && pair[1] == randomMove[1]);
-    that.state = new State(that.game, that.size, randomMovePairIndex);
+    const robotMove = findRobotMove(that.game);
+    const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]);
+    that.state = new State(that.game, that.size, robotMovePairIndex);
     show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
     await delay(1000);
 
-    that.game.move([randomMove[0], randomMove[1]], randomMove[2]);
+    that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
     that.state = new State(that.game, that.size, -1);
 }
 function delay(ms) {
