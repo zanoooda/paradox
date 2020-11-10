@@ -2,9 +2,10 @@
 
 import { Game } from './game.js';
 
-function evaluate(game) {
+function evaluate(game) { // -100 <= result <= 100
+    let result = 0;
     // ...
-    return 0; // -100 <= result <= 100
+    return result;
 }
 function findMove(game) {
     const allMoves = game.getAllMoves();
