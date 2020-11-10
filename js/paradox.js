@@ -128,10 +128,10 @@ function delay(ms) {
 function getCells(game, size) { // getCellsWithItemsAndPoints()
     return cells.map(cell => {
         const point = getPoint([cell[0], cell[1]], size);
-        const playerIndex = game.findPlayerIndex(cell);
-        if (playerIndex != -1) {
-            const itemIndex = game.findItemIndex(cell, playerIndex);
-            return [...cell, ...point, playerIndex, itemIndex];
+        const player = game.findPlayer(cell);
+        if (player != -1) {
+            const itemIndex = game.findItemIndex(cell, player);
+            return [...cell, ...point, player, itemIndex];
         }
         return [...cell, ...point];
     });
@@ -245,12 +245,12 @@ function showSelectedPairMove(move, context, size, clickRadius) {
 async function showCurrentPlayer(state, context, size, indicator) {
     if (
         state.selectedPairIndex == -1 &&
-        indicator.style.backgroundColor != colors[state.currentPlayerIndex] &&
+        indicator.style.backgroundColor != colors[state.currentPlayer] &&
         state.winner == -1
     ) {
         document.getElementById("indicator").classList.toggle("collapsed");
         await delay(200);
-        indicator.style.backgroundColor = colors[state.currentPlayerIndex];
+        indicator.style.backgroundColor = colors[state.currentPlayer];
         document.getElementById("indicator").classList.toggle("collapsed");
     }
 }
@@ -301,10 +301,10 @@ class Paradox {
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
         show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
-    async playWithRobot(playerIndex) {
+    async playWithRobot(player) {
         this.type = type.withRobot;
         this.game = new Game();
-        this.me = playerIndex;
+        this.me = player;
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
         if (this.me != 0) {
             show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
@@ -317,11 +317,11 @@ class Paradox {
 }
 class State { // Can be struct. Otherwise: cells, pairs and moves can be classes. Anyway describe structs
     constructor(game, size, selectedPairIndex) {
-        this.cells = getCells(game, size); // [[cell0, cell1, x, y (optonal), playerIndex, itemIndex], ...]
+        this.cells = getCells(game, size); // [[cell0, cell1, x, y (optonal), player, itemIndex], ...]
         this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...] // size or cells?
         this.selectedPairIndex = selectedPairIndex; // -1|0...
         this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells, size); // [[directionIndex, x, y], ...]
-        this.currentPlayerIndex = game.getCurrentPlayer();
+        this.currentPlayer = game.getCurrentPlayer();
         this.winner = game.winner;
     }
 }

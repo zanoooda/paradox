@@ -1,10 +1,8 @@
-// TODO: Export methods (not only classes)
-
 // TODO: Decide about ability to change order of items.
 // move can be [cell0, cell1, direction] (not [index0, index1, direction]) 
 // otherwise sort items by cell0 than by cell1
 
-// TODO: Hash (findPlayerIndex(), findItemIndex(), findItemWithIndex())
+// TODO: Hash (findPlayer(), findItemIndex(), findItemWithIndex())
 // Learn about keyed collections (Map, Set, WeakMap, WeakSet),
 // structured data (ArrayBuffer, SharedArrayBuffer, Atomics, DataView),
 // WebAssembly
@@ -116,7 +114,7 @@ function findWinner(items) { // TODO: Improve
     let winners = [];
     let _items = [[...items[0].map(cell => getExtendedCell(cell))], [...items[1].map(cell => getExtendedCell(cell))]];
     let found = false;
-    for (const [playerIndex, cells] of _items.entries()) {
+    for (const [player, cells] of _items.entries()) {
         found = false;
         for (let diagonal = 0; diagonal < 3; diagonal++) {
             if (found) {
@@ -133,7 +131,7 @@ function findWinner(items) { // TODO: Improve
                     count = 1;
                 }
                 if (count == 4) {
-                    winners.push(playerIndex);
+                    winners.push(player);
                     found = true;
                     break;
                 }
@@ -153,15 +151,15 @@ function findWinner(items) { // TODO: Improve
             break;
     }
 }
-function findPlayerIndex(cell, items) {
+function findPlayer(cell, items) {
     return items.findIndex(sameItems => findItemIndex(cell, sameItems) != -1);
 }
 function findItemWithIndex(cell, items) {
-    let itemIndex, playerIndex = items.findIndex((sameItems) => {
+    let itemIndex, player = items.findIndex((sameItems) => {
         itemIndex = findItemIndex(cell, sameItems);
         return itemIndex != -1;
     });
-    return [playerIndex, itemIndex];
+    return [player, itemIndex];
 }
 function findItemIndex(cell, samePlayersItems) {
     return samePlayersItems.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
@@ -195,7 +193,7 @@ function isLegal(move, items, prevMove) { // TODO: Improve
     }
     return false;
 }
-function getAllMoves(pairs) {
+function getMoves(pairs) {
     let moves = [];
     for (const pair of pairs) {
         for (const directionIndex of pair[2]) {
@@ -232,14 +230,14 @@ class Game {
     getPrevMove() {
         return this.history?.[this.history.length - 1] ?? null;
     }
-    getAllMoves() {
-        return getAllMoves(this.pairs);
+    getMoves() {
+        return getMoves(this.pairs);
     }
-    findPlayerIndex(cell) {
-        return findPlayerIndex(cell, this.items);
+    findPlayer(cell) {
+        return findPlayer(cell, this.items);
     }
-    findItemIndex(cell, playerIndex) {
-        return findItemIndex(cell, this.items[playerIndex]);
+    findItemIndex(cell, player) {
+        return findItemIndex(cell, this.items[player]);
     }
 }
 
