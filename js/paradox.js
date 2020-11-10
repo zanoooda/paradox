@@ -10,6 +10,7 @@
 import { Game, Grid } from './game.js';
 
 const colors = ['red', 'blue'];
+const type = { hotSeat: 0, withRobot: 1, online: 2 };
 
 function getPoint(cell, size) { // TODO: Improve (width larger than height of the grid)
     const _cell = Grid.getExtendedCell([cell[0], cell[1]]); //:
@@ -56,6 +57,22 @@ function createCanvas(size) {
     return canvas;
 }
 function canvasClick(event, that) {
+    switch (that.type) {
+        case type.hotSeat:
+            continueHotSeat(event, that);
+            break;
+        case type.withRobot:
+            continueWithRobot(event, that);
+            break;
+        case type.online:
+            // ...
+            break;
+
+        default:
+            break;
+    }
+}
+function continueHotSeat(event, that) {
     const clickPoint = getClickPoint(event, that.canvas);
     let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
     const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
@@ -72,7 +89,7 @@ function canvasClick(event, that) {
     }
     show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
 }
-async function canvasClickWithRobot(event, that) {
+async function continueWithRobot(event, that) {
     if (that.game.getCurrentPlayer() == that.me) {
         const clickPoint = getClickPoint(event, that.canvas);
         let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
@@ -257,32 +274,30 @@ class Paradox {
     constructor(container, indicator) {
         this.container = container;
         this.indicator = indicator;
-
         this.size = getSize(this.container);
         this.clickRadius = this.size / 24;
         this.cellRadius = this.size / 18;
         this.canvas = createCanvas(this.size);
+        this.canvas.addEventListener('click', (event) => {
+            canvasClick(event, this);
+        }, false);
         this.context = this.canvas.getContext('2d');
         // this.container.innerHTML = '';
         this.container.prepend(this.canvas);
     }
     playHotSeat() {
+        this.type = type.hotSeat;
         this.game = new Game();
-        this.canvas.addEventListener('click', (event) => {
-            canvasClick(event, this);
-        }, false);
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
         show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
-    async playWithRobot(playerIndex) { // TODO: Implement
+    async playWithRobot(playerIndex) {
+        this.type = type.withRobot;
         this.game = new Game();
         this.me = playerIndex;
-        this.canvas.addEventListener('click', (event) => {
-            canvasClickWithRobot(event, this);
-        }, false);
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
         if (this.me != 0) {
-            robotPlay(this);
+            await robotPlay(this);
         }
         show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
