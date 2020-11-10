@@ -4,19 +4,17 @@
 // Points can be calculated only once
 // New state can be crated by old one and [move] (pair and direction) (state.updateState(move))
 
-// TODO: Evaluation: (game) => -100|100
-// Zobrist hashing for game state comparsing
-
-import { Game, Grid } from './game.js';
+import { Game, cells, swap, getNeighbor, getExtendedCell } from './game.js';
 import { findMove as findRobotMove } from './robot.js';
 
 const colors = ['red', 'blue'];
 const type = { hotSeat: 0, withRobot: 1, online: 2 };
+const sqrt3 = Math.sqrt(3);
 
 function getPoint(cell, size) { // TODO: Improve (width larger than height of the grid)
-    const _cell = Grid.getExtendedCell([cell[0], cell[1]]); //:
+    const _cell = getExtendedCell([cell[0], cell[1]]); //:
     const distance = size / 12; // ?
-    const x = (size / 2) + (distance * Math.sqrt(3) * (cell[0] + _cell[2] / 2)); // TODO: Math.sqrt(3) to const
+    const x = (size / 2) + (distance * sqrt3 * (cell[0] + _cell[2] / 2));
     const y = (size / 2) + (distance * 3 / 2 * _cell[2]);
     return [x, y];
 }
@@ -103,6 +101,9 @@ async function continueWithRobot(event, that) {
             that.game.move(selectedPair, clickedMoveDirection);
             that.state = new State(that.game, that.size, -1);
             show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+            if (that.state.winner != -1) {
+                return;
+            }
             await robotPlay(that);
         }
         else if (clickedPairIndex != -1) {
@@ -125,7 +126,7 @@ function delay(ms) {
     return new Promise(res => setTimeout(res, ms));
 }
 function getCells(game, size) { // getCellsWithItemsAndPoints()
-    return Grid.cells.map(cell => {
+    return cells.map(cell => {
         const point = getPoint([cell[0], cell[1]], size);
         const playerIndex = game.findPlayerIndex(cell);
         if (playerIndex != -1) {
@@ -211,14 +212,14 @@ function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // TODO: 
         return [];
     }
     return pairs[selectedPairIndex][2].map(directionIndex => {
-        if (directionIndex == Grid.swap) {
+        if (directionIndex == swap) {
             const point = [pairs[selectedPairIndex][3], pairs[selectedPairIndex][4]]
             return [directionIndex, ...point];
         }
         const cell0 = cells.find(cell => cell[4] == 0 && cell[5] == pairs[selectedPairIndex][0]);
         const cell1 = cells.find(cell => cell[4] == 1 && cell[5] == pairs[selectedPairIndex][1]);
-        const cell0NewPoint = getPoint(Grid.getNeighbor(cell0, directionIndex), size);
-        const cell1NewPoint = getPoint(Grid.getNeighbor(cell1, directionIndex), size);
+        const cell0NewPoint = getPoint(getNeighbor(cell0, directionIndex), size);
+        const cell1NewPoint = getPoint(getNeighbor(cell1, directionIndex), size);
         const point = getMidPoint(cell0NewPoint, cell1NewPoint);
         return [directionIndex, ...point];
     });
@@ -242,7 +243,11 @@ function showSelectedPairMove(move, context, size, clickRadius) {
     // context.stroke();
 }
 async function showCurrentPlayer(state, context, size, indicator) {
-    if(state.selectedPairIndex == -1 && indicator.style.backgroundColor != colors[state.currentPlayerIndex]) {
+    if (
+        state.selectedPairIndex == -1 &&
+        indicator.style.backgroundColor != colors[state.currentPlayerIndex] &&
+        state.winner == -1
+    ) {
         document.getElementById("indicator").classList.toggle("collapsed");
         await delay(200);
         indicator.style.backgroundColor = colors[state.currentPlayerIndex];

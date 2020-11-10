@@ -242,11 +242,5 @@ class Game {
         return findItemIndex(cell, this.items[playerIndex]);
     }
 }
-class Grid {
-    static cells = cells;
-    static swap = swap;
-    static getNeighbor = getNeighbor;
-    static getExtendedCell = getExtendedCell;
-}
 
-export { Game, Grid }
+export { Game, cells, swap, getNeighbor, getExtendedCell }
