@@ -1,4 +1,4 @@
-// TODO: clone
+// TODO: Deep clone
 // Zobrist hashing
 
 import { Game } from './game.js';
