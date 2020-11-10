@@ -84,24 +84,24 @@ async function canvasClickWithRobot(event, that) { // TODO: Wrap dublications
             ];
             that.game.move(selectedPair, clickedMoveDirection);
             that.state = new State(that.game, that.size, -1);
-
-            //#region robot move
-            const allMoves = that.game.getAllMoves();
-            const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
-            const randomMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == randomMove[0] && pair[1] == randomMove[1]);
-            that.state = new State(that.game, that.size, randomMovePairIndex);
-            show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
-            await delay(1000);
-
-            that.game.move([randomMove[0], randomMove[1]], randomMove[2]);
-            that.state = new State(that.game, that.size, -1);
-            //#endregion
+            await robotPlay(that);
         }
         else if (clickedPairIndex != -1) {
             that.state = new State(that.game, that.size, clickedPairIndex);
         }
         show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
     }
+}
+async function robotPlay(that) {
+    const allMoves = that.game.getAllMoves();
+    const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+    const randomMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == randomMove[0] && pair[1] == randomMove[1]);
+    that.state = new State(that.game, that.size, randomMovePairIndex);
+    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+    await delay(1000);
+
+    that.game.move([randomMove[0], randomMove[1]], randomMove[2]);
+    that.state = new State(that.game, that.size, -1);
 }
 function delay(ms) {
     return new Promise(res => setTimeout(res, ms));
@@ -282,17 +282,7 @@ class Paradox {
         }, false);
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
         if (this.me != 0) {
-            //#region robot move
-            const allMoves = this.game.getAllMoves();
-            const randomMove = allMoves[Math.floor(Math.random() * allMoves.length)];
-            const randomMovePairIndex = this.state.pairs.findIndex(pair => pair[0] == randomMove[0] && pair[1] == randomMove[1]);
-            this.state = new State(this.game, this.size, randomMovePairIndex);
-            show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
-            await delay(1000);
-
-            this.game.move([randomMove[0], randomMove[1]], randomMove[2]);
-            this.state = new State(this.game, this.size, -1);
-            //#endregion
+            robotPlay(this);
         }
         show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
