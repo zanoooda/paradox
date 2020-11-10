@@ -8,6 +8,7 @@
 // Zobrist hashing for game state comparsing
 
 import { Game, Grid } from './game.js';
+// import { Robot } from './robot.js';
 
 const colors = ['red', 'blue'];
 const type = { hotSeat: 0, withRobot: 1, online: 2 };
@@ -101,6 +102,7 @@ async function continueWithRobot(event, that) {
             ];
             that.game.move(selectedPair, clickedMoveDirection);
             that.state = new State(that.game, that.size, -1);
+            show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
             await robotPlay(that);
         }
         else if (clickedPairIndex != -1) {
@@ -240,9 +242,13 @@ function showSelectedPairMove(move, context, size, clickRadius) {
     // context.strokeStyle = 'green';
     // context.stroke();
 }
-function showCurrentPlayer(currentPlayerIndex, context, size, indicator) {
-    indicator.style.backgroundColor = colors[currentPlayerIndex];
-    // console.log(currentPlayerIndex);
+async function showCurrentPlayer(state, context, size, indicator) {
+    if(state.selectedPairIndex == -1 && indicator.style.backgroundColor != colors[state.currentPlayerIndex]) {
+        document.getElementById("indicator").classList.toggle("collapsed");
+        await delay(200);
+        indicator.style.backgroundColor = colors[state.currentPlayerIndex];
+        document.getElementById("indicator").classList.toggle("collapsed");
+    }
 }
 function show(state, context, size, cellRadius, clickRadius, indicator) {
     context.clearRect(0, 0, size, size);
@@ -250,7 +256,7 @@ function show(state, context, size, cellRadius, clickRadius, indicator) {
     showPairs(state.pairs, context, clickRadius);
     showSelectedPair(state, context, size, cellRadius);
     showSelectedPairMoves(state.moves, context, size, clickRadius);
-    showCurrentPlayer(state.currentPlayerIndex, context, size, indicator);
+    showCurrentPlayer(state, context, size, indicator);
     showWinner(state.winner, context, size);
 }
 function showWinner(winner, context, size) {
@@ -297,6 +303,7 @@ class Paradox {
         this.me = playerIndex;
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
         if (this.me != 0) {
+            show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
             await robotPlay(this);
         }
         show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);

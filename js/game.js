@@ -215,16 +215,20 @@ class Game {
     getCurrentPlayer() {
         return this.history.length % 2;
     }
-    move(pair, directionIndex) { // TODO: Test/Improve
-        //if(!isLegal([...pair, directionIndex], this.items, this.history.length > 0 ? this.history[this.history.length - 1] : null)) return;
-        const move = [...pair, directionIndex];
-        this.history.push(move); // this.history.push([...move, items, pairs]);
-        this.items = updateItems(move, this.items);
-        this.winner = findWinner(this.items);
-        this.pairs = findPairs(this.items, move);
+    move(pair, directionIndex) {
+        if (isLegal([...pair, directionIndex], this.items, this.getPrevMove())) {
+            const move = [...pair, directionIndex];
+            this.history.push(move); // this.history.push([...move, items, pairs]);
+            this.items = updateItems(move, this.items);
+            this.winner = findWinner(this.items);
+            this.pairs = findPairs(this.items, move);
+        }
     }
     undo() { // Implement
         // ...
+    }
+    getPrevMove() {
+        return this.history?.[this.history.length - 1] ?? null;
     }
     getAllMoves() {
         return getAllMoves(this.pairs);
