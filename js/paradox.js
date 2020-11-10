@@ -72,7 +72,7 @@ function canvasClick(event, that) {
     }
     show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
 }
-async function canvasClickWithRobot(event, that) { // TODO: Wrap dublications
+async function canvasClickWithRobot(event, that) {
     if (that.game.getCurrentPlayer() == that.me) {
         const clickPoint = getClickPoint(event, that.canvas);
         let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
