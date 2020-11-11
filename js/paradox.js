@@ -203,7 +203,7 @@ function showSelectedCell(cell, context, size, cellRadius) {
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
     context.closePath();
     context.lineWidth = size / 36;
-    context.strokeStyle = 'purple'
+    context.strokeStyle = 'purple';
     context.stroke();
     context.lineWidth = 1;
 }
