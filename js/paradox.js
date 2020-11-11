@@ -117,7 +117,7 @@ async function robotPlay(that) {
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]);
     that.state = new State(that.game, that.size, robotMovePairIndex);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
-    await delay(1000);
+    await delay(1500);
 
     that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
     that.state = new State(that.game, that.size, -1);
