@@ -263,7 +263,7 @@ async function show(state, context, size, cellRadius, clickRadius, indicator) {
     await showCurrentPlayer(state, context, size, indicator);
     showWinner(state.winner, context, size);
 }
-async function showWinner(winner, context, size) {
+function showWinner(winner, context, size) {
     if (winner != -1) {
         const midPoint = [size / 2, size / 2];
         const name = colors?.[winner]?.charAt(0)?.toUpperCase() + colors?.[winner]?.slice(1);
