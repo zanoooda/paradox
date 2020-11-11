@@ -32,6 +32,7 @@ function findMove(game) {
         _game.move([move[0], move[1]], move[2]);
         const _e = evaluate(_game, robotPlayer);
         move.push(_e);
+        
     }
     (a, b) => a[diagonal] - b[diagonal] || a[nextDiagonal] - b[nextDiagonal]
     moves.sort((a, b) => a[3] - b[3]);
