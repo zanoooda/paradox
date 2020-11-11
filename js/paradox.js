@@ -71,7 +71,7 @@ function canvasClick(event, that) {
             break;
     }
 }
-function continueHotSeat(event, that) {
+async function continueHotSeat(event, that) {
     const clickPoint = getClickPoint(event, that.canvas);
     let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
     const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
@@ -86,7 +86,7 @@ function continueHotSeat(event, that) {
     else if (clickedPairIndex != -1) {
         that.state = new State(that.game, that.size, clickedPairIndex);
     }
-    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
 }
 async function continueWithRobot(event, that) {
     if (that.game.getCurrentPlayer() == that.me) {
@@ -100,7 +100,7 @@ async function continueWithRobot(event, that) {
             ];
             that.game.move(selectedPair, clickedMoveDirection);
             that.state = new State(that.game, that.size, -1);
-            show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+            await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
             if (that.state.winner != -1) {
                 return;
             }
@@ -109,14 +109,14 @@ async function continueWithRobot(event, that) {
         else if (clickedPairIndex != -1) {
             that.state = new State(that.game, that.size, clickedPairIndex);
         }
-        show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+        await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
     }
 }
 async function robotPlay(that) {
     const robotMove = findRobotMove(that.game);
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]);
     that.state = new State(that.game, that.size, robotMovePairIndex);
-    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
     await delay(1000);
 
     that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
@@ -254,16 +254,16 @@ async function showCurrentPlayer(state, context, size, indicator) {
         document.getElementById("indicator").classList.toggle("collapsed");
     }
 }
-function show(state, context, size, cellRadius, clickRadius, indicator) {
+async function show(state, context, size, cellRadius, clickRadius, indicator) {
     context.clearRect(0, 0, size, size);
     showCells(state.cells, context, cellRadius);
     showPairs(state.pairs, context, clickRadius);
     showSelectedPair(state, context, size, cellRadius);
     showSelectedPairMoves(state.moves, context, size, clickRadius);
-    showCurrentPlayer(state, context, size, indicator);
+    await showCurrentPlayer(state, context, size, indicator);
     showWinner(state.winner, context, size);
 }
-function showWinner(winner, context, size) {
+async function showWinner(winner, context, size) {
     if (winner != -1) {
         const midPoint = [size / 2, size / 2];
         const name = colors?.[winner]?.charAt(0)?.toUpperCase() + colors?.[winner]?.slice(1);
@@ -295,11 +295,11 @@ class Paradox {
         // this.container.innerHTML = '';
         this.container.prepend(this.canvas);
     }
-    playHotSeat() {
+    async playHotSeat() {
         this.type = type.hotSeat;
         this.game = new Game();
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
-        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
+        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
     async playWithRobot(player) {
         this.type = type.withRobot;
@@ -307,10 +307,10 @@ class Paradox {
         this.me = player;
         this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
         if (this.me != 0) {
-            show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
+            await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
             await robotPlay(this);
         }
-        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
+        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
     playOnline() { // TODO: Implement
     }
