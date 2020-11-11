@@ -249,7 +249,7 @@ async function showCurrentPlayer(state, context, size, indicator) {
         state.winner == -1
     ) {
         document.getElementById("indicator").classList.toggle("collapsed");
-        await delay(200);
+        await delay(500);
         indicator.style.backgroundColor = colors[state.currentPlayer];
         document.getElementById("indicator").classList.toggle("collapsed");
     }
@@ -313,6 +313,8 @@ class Paradox {
         await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
     }
     playOnline() { // TODO: Implement
+    }
+    highlightLastMove() { // TODO: Implement
     }
 }
 class State { // Can be struct. Otherwise: cells, pairs and moves can be classes. Anyway describe structs
