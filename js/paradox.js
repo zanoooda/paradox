@@ -248,10 +248,10 @@ async function showCurrentPlayer(state, context, size, indicator) {
         indicator.style.backgroundColor != colors[state.currentPlayer] &&
         state.winner == -1
     ) {
-        indicator.classList.toggle("collapsed");
+        indicator.classList.toggle('collapsed');
         await delay(500);
         indicator.style.backgroundColor = colors[state.currentPlayer];
-        document.getElementById("indicator").classList.toggle("collapsed");
+        indicator.classList.toggle('collapsed');
     }
 }
 function showWinner(winner, context, size) {
@@ -266,8 +266,8 @@ function showWinner(winner, context, size) {
         context.globalAlpha = 1.0;
         context.fillStyle = 'black';
         context.font = `bold ${fontSize}px serif`;
-        context.textAlign = "center";
-        context.textBaseline = "middle";
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
         context.fillText(message, ...midPoint);
     }
 }
