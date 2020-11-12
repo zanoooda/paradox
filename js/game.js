@@ -1,4 +1,4 @@
-// TODO: Deep copy initialItems in Game constructor
+// TODO: copy/clone without JSON in Game constructor
 
 // TODO: Decide about ability to change order of items.
 // move can be [cell0, cell1, direction] (not [index0, index1, direction]) 
@@ -205,12 +205,20 @@ function getMoves(pairs) {
     return moves;
 }
 class Game {
-    constructor() {
-        // this.items = initialItems; // [plyer0Cells, player1Cells]
-        this.items = JSON.parse(JSON.stringify(initialItems)); // TONOTTODO: Don't use JSON to copy
-        this.pairs = findPairs(this.items, null); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections]], ...] // pairsWithMoves
-        this.history = []; // [...move]; move: [...pair, directionIndex (optional), items, pairs]
-        this.winner = -1;
+    constructor(game = null) {
+        if (game) {
+            this.items =  JSON.parse(JSON.stringify(game.items)); // !
+            this.pairs = JSON.parse(JSON.stringify(game.pairs)); // !
+            this.history = JSON.parse(JSON.stringify(game.history)); // !
+            this.winner = game.winner;
+        }
+        else {
+            // this.items = initialItems; // [plyer0Cells, player1Cells]
+            this.items = JSON.parse(JSON.stringify(initialItems)); // !
+            this.pairs = findPairs(this.items, null); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections]], ...] // pairsWithMoves
+            this.history = []; // [...move]; move: [...pair, directionIndex (optional), items, pairs]
+            this.winner = -1;
+        }
     }
     isLegal(move) { // TODO: Test if history.length = 0
         return isLegal(move, this.items, this.history?.[this.history.length - 1] ?? null);
