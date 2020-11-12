@@ -352,6 +352,7 @@ class State { // Can be struct. Otherwise: cells, pairs and moves can be classes
         this.historyLength = game.history.length; // !
         this.type = type; // !
         this.me = me; // !
+        // this.undoButtonVisibility = getUndoButtonVisibility(game, type. me)
         this.cells = getCells(game, size); // [[cell0, cell1, x, y (optonal), player, itemIndex], ...]
         this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...] // size or cells?
         this.selectedPairIndex = selectedPairIndex; // -1|0...
