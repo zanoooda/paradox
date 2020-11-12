@@ -4,14 +4,44 @@ html, body {
     padding: 0;
     margin: 0;
 }
-#container {
+#menu-button {
+    z-index: 1;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    cursor: pointer;
+    border: none;
+    font-size: 3em;
+    color: black;
+    background-color: inherit;
+}
+#menu {
+    display: none;
+}
+#menu.show {
+    position: absolute;
+    top: 0;
+    right: 0;
     height: 100vh;
     width: 100vw;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: rgba(255, 255, 255, 0.5);
 }
-
+.menu-option {
+    display: block;
+    cursor: pointer;
+    font-size: 2em;
+    text-align: center;
+    color: white;
+    background-color: green;
+    width: 100%;
+    padding: 1em 2em;
+    margin: .5em 0;
+    border: none;
+    border-radius: 25px;
+}
 #indicator {
     position: absolute;
     top: 0;
@@ -22,4 +52,11 @@ html, body {
 }
 #indicator.collapsed {
     width: 0;
+}
+#container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

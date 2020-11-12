@@ -292,7 +292,7 @@ class Paradox {
             canvasClick(event, this);
         }, false);
         this.context = this.canvas.getContext('2d');
-        // this.container.innerHTML = '';
+        this.container.innerHTML = '';
         this.container.prepend(this.canvas);
     }
     async playHotSeat() {

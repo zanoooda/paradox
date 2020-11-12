@@ -1,3 +1,5 @@
+// TODO: Deep copy initialItems in Game constructor
+
 // TODO: Decide about ability to change order of items.
 // move can be [cell0, cell1, direction] (not [index0, index1, direction]) 
 // otherwise sort items by cell0 than by cell1
@@ -204,7 +206,8 @@ function getMoves(pairs) {
 }
 class Game {
     constructor() {
-        this.items = initialItems; // [plyer0Cells, player1Cells]
+        // this.items = initialItems; // [plyer0Cells, player1Cells]
+        this.items = JSON.parse(JSON.stringify(initialItems)); // TONOTTODO: Don't use JSON to copy
         this.pairs = findPairs(this.items, null); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections]], ...] // pairsWithMoves
         this.history = []; // [...move]; move: [...pair, directionIndex (optional), items, pairs]
         this.winner = -1;
