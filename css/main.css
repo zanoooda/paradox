@@ -11,7 +11,7 @@ html, body {
     right: 1em;
     cursor: pointer;
     border: none;
-    font-size: 3em;
+    font-size: 5em;
     color: black;
     background-color: inherit;
 }
@@ -50,7 +50,7 @@ html, body {
     left: 1em;
     cursor: pointer;
     border: none;
-    font-size: 3em;
+    font-size: 5em;
     color: black;
     background-color: inherit;
 }
@@ -65,7 +65,7 @@ html, body {
     right: 1em;
     cursor: pointer;
     border: none;
-    font-size: 3em;
+    font-size: 5em;
     color: black;
     background-color: inherit;
 }
