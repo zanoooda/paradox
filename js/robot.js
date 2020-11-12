@@ -27,6 +27,21 @@ function findMove(game) {
         _game.move([move[0], move[1]], move[2]);
         const _e = evaluate(_game, robotPlayer);
         move.push(_e);
+        // let _moves = _game.getMoves();
+        // for (const _move of _moves) {
+        //     let __game = new Game();
+        //     __game.items = JSON.parse(JSON.stringify(_game.items));
+        //     __game.pairs = JSON.parse(JSON.stringify(_game.pairs));
+        //     __game.history = JSON.parse(JSON.stringify(_game.history));
+        //     __game.winner = _game.winner;
+
+        //     __game.move([_move[0], _move[1]], _move[2]);
+        //     const __e = evaluate(__game, robotPlayer);
+        //     _move.push(__e);
+
+        //     console.log(`${_move}`);
+        // }
+        // move.push(_moves);
     }
     (a, b) => a[diagonal] - b[diagonal] || a[nextDiagonal] - b[nextDiagonal]
     moves.sort((a, b) => a[3] - b[3]);

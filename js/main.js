@@ -7,8 +7,9 @@ let menuButton = document.getElementById('menu-button');
 let playHotSeatButton = document.getElementById('play-hotseat-button');
 let playWithBlueRobotButton = document.getElementById('play-with-blue-robot-button');
 let playWithRedRobotButton = document.getElementById('play-with-red-robot-button');
+let undoButton = document.getElementById('undo-button');
 
-let paradox = new Paradox(container, indicator);
+let paradox = new Paradox(container, indicator, undoButton);
 
 menu.classList.toggle('show');
 

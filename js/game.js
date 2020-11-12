@@ -32,7 +32,7 @@ function isExist(cell) {
     return Math.max(...getExtendedCell(cell).map(Math.abs)) <= radius
 }
 function getInverseDirectionIndex(directionIndex) {
-    return inverseDirectionsIndexes[directionIndex];
+    return inverseDirectionsIndexes?.[directionIndex] ?? -1;
 }
 function getNeighbor(cell, directionIndex) {
     return cell.map((n, i) => n + directions[directionIndex][i]);
@@ -207,7 +207,7 @@ function getMoves(pairs) {
 class Game {
     constructor(game = null) {
         if (game) {
-            this.items =  JSON.parse(JSON.stringify(game.items)); // !
+            this.items = JSON.parse(JSON.stringify(game.items)); // !
             this.pairs = JSON.parse(JSON.stringify(game.pairs)); // !
             this.history = JSON.parse(JSON.stringify(game.history)); // !
             this.winner = game.winner;
@@ -231,12 +231,19 @@ class Game {
             const move = [...pair, directionIndex];
             this.history.push(move); // this.history.push([...move, items, pairs]);
             this.items = updateItems(move, this.items);
-            this.winner = findWinner(this.items);
             this.pairs = findPairs(this.items, move);
+            this.winner = findWinner(this.items);
         }
     }
-    undo() { // Implement
-        // ...
+    undo() { // TODO: Test
+        const prevMove = this.getPrevMove();
+        if (prevMove) { // prevMove != null
+            const undoMove = [prevMove[0], prevMove[1], getInverseDirectionIndex(prevMove[2])];
+            this.items = updateItems(undoMove, this.items); // or from history
+            this.pairs = findPairs(this.items, this.history?.[this.history.length - 2] ?? null); // or from history
+            this.history.pop();
+            this.winner = findWinner(this.items); // ?
+        }
     }
     getPrevMove() {
         return this.history?.[this.history.length - 1] ?? null;

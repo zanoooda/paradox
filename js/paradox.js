@@ -81,12 +81,12 @@ async function continueHotSeat(event, that) {
             that.state.pairs[that.state.selectedPairIndex][1]
         ];
         that.game.move(selectedPair, clickedMoveDirection);
-        that.state = new State(that.game, that.size, -1);
+        that.state = new State(that.game, that.size, -1, that.type, null);
     }
     else if (clickedPairIndex != -1) {
-        that.state = new State(that.game, that.size, clickedPairIndex);
+        that.state = new State(that.game, that.size, clickedPairIndex, that.type, null);
     }
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
 }
 async function continueWithRobot(event, that) {
     if (that.game.getCurrentPlayer() == that.me) {
@@ -99,28 +99,28 @@ async function continueWithRobot(event, that) {
                 that.state.pairs[that.state.selectedPairIndex][1]
             ];
             that.game.move(selectedPair, clickedMoveDirection);
-            that.state = new State(that.game, that.size, -1);
-            await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+            that.state = new State(that.game, that.size, -1, that.type, that.me);
+            await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
             if (that.state.winner != -1) {
                 return;
             }
             await robotPlay(that);
         }
         else if (clickedPairIndex != -1) {
-            that.state = new State(that.game, that.size, clickedPairIndex);
+            that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.me);
         }
-        await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+        await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
     }
 }
 async function robotPlay(that) {
     const robotMove = findRobotMove(that.game);
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]);
-    that.state = new State(that.game, that.size, robotMovePairIndex);
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator);
+    that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.me);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
     await delay(1500);
 
     that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
-    that.state = new State(that.game, that.size, -1);
+    that.state = new State(that.game, that.size, -1, that.type, that.me);
 }
 function delay(ms) {
     return new Promise(res => setTimeout(res, ms));
@@ -248,20 +248,11 @@ async function showCurrentPlayer(state, context, size, indicator) {
         indicator.style.backgroundColor != colors[state.currentPlayer] &&
         state.winner == -1
     ) {
-        document.getElementById("indicator").classList.toggle("collapsed");
+        indicator.classList.toggle("collapsed");
         await delay(500);
         indicator.style.backgroundColor = colors[state.currentPlayer];
         document.getElementById("indicator").classList.toggle("collapsed");
     }
-}
-async function show(state, context, size, cellRadius, clickRadius, indicator) {
-    context.clearRect(0, 0, size, size);
-    showCells(state.cells, context, cellRadius);
-    showPairs(state.pairs, context, clickRadius);
-    showSelectedPair(state, context, size, cellRadius);
-    showSelectedPairMoves(state.moves, context, size, clickRadius);
-    await showCurrentPlayer(state, context, size, indicator);
-    showWinner(state.winner, context, size);
 }
 function showWinner(winner, context, size) {
     if (winner != -1) {
@@ -280,45 +271,87 @@ function showWinner(winner, context, size) {
         context.fillText(message, ...midPoint);
     }
 }
+function showUndoButton(undoButton, state) {
+    undoButton.classList.remove('show');
+    if ((state.type == type.hotSeat && state.historyLength > 0) ||
+        (state.type == type.withRobot && state.historyLength > state.me + 1)) {
+        undoButton.classList.add('show');
+    }
+}
+async function show(state, context, size, cellRadius, clickRadius, indicator, undoButton) {
+    context.clearRect(0, 0, size, size);
+    showCells(state.cells, context, cellRadius);
+    showPairs(state.pairs, context, clickRadius);
+    showSelectedPair(state, context, size, cellRadius);
+    showSelectedPairMoves(state.moves, context, size, clickRadius);
+    await showCurrentPlayer(state, context, size, indicator);
+    showWinner(state.winner, context, size);
+    showUndoButton(undoButton, state);
+}
+function undoClick(that) { // async
+    switch (that.type) {
+        case type.hotSeat:
+            console.log(`undo hotSeat`);
+            // ...
+            break;
+        case type.withRobot:
+            console.log(`undo withRobot`);
+            // ...
+            break;
+        case type.online:
+            break;
+        default:
+            break;
+    }
+}
 class Paradox {
-    constructor(container, indicator) {
+    constructor(container, indicator, undoButton) {
         this.container = container;
         this.indicator = indicator;
+        this.undoButton = undoButton;
         this.size = getSize(this.container);
         this.clickRadius = this.size / 24;
         this.cellRadius = this.size / 18;
         this.canvas = createCanvas(this.size);
+        this.context = this.canvas.getContext('2d');
+
+        this.undoButton.addEventListener('click', () => {
+            undoClick(this);
+        }, false);
         this.canvas.addEventListener('click', (event) => {
             canvasClick(event, this);
         }, false);
-        this.context = this.canvas.getContext('2d');
+
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
     }
     async playHotSeat() {
         this.type = type.hotSeat;
         this.game = new Game();
-        this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
-        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
+        this.state = new State(this.game, this.size, -1, this.type, null); // this.state | game.state ? Create state in show(state)?
+        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton);
     }
     async playWithRobot(player) {
         this.type = type.withRobot;
         this.game = new Game();
         this.me = player;
-        this.state = new State(this.game, this.size, -1); // this.state | game.state ? Create state in show(state)?
+        this.state = new State(this.game, this.size, -1, this.type, this.me); // this.state | game.state ? Create state in show(state)?
         if (this.me != 0) {
-            await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
+            await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton);
             await robotPlay(this);
         }
-        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator);
+        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton);
     }
     playOnline() { // TODO: Implement
     }
-    highlightLastMove() { // TODO: Implement
+    replayLastMove() { // TODO: Implement
     }
 }
 class State { // Can be struct. Otherwise: cells, pairs and moves can be classes. Anyway describe structs
-    constructor(game, size, selectedPairIndex) {
+    constructor(game, size, selectedPairIndex, type, me) {
+        this.historyLength = game.history.length; // !
+        this.type = type; // !
+        this.me = me; // !
         this.cells = getCells(game, size); // [[cell0, cell1, x, y (optonal), player, itemIndex], ...]
         this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...] // size or cells?
         this.selectedPairIndex = selectedPairIndex; // -1|0...
