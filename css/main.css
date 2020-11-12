@@ -46,8 +46,8 @@ html, body {
     display: none;
     z-index: 1;
     position: absolute;
-    bottom: 1em;
-    right: 1em;
+    top: 1em;
+    left: 1em;
     cursor: pointer;
     border: none;
     font-size: 3em;
@@ -61,8 +61,8 @@ html, body {
     display: none;
     z-index: 1;
     position: absolute;
-    top: 1em;
-    left: 1em;
+    bottom: 1em;
+    right: 1em;
     cursor: pointer;
     border: none;
     font-size: 3em;
