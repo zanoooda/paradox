@@ -42,6 +42,36 @@ html, body {
     border: none;
     border-radius: 25px;
 }
+#undo-button {
+    display: none;
+    z-index: 1;
+    position: absolute;
+    bottom: 1em;
+    right: 1em;
+    cursor: pointer;
+    border: none;
+    font-size: 3em;
+    color: black;
+    background-color: inherit;
+}
+#undo-button.show {
+    display: block;
+}
+#replay-last-move-button {
+    display: none;
+    z-index: 1;
+    position: absolute;
+    top: 1em;
+    left: 1em;
+    cursor: pointer;
+    border: none;
+    font-size: 3em;
+    color: black;
+    background-color: inherit;
+}
+#replay-last-move-button.show {
+    display: block;
+}
 #indicator {
     position: absolute;
     top: 0;
