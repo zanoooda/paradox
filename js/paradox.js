@@ -41,8 +41,16 @@ function getClickedMoveDirection(clickPoint, state, clickRadius) {
     }
     return clickedMoveDirection;
 }
-function getClickedPairIndex(clickPoint, pairs, clickRadius) { // TODO: Find clothest to click pair that in radius (Click can be overlapped by two pairs)
-    return pairs.findIndex(pair => getDistance([pair[3], pair[4]], clickPoint) < clickRadius);
+function getClickedPairIndex(clickPoint, pairs, clickRadius) {
+    const distances = pairs.map(pair => getDistance([pair[3], pair[4]], clickPoint));
+    const minDistance = Math.min(...distances);
+    const minDistancePairIndex = distances.findIndex(distance => distance == minDistance);
+    if (minDistance < clickRadius) {
+        return minDistancePairIndex;
+    }
+    else {
+        return -1;
+    }
 }
 function getDistance(point0, point1) {
     return Math.sqrt(Math.pow(point0[0] - point1[0], 2) + Math.pow(point0[1] - point1[1], 2));
@@ -72,10 +80,26 @@ function canvasClick(event, that) {
             break;
     }
 }
+function compareOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that) {
+    if (clickedMoveDirection != null && clickedPairIndex != -1) {
+        const clickedMove = that.state.moves.find(move => move[0] == clickedMoveDirection);
+        const clickedMovePoint = [clickedMove[1], clickedMove[2]];
+        const clickedMoveDirectionDistance = getDistance(clickPoint, clickedMovePoint);
+        const clickedPair = that.state.pairs[clickedPairIndex];
+        const clickedPairPoint = [clickedPair[3], clickedPair[4]];
+        const clickedPairDistance = getDistance(clickPoint, clickedPairPoint);
+        const diff = clickedMoveDirectionDistance - clickedPairDistance;
+        if (diff > 0) {
+            clickedMoveDirection = null;
+        }
+    }
+    return clickedMoveDirection;
+}
 async function continueHotSeat(event, that) {
     const clickPoint = getClickPoint(event, that.canvas);
     let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
     const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
+    clickedMoveDirection = compareOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
     if (clickedMoveDirection != null) {
         const selectedPair = [
             that.state.pairs[that.state.selectedPairIndex][0],
@@ -94,6 +118,7 @@ async function continueWithRobot(event, that) {
         const clickPoint = getClickPoint(event, that.canvas);
         let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
         const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
+        clickedMoveDirection = compareOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
         if (clickedMoveDirection != null) {
             const selectedPair = [
                 that.state.pairs[that.state.selectedPairIndex][0],
@@ -344,7 +369,7 @@ class Paradox {
         this.undoButton = undoButton;
         this.replayLastMoveButton = replayLastMoveButton;
         this.size = getSize(this.container);
-        this.clickRadius = this.size / 24;
+        this.clickRadius = this.size / 16;
         this.cellRadius = this.size / 18;
         this.canvas = createCanvas(this.size);
         this.context = this.canvas.getContext('2d');
