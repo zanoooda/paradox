@@ -1,10 +1,6 @@
 // TODO: lock
-
-// TODO: Describe structs or wrap structs to classes with readable props
-// TODO: Wrap unreadable/similar/duplicated struct manipulations to readable variables/methods
-
 // Points can be calculated only once
-// New state can be crated by old one and [move] (pair and direction) (state.updateState(move))
+// New state can be crated by old one; and move (state.updateState(move))
 
 import { Game, cells, swap, getNeighbor, getExtendedCell } from './game.js';
 import { findMove as findRobotMove } from './robot.js';
