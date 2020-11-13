@@ -44,7 +44,7 @@ html, body {
 }
 #undo-button {
     display: none;
-    z-index: 1;
+    /* z-index: 1; */
     position: absolute;
     top: 1em;
     left: 1em;
@@ -59,7 +59,7 @@ html, body {
 }
 #replay-last-move-button {
     display: none;
-    z-index: 1;
+    /* z-index: 1; */
     position: absolute;
     bottom: 1em;
     right: 1em;
@@ -71,6 +71,18 @@ html, body {
 }
 #replay-last-move-button.show {
     display: block;
+}
+#settings-button {
+    display: block;
+    z-index: 1; /* ? */
+    position: absolute;
+    bottom: 1em;
+    left: 1em;
+    cursor: pointer;
+    border: none;
+    font-size: 5em;
+    color: black;
+    background-color: inherit;
 }
 #indicator {
     position: absolute;
