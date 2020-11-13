@@ -68,7 +68,6 @@ function canvasClick(event, that) {
         case type.online:
             // ...
             break;
-
         default:
             break;
     }
@@ -326,10 +325,19 @@ async function undo(that) {
     // }
 }
 function replayLastMoveClick(that) {
-    // ...
-
-    console.log('replayLastMoveClick');
+    replayLastMove(that);
 }
+async function replayLastMove(that) { // TODO: Improve
+    const lastMove = that.game.history?.[that.game.history.length - 1];
+    let _game = new Game(that.game);
+    _game.undo();
+    const selectedPairIndex = _game.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
+    let _state = new State(_game, that.size, selectedPairIndex, that.type, that.me);
+    await show(_state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    await delay(1000);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+}
+
 class Paradox {
     constructor(container, indicator, undoButton, replayLastMoveButton) {
         this.container = container;
