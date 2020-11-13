@@ -5,9 +5,6 @@
 // otherwise sort items by cell0 than by cell1
 
 // TODO: Hash (findPlayer(), findItemIndex(), findItemWithIndex())
-// Learn about keyed collections (Map, Set, WeakMap, WeakSet),
-// structured data (ArrayBuffer, SharedArrayBuffer, Atomics, DataView),
-// WebAssembly
 
 //#region grid
 const radius = 3,
