@@ -114,7 +114,7 @@ async function continueWithRobot(event, that) {
 }
 async function robotPlay(that) {
     const robotMove = findRobotMove(that.game);
-    const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]);
+    const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
     that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.me);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
     await delay(1500);
@@ -288,21 +288,31 @@ async function show(state, context, size, cellRadius, clickRadius, indicator, un
     showWinner(state.winner, context, size);
     showUndoButton(undoButton, state);
 }
-function undoClick(that) { // async
+async function undoClick(that) {
     switch (that.type) {
         case type.hotSeat:
-            console.log(`undo hotSeat`);
-            // ...
+            await undo(that);
             break;
         case type.withRobot:
-            console.log(`undo withRobot`);
-            // ...
+            await undo(that);
+            await delay(1000);
+            await undo(that);
             break;
         case type.online:
             break;
         default:
             break;
     }
+}
+async function undo(that) {
+    const lastMove = that.game.history[that.game.history.length - 1];
+    const selectedPairIndex = that.state.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
+    that.state = new State(that.game, that.size, selectedPairIndex, that.type, that.me);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
+    await delay(500)
+    that.game.undo();
+    that.state = new State(that.game, that.size, -1, that.type, that.me);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
 }
 class Paradox {
     constructor(container, indicator, undoButton) {
