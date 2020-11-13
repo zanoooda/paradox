@@ -391,7 +391,7 @@ class Paradox {
     async playWithRobot(player) {
         this.type = type.withRobot;
         this.game = new Game();
-        this.me = player;
+        this.me = player; // TODO: rename to this.player
         this.state = new State(this.game, this.size, -1, this.type, this.me); // this.state | game.state ? Create state in show(state)?
         if (this.me != 0) {
             await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
