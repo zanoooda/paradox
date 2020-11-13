@@ -65,6 +65,9 @@ html, body {
     border: 1px black solid;
     border-radius: .2em;
 }
+.disabled {	
+    color: gray;	
+}
 #undo-button {
     display: none;
     position: absolute;
