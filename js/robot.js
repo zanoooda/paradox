@@ -1,4 +1,3 @@
-// TODO: Deep clone
 // Zobrist hashing
 
 import { Game, getExtendedCell } from './game.js';
