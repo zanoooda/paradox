@@ -332,9 +332,9 @@ async function undoClick(that) {
     }
 }
 async function undo(that) {
-    const lastMove = that.game.history?.[that.game.history.length - 1];
+    const prevMove = that.game.getPrevMove();
     // if (lastMove) {
-    const selectedPairIndex = that.state.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
+    const selectedPairIndex = that.state.pairs.findIndex(pair => pair[0] == prevMove[0] && pair[1] == prevMove[1]); // dublication
     that.state = new State(that.game, that.size, selectedPairIndex, that.type, that.me);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     await delay(500)

@@ -29,7 +29,7 @@ function isExist(cell) {
     return Math.max(...getExtendedCell(cell).map(Math.abs)) <= radius
 }
 function getInverseDirectionIndex(directionIndex) {
-    return inverseDirectionsIndexes?.[directionIndex] ?? -1;
+    return inverseDirectionsIndexes?.[directionIndex] ?? swap;
 }
 function getNeighbor(cell, directionIndex) {
     return cell.map((n, i) => n + directions[directionIndex][i]);
@@ -109,7 +109,7 @@ function updateItems(move, items) {
     }
     return items;
 }
-function findWinner(items) { // TODO: Improve
+function findWinner(items) {
     let winners = [];
     let _items = [[...items[0].map(cell => getExtendedCell(cell))], [...items[1].map(cell => getExtendedCell(cell))]];
     let found = false;
@@ -163,7 +163,7 @@ function findItemWithIndex(cell, items) {
 function findItemIndex(cell, samePlayersItems) {
     return samePlayersItems.findIndex(item => item[0] == cell[0] && item[1] == cell[1]);
 }
-function isLegal(move, items, prevMove) { // TODO: Improve
+function isLegal(move, items, prevMove) {
     const cell0 = items[0][move[0]],
         cell1 = items[1][move[1]],
         direction = move[2],
@@ -217,7 +217,7 @@ class Game {
             this.winner = -1;
         }
     }
-    isLegal(move) { // TODO: Test if history.length = 0
+    isLegal(move) {
         return isLegal(move, this.items, this.history?.[this.history.length - 1] ?? null);
     }
     getCurrentPlayer() {
@@ -232,9 +232,9 @@ class Game {
             this.winner = findWinner(this.items);
         }
     }
-    undo() { // TODO: Test
+    undo() {
         const prevMove = this.getPrevMove();
-        if (prevMove) { // prevMove != null
+        if (prevMove) {
             const undoMove = [prevMove[0], prevMove[1], getInverseDirectionIndex(prevMove[2])];
             this.items = updateItems(undoMove, this.items); // or from history
             this.pairs = findPairs(this.items, this.history?.[this.history.length - 2] ?? null); // or from history
