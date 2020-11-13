@@ -11,7 +11,9 @@ let undoButton = document.getElementById('undo-button');
 let replayLastMoveButton = document.getElementById('replay-last-move-button');
 let settingsButton = document.getElementById('settings-button');
 let settings = document.getElementById('settings');
+let robotPlayerCheckbox = document.getElementById("robot-player-checkbox");
 
+let robotPlayer = 0;
 let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton);
 
 menu.classList.add('show');
@@ -26,7 +28,7 @@ playHotSeatButton.addEventListener('click', () => {
 });
 playWithRobotButton.addEventListener('click', () => {
     menu.classList.remove('show');
-    paradox.playWithRobot(0);
+    paradox.playWithRobot(robotPlayer);
 });
 playOnlineButton.addEventListener('click', () => {
     // ...
@@ -34,4 +36,7 @@ playOnlineButton.addEventListener('click', () => {
 settingsButton.addEventListener('click', () => {
     menu.classList.remove('show');
     settings.classList.toggle('show');
+});
+robotPlayerCheckbox.addEventListener('change', (event) => {
+    robotPlayer = event.target.checked ? 1 : 0;
 });
