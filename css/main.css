@@ -32,15 +32,15 @@ html, body {
 .menu-option {
     display: block;
     cursor: pointer;
-    font-size: 3em;
+    font: bold 3em serif;
     text-align: center;
-    color: white;
-    background-color: green;
+    color: black;
+    background-color: white;
     width: 100%;
     padding: 1em 2em;
     margin: .5em 0;
-    border: none;
-    border-radius: 25px;
+    border: 1px black solid;
+    border-radius: .2em;
 }
 #undo-button {
     display: none;
