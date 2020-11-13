@@ -32,7 +32,7 @@ html, body {
 .menu-option {
     display: block;
     cursor: pointer;
-    font: bold 3em serif;
+    font: bold 3em sans;
     text-align: center;
     color: black;
     background-color: white;
@@ -55,7 +55,7 @@ html, body {
     background-color: inherit;
 }
 .settings-option {
-    font: bold 3em serif;
+    font: bold 3em sans;
     text-align: center;
     color: black;
     background-color: white;

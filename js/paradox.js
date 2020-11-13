@@ -260,13 +260,12 @@ function showWinner(winner, context, size) {
         const midPoint = [size / 2, size / 2];
         const name = colors?.[winner]?.charAt(0)?.toUpperCase() + colors?.[winner]?.slice(1);
         const message = winner == 2 ? `Draw!` : `${name} player win!`;
-        const fontSize = size / 10;
         context.fillStyle = 'white';
-        context.globalAlpha = 0.6;
+        context.globalAlpha = 0.8;
         context.fillRect(0, 0, size, size);
         context.globalAlpha = 1.0;
         context.fillStyle = 'black';
-        context.font = `bold ${fontSize}px serif`;
+        context.font = `bold 3em sans`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillText(message, ...midPoint);
