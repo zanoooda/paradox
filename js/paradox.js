@@ -1,4 +1,9 @@
+// TODO: getUndoButtonVisibility()
+// TODO: show(that)
+// TODO: Show message
+
 // TODO: lock
+
 // Points can be calculated only once
 // New state can be crated by old one; and move (state.updateState(move))
 
@@ -406,16 +411,16 @@ class Paradox {
 }
 class State { // Can be struct. Otherwise: cells, pairs and moves can be classes. Anyway describe structs
     constructor(game, size, selectedPairIndex, type, player) {
-        this.historyLength = game.history.length; // !
-        this.type = type; // !
-        this.player = player; // !
+        this.historyLength = game.history.length; // remove
+        this.type = type; // remove
+        this.player = player; // remove
         // this.undoButtonVisibility = getUndoButtonVisibility(game, type. player)
         this.cells = getCells(game, size); // [[cell0, cell1, x, y (optonal), player, itemIndex], ...]
         this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...] // size or cells?
         this.selectedPairIndex = selectedPairIndex; // -1|0...
         this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells, size); // [[directionIndex, x, y], ...]
-        this.currentPlayer = game.getCurrentPlayer();
-        this.winner = game.winner; // !
+        this.currentPlayer = game.getCurrentPlayer(); // remove
+        this.winner = game.winner; // remove
     }
 }
 
