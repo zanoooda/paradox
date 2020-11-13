@@ -1,3 +1,5 @@
+// TODO: lock
+
 // TODO: Describe structs or wrap structs to classes with readable props
 // TODO: Wrap unreadable/similar/duplicated struct manipulations to readable variables/methods
 
@@ -86,7 +88,7 @@ async function continueHotSeat(event, that) {
     else if (clickedPairIndex != -1) {
         that.state = new State(that.game, that.size, clickedPairIndex, that.type, null);
     }
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
 }
 async function continueWithRobot(event, that) {
     if (that.game.getCurrentPlayer() == that.me) {
@@ -100,7 +102,7 @@ async function continueWithRobot(event, that) {
             ];
             that.game.move(selectedPair, clickedMoveDirection);
             that.state = new State(that.game, that.size, -1, that.type, that.me);
-            await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
+            await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
             if (that.state.winner != -1) {
                 return;
             }
@@ -109,14 +111,14 @@ async function continueWithRobot(event, that) {
         else if (clickedPairIndex != -1) {
             that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.me);
         }
-        await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
+        await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     }
 }
 async function robotPlay(that) {
     const robotMove = findRobotMove(that.game);
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
     that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.me);
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     await delay(1500);
 
     that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
@@ -278,7 +280,13 @@ function showUndoButton(undoButton, state) {
         undoButton.classList.add('show');
     }
 }
-async function show(state, context, size, cellRadius, clickRadius, indicator, undoButton) {
+function showReplayLastMoveButton(replayLastMoveButton, state) {
+    replayLastMoveButton.classList.remove('show');
+    if (state.historyLength > 0) {
+        replayLastMoveButton.classList.add('show');
+    }
+}
+async function show(state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
     context.clearRect(0, 0, size, size);
     showCells(state.cells, context, cellRadius);
     showPairs(state.pairs, context, clickRadius);
@@ -287,6 +295,7 @@ async function show(state, context, size, cellRadius, clickRadius, indicator, un
     await showCurrentPlayer(state, context, size, indicator);
     showWinner(state.winner, context, size);
     showUndoButton(undoButton, state);
+    showReplayLastMoveButton(replayLastMoveButton, state);
 }
 async function undoClick(that) {
     switch (that.type) {
@@ -305,31 +314,42 @@ async function undoClick(that) {
     }
 }
 async function undo(that) {
-    const lastMove = that.game.history[that.game.history.length - 1];
+    const lastMove = that.game.history?.[that.game.history.length - 1];
+    // if (lastMove) {
     const selectedPairIndex = that.state.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
     that.state = new State(that.game, that.size, selectedPairIndex, that.type, that.me);
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     await delay(500)
     that.game.undo();
     that.state = new State(that.game, that.size, -1, that.type, that.me);
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    // }
+}
+function replayLastMoveClick(that) {
+    // ...
+
+    console.log('replayLastMoveClick');
 }
 class Paradox {
-    constructor(container, indicator, undoButton) {
+    constructor(container, indicator, undoButton, replayLastMoveButton) {
         this.container = container;
         this.indicator = indicator;
         this.undoButton = undoButton;
+        this.replayLastMoveButton = replayLastMoveButton;
         this.size = getSize(this.container);
         this.clickRadius = this.size / 24;
         this.cellRadius = this.size / 18;
         this.canvas = createCanvas(this.size);
         this.context = this.canvas.getContext('2d');
 
+        this.canvas.addEventListener('click', (event) => {
+            canvasClick(event, this);
+        }, false);
         this.undoButton.addEventListener('click', () => {
             undoClick(this);
         }, false);
-        this.canvas.addEventListener('click', (event) => {
-            canvasClick(event, this);
+        this.replayLastMoveButton.addEventListener('click', () => {
+            replayLastMoveClick(this);
         }, false);
 
         this.container.innerHTML = '';
@@ -339,7 +359,7 @@ class Paradox {
         this.type = type.hotSeat;
         this.game = new Game();
         this.state = new State(this.game, this.size, -1, this.type, null); // this.state | game.state ? Create state in show(state)?
-        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton);
+        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
     }
     async playWithRobot(player) {
         this.type = type.withRobot;
@@ -347,10 +367,10 @@ class Paradox {
         this.me = player;
         this.state = new State(this.game, this.size, -1, this.type, this.me); // this.state | game.state ? Create state in show(state)?
         if (this.me != 0) {
-            await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton);
+            await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
             await robotPlay(this);
         }
-        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton);
+        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
     }
     playOnline() { // TODO: Implement
     }

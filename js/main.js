@@ -8,8 +8,9 @@ let playHotSeatButton = document.getElementById('play-hotseat-button');
 let playWithBlueRobotButton = document.getElementById('play-with-blue-robot-button');
 let playWithRedRobotButton = document.getElementById('play-with-red-robot-button');
 let undoButton = document.getElementById('undo-button');
+let replayLastMoveButton = document.getElementById('replay-last-move-button');
 
-let paradox = new Paradox(container, indicator, undoButton);
+let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton);
 
 menu.classList.toggle('show');
 
