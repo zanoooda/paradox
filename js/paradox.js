@@ -80,7 +80,7 @@ function canvasClick(event, that) {
             break;
     }
 }
-function compareOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that) {
+function fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that) {
     if (clickedMoveDirection != null && clickedPairIndex != -1) {
         const clickedMove = that.state.moves.find(move => move[0] == clickedMoveDirection);
         const clickedMovePoint = [clickedMove[1], clickedMove[2]];
@@ -99,7 +99,7 @@ async function continueHotSeat(event, that) {
     const clickPoint = getClickPoint(event, that.canvas);
     let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
     const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
-    clickedMoveDirection = compareOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
+    clickedMoveDirection = fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
     if (clickedMoveDirection != null) {
         const selectedPair = [
             that.state.pairs[that.state.selectedPairIndex][0],
@@ -118,7 +118,7 @@ async function continueWithRobot(event, that) {
         const clickPoint = getClickPoint(event, that.canvas);
         let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
         const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
-        clickedMoveDirection = compareOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
+        clickedMoveDirection = fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
         if (clickedMoveDirection != null) {
             const selectedPair = [
                 that.state.pairs[that.state.selectedPairIndex][0],
@@ -143,8 +143,7 @@ async function robotPlay(that) {
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
     that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.me);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
-    await delay(1500);
-
+    await delay(1000);
     that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
     that.state = new State(that.game, that.size, -1, that.type, that.me);
 }
@@ -233,7 +232,7 @@ function showSelectedCell(cell, context, size, cellRadius) {
     context.stroke();
     context.lineWidth = 1;
 }
-function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // TODO: Improve // getSelectedPairMoveDirectionsWithPoints()
+function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // getSelectedPairMoveDirectionsWithPoints()
     if (selectedPairIndex == -1) {
         return [];
     }
@@ -268,7 +267,7 @@ function showSelectedPairMove(move, context, size, clickRadius) {
     // context.strokeStyle = 'green';
     // context.stroke();
 }
-async function showCurrentPlayer(state, context, size, indicator) {
+async function showCurrentPlayer(state, context, size, indicator) { // !
     if (
         state.selectedPairIndex == -1 &&
         indicator.style.backgroundColor != colors[state.currentPlayer] &&
@@ -351,7 +350,7 @@ async function undo(that) {
 function replayLastMoveClick(that) {
     replayLastMove(that);
 }
-async function replayLastMove(that) { // TODO: Improve
+async function replayLastMove(that) {
     const lastMove = that.game.history?.[that.game.history.length - 1];
     let _game = new Game(that.game);
     _game.undo();
@@ -420,7 +419,7 @@ class State { // Can be struct. Otherwise: cells, pairs and moves can be classes
         this.selectedPairIndex = selectedPairIndex; // -1|0...
         this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells, size); // [[directionIndex, x, y], ...]
         this.currentPlayer = game.getCurrentPlayer();
-        this.winner = game.winner;
+        this.winner = game.winner; // !
     }
 }
 
