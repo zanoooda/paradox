@@ -249,10 +249,10 @@ async function showCurrentPlayer(state, context, size, indicator) {
         indicator.style.backgroundColor != colors[state.currentPlayer] &&
         state.winner == -1
     ) {
-        indicator.classList.toggle('collapsed');
+        indicator.classList.remove('show');
         await delay(500);
         indicator.style.backgroundColor = colors[state.currentPlayer];
-        indicator.classList.toggle('collapsed');
+        indicator.classList.add('show');
     }
 }
 function showWinner(winner, context, size) {
