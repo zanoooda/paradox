@@ -402,14 +402,12 @@ class Paradox {
     }
     playOnline() { // TODO: Implement
     }
-    replayLastMove() { // TODO: Implement
-    }
 }
-class State { // Can be struct. Otherwise: cells, pairs and moves can be classes. Anyway describe structs
+class State {
     constructor(game, size, selectedPairIndex, type, player) {
-        this.selectedPairIndex = selectedPairIndex; // -1|0...
-        this.cells = getCells(game, size); // [[cell0, cell1, x, y (optonal), player, itemIndex], ...]
-        this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...] // size or cells?
+        this.selectedPairIndex = selectedPairIndex; // -1|0...5
+        this.cells = getCells(game, size); // [[cell[0], cell[1], x, y (optonal), player, itemIndex], ...]
+        this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...]
         this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells, size); // [[directionIndex, x, y], ...]
         this.undoButtonVisibility = (type == types.hotSeat && game.history.length > 0) ||
             (type == types.withRobot && game.history.length > player + 1);
