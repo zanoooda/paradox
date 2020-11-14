@@ -1,8 +1,5 @@
-// TODO: getUndoButtonVisibility()
-// TODO: show(that)
-// TODO: Show message
-
 // TODO: lock
+// TODO: Show message
 
 // Points can be calculated only once
 // New state can be crated by old one; and move (state.updateState(move))
@@ -11,7 +8,7 @@ import { Game, cells, swap, getNeighbor, getExtendedCell } from './game.js';
 import { findMove as findRobotMove } from './robot.js';
 
 const colors = ['red', 'blue'];
-const type = { hotSeat: 0, withRobot: 1, online: 2 };
+const types = { hotSeat: 0, withRobot: 1, online: 2 };
 const sqrt3 = Math.sqrt(3);
 
 function getPoint(cell, size) { // TODO: Improve (width larger than height of the grid)
@@ -68,13 +65,13 @@ function createCanvas(size) {
 }
 function canvasClick(event, that) {
     switch (that.type) {
-        case type.hotSeat:
+        case types.hotSeat:
             continueHotSeat(event, that);
             break;
-        case type.withRobot:
+        case types.withRobot:
             continueWithRobot(event, that);
             break;
-        case type.online:
+        case types.online:
             // ...
             break;
         default:
@@ -298,14 +295,13 @@ function showWinner(winner, context, size) {
 }
 function showUndoButton(undoButton, state) {
     undoButton.classList.remove('show');
-    if ((state.type == type.hotSeat && state.historyLength > 0) ||
-        (state.type == type.withRobot && state.historyLength > state.player + 1)) {
+    if (state.undoButtonVisibility) {
         undoButton.classList.add('show');
     }
 }
 function showReplayLastMoveButton(replayLastMoveButton, state) {
     replayLastMoveButton.classList.remove('show');
-    if (state.historyLength > 0) {
+    if (state.replayLastMoveButtonVisibility) {
         replayLastMoveButton.classList.add('show');
     }
 }
@@ -322,15 +318,15 @@ async function show(state, context, size, cellRadius, clickRadius, indicator, un
 }
 async function undoClick(that) {
     switch (that.type) {
-        case type.hotSeat:
+        case types.hotSeat:
             await undo(that);
             break;
-        case type.withRobot:
+        case types.withRobot:
             await undo(that);
             await delay(1000);
             await undo(that);
             break;
-        case type.online:
+        case types.online:
             break;
         default:
             break;
@@ -388,13 +384,13 @@ class Paradox {
         this.container.prepend(this.canvas);
     }
     async playHotSeat() {
-        this.type = type.hotSeat;
+        this.type = types.hotSeat;
         this.game = new Game();
         this.state = new State(this.game, this.size, -1, this.type, null); // this.state | game.state ? Create state in show(state)?
         await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
     }
     async playWithRobot(player) {
-        this.type = type.withRobot;
+        this.type = types.withRobot;
         this.game = new Game();
         this.player = player; // TODO: rename to this.player
         this.state = new State(this.game, this.size, -1, this.type, this.player); // this.state | game.state ? Create state in show(state)?
@@ -411,16 +407,15 @@ class Paradox {
 }
 class State { // Can be struct. Otherwise: cells, pairs and moves can be classes. Anyway describe structs
     constructor(game, size, selectedPairIndex, type, player) {
-        this.historyLength = game.history.length; // remove
-        this.type = type; // remove
-        this.player = player; // remove
-        // this.undoButtonVisibility = getUndoButtonVisibility(game, type. player)
+        this.selectedPairIndex = selectedPairIndex; // -1|0...
         this.cells = getCells(game, size); // [[cell0, cell1, x, y (optonal), player, itemIndex], ...]
         this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...] // size or cells?
-        this.selectedPairIndex = selectedPairIndex; // -1|0...
         this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells, size); // [[directionIndex, x, y], ...]
-        this.currentPlayer = game.getCurrentPlayer(); // remove
-        this.winner = game.winner; // remove
+        this.undoButtonVisibility = (type == types.hotSeat && game.history.length > 0) ||
+            (type == types.withRobot && game.history.length > player + 1);
+        this.replayLastMoveButtonVisibility = game.history.length > 0;
+        this.currentPlayer = game.getCurrentPlayer();
+        this.winner = game.winner; //
     }
 }
 
