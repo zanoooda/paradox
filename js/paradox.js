@@ -1,4 +1,3 @@
-// TODO: lock
 // TODO: Show message
 
 // Points can be calculated only once
@@ -137,6 +136,7 @@ async function continueWithRobot(event, that) {
     }
 }
 async function robotPlay(that) {
+    that.lock = true;
     const robotMove = findRobotMove(that.game);
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
     that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.player);
@@ -144,6 +144,7 @@ async function robotPlay(that) {
     await delay(1000);
     that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
     that.state = new State(that.game, that.size, -1, that.type, that.player);
+    that.lock = false;
 }
 function delay(ms) {
     return new Promise(res => setTimeout(res, ms));
@@ -374,9 +375,11 @@ class Paradox {
             canvasClick(event, this);
         }, false);
         this.undoButton.addEventListener('click', () => {
+            if (this.lock) return;
             undoClick(this);
         }, false);
         this.replayLastMoveButton.addEventListener('click', () => {
+            if (this.lock) return;
             replayLastMoveClick(this);
         }, false);
 
