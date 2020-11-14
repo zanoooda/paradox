@@ -318,6 +318,7 @@ async function show(state, context, size, cellRadius, clickRadius, indicator, un
     showReplayLastMoveButton(replayLastMoveButton, state);
 }
 async function undoClick(that) {
+    that.lock = true;
     switch (that.type) {
         case types.hotSeat:
             await undo(that);
@@ -332,6 +333,7 @@ async function undoClick(that) {
         default:
             break;
     }
+    that.lock = false;
 }
 async function undo(that) {
     const prevMove = that.game.getPrevMove();
