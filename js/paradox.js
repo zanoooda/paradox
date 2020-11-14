@@ -318,20 +318,31 @@ async function show(state, context, size, cellRadius, clickRadius, indicator, un
     showReplayLastMoveButton(replayLastMoveButton, state);
 }
 async function undoClick(that) {
-    that.lock = true;
     switch (that.type) {
         case types.hotSeat:
-            await undo(that);
+            await undoHotSeat(that);
             break;
         case types.withRobot:
-            await undo(that);
-            await delay(1000);
-            await undo(that);
+            await undoRobot(that);
             break;
         case types.online:
             break;
         default:
             break;
+    }
+}
+async function undoHotSeat(that) {
+    that.lock = true;
+    await undo(that);
+    that.lock = false;
+}
+async function undoRobot(that) {
+    that.lock = true;
+    const undoOnce = that.game.winner == that.player;
+    await undo(that);
+    if (!undoOnce) {
+        await delay(500);
+        await undo(that);
     }
     that.lock = false;
 }
