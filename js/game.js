@@ -1,5 +1,3 @@
-// TODO: copy/clone without JSON in Game constructor
-
 // TODO: Decide about ability to change order of items.
 // move can be [cell0, cell1, direction] (not [index0, index1, direction]) 
 // otherwise sort items by cell0 than by cell1
@@ -68,6 +66,9 @@ function createItems() {
         items[index % 2].push(cell);
     }
     return items;
+}
+function cloneItems(items) { // copyItems?
+    return [items[0].map(item => item), items[1].map(item => item)];
 }
 function findPairs(items, prevMove) { // findPairsWithMoves()
     let pairs = [];
@@ -204,14 +205,13 @@ function getMoves(pairs) {
 class Game {
     constructor(game = null) {
         if (game) {
-            this.items = JSON.parse(JSON.stringify(game.items)); // !
-            this.pairs = JSON.parse(JSON.stringify(game.pairs)); // !
-            this.history = JSON.parse(JSON.stringify(game.history)); // !
+            this.items = cloneItems(game.items);
+            this.pairs = game.pairs.map(pair => pair);
+            this.history = game.history.map(move => move);
             this.winner = game.winner;
         }
         else {
-            // this.items = initialItems; // [plyer0Cells, player1Cells]
-            this.items = JSON.parse(JSON.stringify(initialItems)); // !
+            this.items = cloneItems(initialItems);
             this.pairs = findPairs(this.items, null); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections]], ...] // pairsWithMoves
             this.history = []; // [...move]; move: [...pair, directionIndex (optional), items, pairs]
             this.winner = -1;
