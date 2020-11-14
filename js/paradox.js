@@ -10,9 +10,9 @@ const colors = ['red', 'blue'];
 const types = { hotSeat: 0, withRobot: 1, online: 2 };
 const sqrt3 = Math.sqrt(3);
 
-function getPoint(cell, size) { // TODO: Improve (width larger than height of the grid)
-    const _cell = getExtendedCell([cell[0], cell[1]]); //:
-    const distance = size / 12; // ?
+function getPoint(cell, size) {
+    const _cell = getExtendedCell([cell[0], cell[1]]);
+    const distance = size / 12;
     const x = (size / 2) + (distance * sqrt3 * (cell[0] + _cell[2] / 2));
     const y = (size / 2) + (distance * 3 / 2 * _cell[2]);
     return [x, y];
@@ -389,21 +389,22 @@ class Paradox {
     async playHotSeat() {
         this.type = types.hotSeat;
         this.game = new Game();
-        this.state = new State(this.game, this.size, -1, this.type, null); // this.state | game.state ? Create state in show(state)?
+        this.state = new State(this.game, this.size, -1, this.type, null);
         await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
     }
     async playWithRobot(player) {
         this.type = types.withRobot;
         this.game = new Game();
-        this.player = player; // TODO: rename to this.player
-        this.state = new State(this.game, this.size, -1, this.type, this.player); // this.state | game.state ? Create state in show(state)?
+        this.player = player;
+        this.state = new State(this.game, this.size, -1, this.type, this.player);
         if (this.player != 0) {
             await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
             await robotPlay(this);
         }
         await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
     }
-    playOnline() { // TODO: Implement
+    playOnline() {
+        // ...
     }
 }
 class State {
