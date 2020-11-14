@@ -25,8 +25,8 @@ function findMove(game) {
     for (const move of moves) {
         let _game = new Game(game);
         _game.move([move[0], move[1]], move[2]);
-        // const score = evaluate(_game, robotPlayer);
-        // move.push(score);
+        const score = evaluate(_game, robotPlayer);
+        move.push(score);
         // let _moves = _game.getMoves();
         // for (const _move of _moves) {
         //     let __game = new Game();
