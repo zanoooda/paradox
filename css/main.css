@@ -101,7 +101,7 @@ html, body {
     top: 0;
     left: 0;
     width: 0;
-    height: 1px;
+    height: 2px;
     transition: width .5s;
 }
 #indicator.show {
