@@ -1,22 +1,23 @@
+// TODO: Get random move from  moves with the same score
 // Zobrist hashing
 
 import { Game, getExtendedCell } from './game.js';
 
 function evaluate(game, player) { // -100 <= result <= 100
-    let result = 0;
+    let score = 0;
     if (game.winner == -1) {
         const partner = !!+player ? 0 : 1;
         const playerWeight = game.items[player].map(cell => Math.max(...getExtendedCell(cell).map(Math.abs))).reduce((a, b) => a + b);
         const partnerWeight = game.items[partner].map(cell => Math.max(...getExtendedCell(cell).map(Math.abs))).reduce((a, b) => a + b);
-        result = partnerWeight - playerWeight;
+        score = partnerWeight - playerWeight;
     }
     else if (game.winner == player) {
-        result = 100;
+        score = 100;
     }
     else {
-        result = -100;
+        score = -100;
     }
-    return result;
+    return score;
 }
 function findMove(game) {
     const robotPlayer = game.getCurrentPlayer();
@@ -24,8 +25,8 @@ function findMove(game) {
     for (const move of moves) {
         let _game = new Game(game);
         _game.move([move[0], move[1]], move[2]);
-        const _e = evaluate(_game, robotPlayer);
-        move.push(_e);
+        // const score = evaluate(_game, robotPlayer);
+        // move.push(score);
         // let _moves = _game.getMoves();
         // for (const _move of _moves) {
         //     let __game = new Game();
@@ -35,8 +36,8 @@ function findMove(game) {
         //     __game.winner = _game.winner;
 
         //     __game.move([_move[0], _move[1]], _move[2]);
-        //     const __e = evaluate(__game, robotPlayer);
-        //     _move.push(__e);
+        //     const _score = evaluate(__game, robotPlayer);
+        //     _move.push(_score);
 
         //     console.log(`${_move}`);
         // }
