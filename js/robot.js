@@ -3,6 +3,8 @@
 
 import { Game, getExtendedCell } from './game.js';
 
+const depth = 2;
+
 function evaluate(game, player) { // -100 <= result <= 100
     let score = 0;
     if (game.winner == -1) {
@@ -20,7 +22,6 @@ function evaluate(game, player) { // -100 <= result <= 100
     return score;
 }
 function evaluateMoves(game, robotPlayer, count = 1) {
-    const depth = 1;
     return game.getMoves().map(move => {
         let _game = new Game(game);
         _game.move([move[0], move[1]], move[2]);
@@ -36,6 +37,13 @@ function evaluateMoves(game, robotPlayer, count = 1) {
 function findMove(game) {
     const robotPlayer = game.getCurrentPlayer();
     let movesWithScores = evaluateMoves(game, robotPlayer);
+    movesWithScores.map(move => {
+        if (Array.isArray(move[4])) {
+            const minScore = Math.min(...move[4].map(m => m[3]));
+            move[3] = move[3] < minScore ? move[3] : minScore;
+        }
+        return move;
+    })
     movesWithScores.sort((a, b) => a[3] - b[3]);
     return movesWithScores[movesWithScores.length - 1].slice(0, 3);
 }
