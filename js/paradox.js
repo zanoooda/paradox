@@ -378,7 +378,7 @@ async function replayLastMove(that) {
     let _game = new Game(that.game);
     _game.undo();
     const selectedPairIndex = _game.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
-    let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player, true);
+    let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player, that.type == types.withRobot ? true : false);
     await show(_state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     await delay(1000);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
