@@ -96,25 +96,12 @@ html, body {
 #replay-last-move-button.show {
     display: block;
 }
-#indicator {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    transition: width .5s;
+#color-0 {
+    color: red;
 }
-#indicator.show {
-    width: 100vw;
+#color-1 {
+    color: blue;
 }
-#container {
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .switch {
     position: relative;
     display: inline-block;
@@ -133,7 +120,7 @@ html, body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #ccc;
+    background-color: blue;
     transition: .4s;
 }
 .slider:before {
@@ -147,10 +134,10 @@ html, body {
     transition: .4s;
 }
 input:checked + .slider {
-    background-color: black;
+    background-color: red;
 }
 input:focus + .slider {
-    box-shadow: 0 0 1px gray;
+    box-shadow: 0 0 1px purple;
 }
 input:checked + .slider:before {
     transform: translateX(1em);
@@ -160,4 +147,23 @@ input:checked + .slider:before {
 }
 .slider.round:before {
     border-radius: 50%;
+}
+
+#indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    transition: width .5s;
+}
+#indicator.show {
+    width: 100vw;
+}
+#container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
