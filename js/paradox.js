@@ -288,7 +288,7 @@ function showWinner(winner, context, size) {
         context.fillRect(0, 0, size, size);
         context.globalAlpha = 1.0;
         context.fillStyle = 'black';
-        context.font = `bold 3em sans`;
+        context.font = `bold 1em sans`;
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         context.fillText(message, ...midPoint);
