@@ -19,27 +19,25 @@ function evaluate(game, player) { // -100 <= result <= 100
     }
     return score;
 }
-function findMove(game) {
-    const robotPlayer = game.getCurrentPlayer();
-    let moves = game.getMoves();
-    for (const move of moves) {
+function evaluateMoves(game, robotPlayer, count = 1) {
+    const depth = 1;
+    return game.getMoves().map(move => {
         let _game = new Game(game);
         _game.move([move[0], move[1]], move[2]);
         const score = evaluate(_game, robotPlayer);
         move.push(score);
-        // let _moves = _game.getMoves();
-        // for (const _move of _moves) {
-        //     let __game = new Game(_game);
-        //     __game.move([_move[0], _move[1]], _move[2]);
-        //     const _score = evaluate(__game, robotPlayer);
-        //     _move.push(_score);
-
-        //     // console.log(`${_move}`);
-        // }
-        // move.push(_moves);
-    }
-    moves.sort((a, b) => a[3] - b[3]);
-    return moves[moves.length - 1].slice(0, 3);
+        if (count == depth || Math.abs(score) == 100) return move;
+        else {
+            move.push(evaluateMoves(_game, robotPlayer, count + 1));
+            return move;
+        }
+    });
+}
+function findMove(game) {
+    const robotPlayer = game.getCurrentPlayer();
+    let movesWithScores = evaluateMoves(game, robotPlayer);
+    movesWithScores.sort((a, b) => a[3] - b[3]);
+    return movesWithScores[movesWithScores.length - 1].slice(0, 3);
 }
 function getRandomMove(game) {
     const moves = game.getMoves();
