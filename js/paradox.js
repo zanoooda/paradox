@@ -379,8 +379,8 @@ class Paradox {
         this.undoButton = undoButton;
         this.replayLastMoveButton = replayLastMoveButton;
         this.size = getSize(this.container);
-        this.clickRadius = this.size / 16;
-        this.cellRadius = this.size / 18;
+        this.clickRadius = this.size / 16; // wrap to settings
+        this.cellRadius = this.size / 18; // wrap to settings
         this.canvas = createCanvas(this.size);
         this.context = this.canvas.getContext('2d');
 
@@ -418,6 +418,18 @@ class Paradox {
     }
     playOnline() {
         // ...
+    }
+    resize(size) {
+        this.size = size;
+        this.canvas.width = size;
+        this.canvas.height = size;
+        this.context = this.canvas.getContext('2d');
+        this.clickRadius = this.size / 16; // wrap to settings
+        this.cellRadius = this.size / 18; // wrap to settings
+        if (this.game) {
+            this.state = new State(this.game, this.size, this.state.selectedPairIndex, this.type, this?.player??null);
+            show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+        }
     }
 }
 class State {

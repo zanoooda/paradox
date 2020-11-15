@@ -40,3 +40,6 @@ settingsButton.addEventListener('click', () => {
 robotPlayerCheckbox.addEventListener('change', (event) => {
     robotPlayer = event.target.checked ? 1 : 0;
 });
+window.addEventListener('resize', (event) => {
+    paradox.resize(Math.min(window.innerHeight, window.innerWidth));
+});
