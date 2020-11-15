@@ -1,3 +1,4 @@
+// TODO: Recursion to the width
 // Zobrist hashing
 
 import { Game, getExtendedCell } from './game.js';
