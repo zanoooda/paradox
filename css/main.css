@@ -7,8 +7,8 @@ html, body {
 #menu-button {
     z-index: 1;
     position: absolute;
-    top: 1em;
-    right: 1em;
+    top: 5vh;
+    right: 5vh;
     cursor: pointer;
     border: none;
     font-size: 5em;
@@ -46,8 +46,8 @@ html, body {
     display: block;
     z-index: 1;
     position: absolute;
-    bottom: 1em;
-    left: 1em;
+    bottom: 5vh;
+    left: 5vh;
     cursor: pointer;
     border: none;
     font-size: 5em;
@@ -71,8 +71,8 @@ html, body {
 #undo-button {
     display: none;
     position: absolute;
-    top: 1em;
-    left: 1em;
+    top: 5vh;
+    left: 5vh;
     cursor: pointer;
     border: none;
     font-size: 5em;
@@ -85,8 +85,8 @@ html, body {
 #replay-last-move-button {
     display: none;
     position: absolute;
-    bottom: 1em;
-    right: 1em;
+    bottom: 5vh;
+    right: 5vh;
     cursor: pointer;
     border: none;
     font-size: 5em;
