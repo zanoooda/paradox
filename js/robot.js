@@ -1,11 +1,10 @@
-// TODO: Get random move from  moves with the same score
 // Zobrist hashing
 
 import { Game, getExtendedCell } from './game.js';
 
-const depth = 2;
+let depth = 2;
 
-function evaluate(game, player) { // -100 <= result <= 100
+function evaluateGame(game, player) { // -100 <= result <= 100
     let score = 0;
     if (game.winner == -1) {
         const partner = !!+player ? 0 : 1;
@@ -25,7 +24,7 @@ function evaluateMoves(game, robotPlayer, count = 1) {
     return game.getMoves().map(move => {
         let _game = new Game(game);
         _game.move([move[0], move[1]], move[2]);
-        const score = evaluate(_game, robotPlayer);
+        const score = evaluateGame(_game, robotPlayer);
         move.push(score);
         if (count == depth || Math.abs(score) == 100) return move;
         else {
@@ -43,14 +42,13 @@ function findMove(game) {
             move[3] = move[3] < minScore ? move[3] : minScore;
         }
         return move;
-    })
-    movesWithScores.sort((a, b) => a[3] - b[3]);
-    return movesWithScores[movesWithScores.length - 1].slice(0, 3);
+    });
+    const maxScore = Math.max(...movesWithScores.map(m => m[3]));
+    const maxScoredMovies = movesWithScores.filter(m => m[3] == maxScore);
+    return getRandomMove(maxScoredMovies).slice(0, 3);
 }
-function getRandomMove(game) {
-    const moves = game.getMoves();
-    const randomMove = moves[Math.floor(Math.random() * moves.length)];
-    return randomMove;
+function getRandomMove(moves) {
+    return moves[Math.floor(Math.random() * moves.length)];
 }
 
 export { findMove }
