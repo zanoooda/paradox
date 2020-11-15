@@ -127,6 +127,8 @@ async function continueWithRobot(event, that) {
             if (that.state.winner != -1) {
                 return;
             }
+            that.spinner.classList.add('show');
+            await delay(500);
             await robotPlay(that);
         }
         else if (clickedPairIndex != -1) {
@@ -138,6 +140,7 @@ async function continueWithRobot(event, that) {
 async function robotPlay(that) {
     that.lock = true;
     const robotMove = findRobotMove(that.game);
+    that.spinner.classList.remove('show');
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
     that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.player);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
@@ -373,10 +376,11 @@ async function replayLastMove(that) {
 }
 
 class Paradox {
-    constructor(container, indicator, undoButton, replayLastMoveButton) {
+    constructor(container, indicator, undoButton, replayLastMoveButton, spinner) {
         this.container = container;
         this.indicator = indicator;
         this.undoButton = undoButton;
+        this.spinner = spinner;
         this.replayLastMoveButton = replayLastMoveButton;
         this.size = getSize(this.container);
         this.clickRadius = this.size / 16; // wrap to settings

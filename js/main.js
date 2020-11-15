@@ -12,12 +12,13 @@ let replayLastMoveButton = document.getElementById('replay-last-move-button');
 let settingsButton = document.getElementById('settings-button');
 let settings = document.getElementById('settings');
 let robotPlayerCheckbox = document.getElementById("robot-player-checkbox");
-let robotColorLabel =document.getElementById("robot-color-label");
+let robotColorLabel = document.getElementById("robot-color-label");
+let spinner = document.getElementById("spinner");
 
 let colors = ['red', 'blue'];
 
 let humanPlayer = 0;
-let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton);
+let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton, spinner);
 
 menu.classList.add('show');
 
