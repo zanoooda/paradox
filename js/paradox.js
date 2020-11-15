@@ -103,10 +103,10 @@ async function continueHotSeat(event, that) {
             that.state.pairs[that.state.selectedPairIndex][1]
         ];
         that.game.move(selectedPair, clickedMoveDirection);
-        that.state = new State(that.game, that.size, -1, that.type, null);
+        that.state = new State(that.game, that.size, -1, that.type, null, false);
     }
     else if (clickedPairIndex != -1) {
-        that.state = new State(that.game, that.size, clickedPairIndex, that.type, null);
+        that.state = new State(that.game, that.size, clickedPairIndex, that.type, null, false);
     }
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
 }
@@ -122,7 +122,7 @@ async function continueWithRobot(event, that) {
                 that.state.pairs[that.state.selectedPairIndex][1]
             ];
             that.game.move(selectedPair, clickedMoveDirection);
-            that.state = new State(that.game, that.size, -1, that.type, that.player);
+            that.state = new State(that.game, that.size, -1, that.type, that.player, false);
             await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
             if (that.state.winner != -1) {
                 return;
@@ -132,7 +132,7 @@ async function continueWithRobot(event, that) {
             await robotPlay(that);
         }
         else if (clickedPairIndex != -1) {
-            that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.player);
+            that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.player, false);
         }
         await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     }
@@ -142,11 +142,11 @@ async function robotPlay(that) {
     const robotMove = findRobotMove(that.game);
     that.spinner.classList.remove('show');
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
-    that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.player);
+    that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.player, false);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     await delay(1000);
     that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
-    that.state = new State(that.game, that.size, -1, that.type, that.player);
+    that.state = new State(that.game, that.size, -1, that.type, that.player, false);
     that.lock = false;
 }
 function delay(ms) {
@@ -163,12 +163,12 @@ function getCells(game, size) { // getCellsWithItemsAndPoints()
         return [...cell, ...point];
     });
 }
-function showCells(cells, context, cellRadius) {
+function showCells(cells, context, cellRadius, playerToHighlight) {
     for (const cell of cells) {
-        showCell(cell, context, cellRadius);
+        showCell(cell, context, cellRadius, playerToHighlight);
     }
 }
-function showCell(cell, context, cellRadius) {
+function showCell(cell, context, cellRadius, playerToHighlight) {
     const point = [cell[2], cell[3]];
     context.beginPath();
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
@@ -176,9 +176,18 @@ function showCell(cell, context, cellRadius) {
     if (typeof cell[4] !== 'undefined') {
         context.fillStyle = colors[cell[4]];
         context.fill();
+        if (playerToHighlight == cell[4]) {
+            context.beginPath();
+            context.arc(...point, cellRadius + (cellRadius / 5), 0, 2 * Math.PI);
+            context.closePath();
+            context.lineWidth = 2;
+            context.strokeStyle = colors[cell[4]];
+            context.stroke();
+            context.lineWidth = 1;
+        }
     }
     else {
-        context.strokeStyle = 'lightgray'
+        context.strokeStyle = 'lightgray';
         context.stroke();
     }
     // context.fillStyle = 'black';
@@ -311,7 +320,7 @@ function showReplayLastMoveButton(replayLastMoveButton, state) {
 }
 async function show(state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
     context.clearRect(0, 0, size, size);
-    showCells(state.cells, context, cellRadius);
+    showCells(state.cells, context, cellRadius, state.playerToHighlight);
     showPairs(state.pairs, context, clickRadius);
     showSelectedPair(state, context, size, cellRadius);
     showSelectedPairMoves(state.moves, context, size, clickRadius);
@@ -353,11 +362,11 @@ async function undo(that) {
     const prevMove = that.game.getPrevMove();
     // if (lastMove) {
     const selectedPairIndex = that.state.pairs.findIndex(pair => pair[0] == prevMove[0] && pair[1] == prevMove[1]); // dublication
-    that.state = new State(that.game, that.size, selectedPairIndex, that.type, that.player);
+    that.state = new State(that.game, that.size, selectedPairIndex, that.type, that.player, false);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     await delay(500)
     that.game.undo();
-    that.state = new State(that.game, that.size, -1, that.type, that.player);
+    that.state = new State(that.game, that.size, -1, that.type, that.player, false);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     // }
 }
@@ -369,7 +378,7 @@ async function replayLastMove(that) {
     let _game = new Game(that.game);
     _game.undo();
     const selectedPairIndex = _game.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
-    let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player);
+    let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player, true);
     await show(_state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     await delay(1000);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
@@ -406,16 +415,18 @@ class Paradox {
     async playHotSeat() {
         this.type = types.hotSeat;
         this.game = new Game();
-        this.state = new State(this.game, this.size, -1, this.type, null);
+        this.state = new State(this.game, this.size, -1, this.type, null, false);
         await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
     }
     async playWithRobot(player) {
         this.type = types.withRobot;
         this.game = new Game();
         this.player = player;
-        this.state = new State(this.game, this.size, -1, this.type, this.player);
+        this.state = new State(this.game, this.size, -1, this.type, this.player, false);
         if (this.player != 0) {
             await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+            this.spinner.classList.add('show');
+            await delay(500);
             await robotPlay(this);
         }
         await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
@@ -431,13 +442,13 @@ class Paradox {
         this.clickRadius = this.size / 16; // wrap to settings
         this.cellRadius = this.size / 18; // wrap to settings
         if (this.game) {
-            this.state = new State(this.game, this.size, this.state.selectedPairIndex, this.type, this?.player??null);
+            this.state = new State(this.game, this.size, this.state.selectedPairIndex, this.type, this?.player??null, false);
             show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
         }
     }
 }
 class State {
-    constructor(game, size, selectedPairIndex, type, player) {
+    constructor(game, size, selectedPairIndex, type, player, highlightPlayerCells) {
         this.selectedPairIndex = selectedPairIndex; // -1|0...5
         this.cells = getCells(game, size); // [[cell[0], cell[1], x, y (optonal), player, itemIndex], ...]
         this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...]
@@ -447,6 +458,7 @@ class State {
         this.replayLastMoveButtonVisibility = game.history.length > 0;
         this.currentPlayer = game.getCurrentPlayer();
         this.winner = game.winner; //
+        this.playerToHighlight = highlightPlayerCells ? player : null;
     }
 }
 
