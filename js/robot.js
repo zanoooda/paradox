@@ -29,6 +29,14 @@ function evaluateMoves(game, robotPlayer, count = 1) {
         if (count == depth || Math.abs(score) == 100) return move;
         else {
             move.push(evaluateMoves(_game, robotPlayer, count + 1));
+            if (count % 2 == 1) {
+                const minScore = Math.min(...move[4].map(m => m[3]));
+                move[3] = move[3] < minScore ? move[3] : minScore;
+            }
+            else {
+                const maxScore = Math.max(...move[4].map(m => m[3]));
+                move[3] = move[3] > maxScore ? move[3] : maxScore;
+            }
             return move;
         }
     });
@@ -36,13 +44,6 @@ function evaluateMoves(game, robotPlayer, count = 1) {
 function findMove(game) {
     const robotPlayer = game.getCurrentPlayer();
     let movesWithScores = evaluateMoves(game, robotPlayer);
-    movesWithScores.map(move => {
-        if (Array.isArray(move[4])) {
-            const minScore = Math.min(...move[4].map(m => m[3]));
-            move[3] = move[3] < minScore ? move[3] : minScore;
-        }
-        return move;
-    });
     const maxScore = Math.max(...movesWithScores.map(m => m[3]));
     const maxScoredMovies = movesWithScores.filter(m => m[3] == maxScore);
     return getRandomMove(maxScoredMovies).slice(0, 3);

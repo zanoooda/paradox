@@ -338,7 +338,7 @@ async function undoHotSeat(that) {
 }
 async function undoRobot(that) {
     that.lock = true;
-    const undoOnce = that.game.winner == that.player;
+    const undoOnce = that.game.getCurrentPlayer() != that.player;
     await undo(that);
     if (!undoOnce) {
         await delay(500);
