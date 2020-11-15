@@ -13,6 +13,8 @@ let settingsButton = document.getElementById('settings-button');
 let settings = document.getElementById('settings');
 let robotPlayerCheckbox = document.getElementById("robot-player-checkbox");
 let robotColorLabel = document.getElementById("robot-color-label");
+let robotStrengthSelect = document.getElementById("robot-strength-select");
+
 let spinner = document.getElementById("spinner");
 
 let colors = ['red', 'blue'];
@@ -48,6 +50,10 @@ robotPlayerCheckbox.addEventListener('change', (event) => {
     let robotPlayer = humanPlayer == 1 ? 0 : 1;
     robotColorLabel.style.color = colors[robotPlayer];
     robotColorLabel.innerHTML = colors[robotPlayer];
+});
+robotStrengthSelect.value = paradox.depth;
+robotStrengthSelect.addEventListener('change', (event) => {
+    paradox.depth = parseInt(event.target.value);
 });
 window.addEventListener('resize', (event) => {
     paradox.resize(Math.min(window.innerHeight, window.innerWidth));

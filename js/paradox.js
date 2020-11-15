@@ -139,7 +139,7 @@ async function continueWithRobot(event, that) {
 }
 async function robotPlay(that) {
     that.lock = true;
-    const robotMove = findRobotMove(that.game);
+    const robotMove = findRobotMove(that.game, that.depth);
     that.spinner.classList.remove('show');
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
     that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.player, false);
@@ -396,6 +396,7 @@ class Paradox {
         this.cellRadius = this.size / 18; // wrap to settings
         this.canvas = createCanvas(this.size);
         this.context = this.canvas.getContext('2d');
+        this.depth = 2;
 
         this.canvas.addEventListener('click', (event) => {
             canvasClick(event, this);
