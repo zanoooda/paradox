@@ -12,8 +12,11 @@ let replayLastMoveButton = document.getElementById('replay-last-move-button');
 let settingsButton = document.getElementById('settings-button');
 let settings = document.getElementById('settings');
 let robotPlayerCheckbox = document.getElementById("robot-player-checkbox");
+let robotColorLabel =document.getElementById("robot-color-label");
 
-let robotPlayer = 0;
+let colors = ['red', 'blue'];
+
+let humanPlayer = 0;
 let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton);
 
 menu.classList.add('show');
@@ -28,7 +31,7 @@ playHotSeatButton.addEventListener('click', () => {
 });
 playWithRobotButton.addEventListener('click', () => {
     menu.classList.remove('show');
-    paradox.playWithRobot(robotPlayer);
+    paradox.playWithRobot(humanPlayer);
 });
 playOnlineButton.addEventListener('click', () => {
     // ...
@@ -37,8 +40,13 @@ settingsButton.addEventListener('click', () => {
     menu.classList.remove('show');
     settings.classList.toggle('show');
 });
+robotColorLabel.style.color = colors[humanPlayer == 1 ? 0 : 1];
+robotColorLabel.innerHTML = colors[humanPlayer == 1 ? 0 : 1];
 robotPlayerCheckbox.addEventListener('change', (event) => {
-    robotPlayer = event.target.checked ? 1 : 0;
+    humanPlayer = event.target.checked ? 1 : 0;
+    let robotPlayer = humanPlayer == 1 ? 0 : 1;
+    robotColorLabel.style.color = colors[robotPlayer];
+    robotColorLabel.innerHTML = colors[robotPlayer];
 });
 window.addEventListener('resize', (event) => {
     paradox.resize(Math.min(window.innerHeight, window.innerWidth));

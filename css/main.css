@@ -96,12 +96,6 @@ html, body {
 #replay-last-move-button.show {
     display: block;
 }
-#color-0 {
-    color: red;
-}
-#color-1 {
-    color: blue;
-}
 .switch {
     position: relative;
     display: inline-block;
