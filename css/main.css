@@ -6,7 +6,7 @@ html, body {
 }
 #menu-button {
     z-index: 1;
-    position: fixed;
+    position: absolute;
     top: 5vh;
     right: 5vh;
     cursor: pointer;
@@ -45,7 +45,7 @@ html, body {
 #settings-button {
     display: block;
     z-index: 1;
-    position: fixed;
+    position: absolute;
     bottom: 5vh;
     left: 5vh;
     cursor: pointer;
@@ -70,7 +70,7 @@ html, body {
 }
 #undo-button {
     display: none;
-    position: fixed;
+    position: absolute;
     top: 5vh;
     left: 5vh;
     cursor: pointer;
@@ -84,7 +84,7 @@ html, body {
 }
 #replay-last-move-button {
     display: none;
-    position: fixed;
+    position: absolute;
     bottom: 5vh;
     right: 5vh;
     cursor: pointer;
