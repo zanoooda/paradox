@@ -1,1514 +1,539 @@
-function Game(canvas) {
-    this.canvas = canvas;
-    this.context = canvas.getContext("2d");
-    this.l = canvas.height;
+// resize fire twice
 
-    this.addListeners();
+// TODO: Show message
+
+// Points can be calculated only once
+// New state can be crated by old one; and move (state.updateState(move))
+
+import { Game, cells, swap, getNeighbor, getExtendedCell } from './game.js';
+import { findMove as findRobotMove } from './robot.js';
+
+const colors = ['red', 'blue'],
+    types = { hotSeat: 0, withRobot: 1, online: 2 },
+    sqrt3 = Math.sqrt(3);
+
+function getPoint(cell, size) {
+    const _cell = getExtendedCell([cell[0], cell[1]]);
+    const distance = size / 12;
+    const x = (size / 2) + (distance * sqrt3 * (cell[0] + _cell[2] / 2));
+    const y = (size / 2) + (distance * 3 / 2 * _cell[2]);
+    return [x, y];
 }
-
-Game.prototype.playOffline = function() {
-    this.offline = true;
-    this.online = false;
-    this.robot = false;
-
-    this.state = new State();
-    this.history = new Array();
-    this.pairs = new Array();
-    this.selected = false;
-    this.options = new Array();
-    this.who = 1;
-    this.you = null;
-    this.waiting = false;
-
-    this.render();
+function getMidPoint(point0, point1) {
+    return [(point0[0] + point1[0]) / 2, (point0[1] + point1[1]) / 2];
 }
-Game.prototype.playOnline = function(color) {
-    this.offline = false;
-    this.online = true;
-    this.robot = false;
-
-    this.state = new State();
-    this.history = new Array();
-    this.pairs = new Array();
-    this.selected = false;
-    this.options = new Array();
-    this.who = 1;
-    this.you = color;
-    this.waiting = color == 1 ? false : true; //!!! ?!
-
-    this.render();
+function getClickPoint(event, canvas) {
+    return [
+        event.pageX - canvas.offsetLeft - canvas.clientLeft,
+        event.pageY - canvas.offsetTop - canvas.clientTop
+    ];
 }
-Game.prototype.playWithRobot = function() {
-    this.offline = false;
-    this.online = false;
-    this.robot = true;
-    
-    this.state = new State();
-    this.history = new Array();
-    this.pairs = new Array();
-    this.selected = false;
-    this.options = new Array();
-    this.who = 1;
-    this.you = 1;
-    this.waiting = false;
-
-    this.render();
-}
-Game.prototype.render = function() {
-    // TODO: if this function exist
-    this.updateStatus();
-
-    // clear canvas
-    this.context.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Start position of the currient line
-    var start = { x: this.l / 4 + this.l / 16, y: this.l / 8 };
-
-    for (var x = 0; x < this.state.length; x++) {
-        for (var y = 0; y < this.state[x].length; y++) {
-            // each Cell/circle 
-
-            this.context.beginPath();
-            this.context.arc(start.x + (this.l / 8 * y), start.y, (this.l / 16) * 0.8, 0, 2 * Math.PI, false);
-
-            // write point to state
-            this.state[x][y].xPx = start.x + (this.l / 8 * y);
-            this.state[x][y].yPx = start.y;
-
-            switch (this.state[x][y].color) {
-                case 1:
-                    this.context.fillStyle = 'blue';
-                    this.context.strokeStyle = 'darkblue';
-                    this.context.lineWidth = 5;
-                    break;
-                case 2:
-                    this.context.fillStyle = 'red';
-                    this.context.strokeStyle = 'darkred';
-                    this.context.lineWidth = 5;
-                    break;
-
-                default:
-                    this.context.fillStyle = 'white';
-                    this.context.strokeStyle = 'gray';
-                    this.context.lineWidth = 1;
-                    break;
-            }
-
-            this.context.fill();
-            this.context.stroke();
-        }
-        // Change start object. start object describe where currient row starts
-        if (x < 3)
-            start.x = start.x - this.l / 16;
-        else
-            start.x = start.x + this.l / 16;
-        start.y = start.y + this.l / 8;
-    }
-    // TODO: Move state variables to state.something
-    this.pairs = this.findPairs();
-
-    for (var pairIndex = 0; pairIndex < this.pairs.length; pairIndex++) {
-        this.pairs[pairIndex].m = this.getM(this.state[this.pairs[pairIndex].first.x][this.pairs[pairIndex].first.y], this.state[this.pairs[pairIndex].second.x][this.pairs[pairIndex].second.y]);
-    }
-
-    if(this.selected) {
-        for (var pairIndex = 0; pairIndex < this.pairs.length; pairIndex++) {
-            if(
-                this.pairs[pairIndex].first.x == this.selected.first.x && 
-                this.pairs[pairIndex].first.y == this.selected.first.y &&
-                this.pairs[pairIndex].second.x == this.selected.second.x && 
-                this.pairs[pairIndex].second.y == this.selected.second.y
-            ) {
-                // remove selected from pairs
-                this.pairs.splice(pairIndex, 1);
+function getClickedMoveDirection(clickPoint, state, clickRadius) {
+    let clickedMoveDirection = null;
+    if (state.selectedPairIndex != -1) {
+        for (const move of state.moves) {
+            if (getDistance([move[1], move[2]], clickPoint) < clickRadius) {
+                clickedMoveDirection = move[0];
+                break;
             }
         }
-
-        this.context.beginPath();
-        this.context.arc(
-            this.state[this.selected.first.x][this.selected.first.y].xPx, 
-            this.state[this.selected.first.x][this.selected.first.y].yPx,  
-            (this.l / 16) * 0.8, 
-            0, 
-            2 * Math.PI, 
-            false
-        );
-        this.context.strokeStyle = 'purple';
-        this.context.lineWidth = this.l * 0.035;
-        this.context.stroke();
-
-        this.context.beginPath();
-        this.context.arc(
-            this.state[this.selected.second.x][this.selected.second.y].xPx, 
-            this.state[this.selected.second.x][this.selected.second.y].yPx,  
-            (this.l / 16) * 0.8, 
-            0, 
-            2 * Math.PI, 
-            false
-        );
-        this.context.strokeStyle = 'purple';
-        this.context.lineWidth = this.l * 0.035;
-        this.context.stroke();
-
-        // for options ...
     }
-
-    for (var i = 0; i < this.options.length; i++) {
-        this.context.beginPath();
-        this.context.arc(this.options[i].m.x, this.options[i].m.y, (this.l / 16) * 0.1, 0, 2 * Math.PI, false);
-        this.context.fillStyle = 'black';
-        this.context.fill();
+    return clickedMoveDirection;
+}
+function getClickedPairIndex(clickPoint, pairs, clickRadius) {
+    const distances = pairs.map(pair => getDistance([pair[3], pair[4]], clickPoint));
+    const minDistance = Math.min(...distances);
+    const minDistancePairIndex = distances.findIndex(distance => distance == minDistance);
+    if (minDistance < clickRadius) {
+        return minDistancePairIndex;
     }
-
-    if(this.selected) {
-        this.context.beginPath();
-        this.context.arc(this.selected.m.x, this.selected.m.y, (this.l / 16) * 0.1, 0, 2 * Math.PI, false);
-        this.context.fillStyle = 'black';
-        this.context.fill();
+    else {
+        return -1;
     }
-
-    if(this.isWin()) {
-        alert('somebody win or may be teko');
-
-        this.restart();
+}
+function getDistance(point0, point1) {
+    return Math.sqrt(Math.pow(point0[0] - point1[0], 2) + Math.pow(point0[1] - point1[1], 2));
+}
+function getSize(container) {
+    const containerRect = container.getBoundingClientRect();
+    return Math.min(containerRect.width, containerRect.height);
+}
+function createCanvas(size) {
+    let canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    return canvas;
+}
+function canvasClick(event, that) {
+    switch (that.type) {
+        case types.hotSeat:
+            continueHotSeat(event, that);
+            break;
+        case types.withRobot:
+            continueWithRobot(event, that);
+            break;
+        case types.online:
+            continueOnline(event, that);
+            break;
+        default:
+            break;
     }
+}
+function fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that) {
+    if (clickedMoveDirection != null && clickedPairIndex != -1) {
+        const clickedMove = that.state.moves.find(move => move[0] == clickedMoveDirection);
+        const clickedMovePoint = [clickedMove[1], clickedMove[2]];
+        const clickedMoveDirectionDistance = getDistance(clickPoint, clickedMovePoint);
+        const clickedPair = that.state.pairs[clickedPairIndex];
+        const clickedPairPoint = [clickedPair[3], clickedPair[4]];
+        const clickedPairDistance = getDistance(clickPoint, clickedPairPoint);
+        const diff = clickedMoveDirectionDistance - clickedPairDistance;
+        if (diff > 0) {
+            clickedMoveDirection = null;
+        }
+    }
+    return clickedMoveDirection;
+}
+async function continueHotSeat(event, that) {
+    const clickPoint = getClickPoint(event, that.canvas);
+    let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
+    const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
+    clickedMoveDirection = fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
+    if (clickedMoveDirection != null) {
+        const selectedPair = [
+            that.state.pairs[that.state.selectedPairIndex][0],
+            that.state.pairs[that.state.selectedPairIndex][1]
+        ];
+        that.game.move(selectedPair, clickedMoveDirection);
+        that.state = new State(that.game, that.size, -1, that.type, null, false);
+    }
+    else if (clickedPairIndex != -1) {
+        that.state = new State(that.game, that.size, clickedPairIndex, that.type, null, false);
+    }
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+}
+async function continueWithRobot(event, that) {
+    if (that.game.getCurrentPlayer() == that.player) {
+        const clickPoint = getClickPoint(event, that.canvas);
+        let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
+        const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
+        clickedMoveDirection = fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
+        if (clickedMoveDirection != null) {
+            const selectedPair = [
+                that.state.pairs[that.state.selectedPairIndex][0],
+                that.state.pairs[that.state.selectedPairIndex][1]
+            ];
+            that.game.move(selectedPair, clickedMoveDirection);
+            that.state = new State(that.game, that.size, -1, that.type, that.player, false);
+            await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+            if (that.state.winner != -1) {
+                return;
+            }
+            showSpinner(that.spinner);
+            await delay(500);
+            await robotPlay(that);
+        }
+        else if (clickedPairIndex != -1) {
+            that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.player, false);
+        }
+        await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    }
+}
+async function continueOnline(event, that) {
+    if (that.game.getCurrentPlayer() == that.player) {
+        const clickPoint = getClickPoint(event, that.canvas);
+        let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
+        const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
+        clickedMoveDirection = fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
+        if (clickedMoveDirection != null) {
+            const selectedPair = [
+                that.state.pairs[that.state.selectedPairIndex][0],
+                that.state.pairs[that.state.selectedPairIndex][1]
+            ];
+            that.game.move(selectedPair, clickedMoveDirection);
+            that.state = new State(that.game, that.size, -1, that.type, that.player, false);
+            await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+            if (that.state.winner == -1) {
+                showSpinner(that.spinner, 'wait for the partner');
+            }
+            that.socket.emit('move', [...selectedPair, clickedMoveDirection]);
+        }
+        else if (clickedPairIndex != -1) {
+            that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.player, false);
+        }
+        await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
 
-    // //debug
-    // for (var i = 0; i < this.pairs.length; i++) {
-    //     this.context.beginPath();
-    //     this.context.arc(this.pairs[i].m.x, this.pairs[i].m.y, (l / 16) * 1, 0, 2 * Math.PI, false);
-    //     this.context.strokeStyle = 'black';
-    //     this.context.lineWidth = 1;
-    //     this.context.stroke();
+
+    }
+}
+async function robotPlay(that) {
+    that.lock = true;
+    const robotMove = findRobotMove(that.game, that.depth);
+    hideSpinner(that.spinner);
+    const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
+    that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.player, false);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    await delay(1000);
+    that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
+    that.state = new State(that.game, that.size, -1, that.type, that.player, false);
+    that.lock = false;
+}
+function delay(ms) {
+    return new Promise(res => setTimeout(res, ms));
+}
+function getCells(game, size) { // getCellsWithItemsAndPoints()
+    return cells.map(cell => {
+        const point = getPoint([cell[0], cell[1]], size);
+        const player = game.findPlayer(cell);
+        if (player != -1) {
+            const itemIndex = game.findItemIndex(cell, player);
+            return [...cell, ...point, player, itemIndex];
+        }
+        return [...cell, ...point];
+    });
+}
+function showCells(cells, context, cellRadius, playerToHighlight) {
+    for (const cell of cells) {
+        showCell(cell, context, cellRadius, playerToHighlight);
+    }
+}
+function showCell(cell, context, cellRadius, playerToHighlight) {
+    const point = [cell[2], cell[3]];
+    context.beginPath();
+    context.arc(...point, cellRadius, 0, 2 * Math.PI);
+    context.closePath();
+    if (typeof cell[4] !== 'undefined') {
+        context.fillStyle = colors[cell[4]];
+        context.fill();
+        if (playerToHighlight == cell[4]) {
+            context.beginPath();
+            context.arc(...point, cellRadius + (cellRadius / 5), 0, 2 * Math.PI);
+            context.closePath();
+            context.lineWidth = 2;
+            context.strokeStyle = colors[cell[4]];
+            context.stroke();
+            context.lineWidth = 1;
+        }
+    }
+    else {
+        context.strokeStyle = 'lightgray';
+        context.stroke();
+    }
+    // context.fillStyle = 'black';
+    // context.font = '10px sans';
+    // context.fillText(`${cell[0]}, ${cell[1]}, ${-cell[0] - cell[1]}`, ...point);
+    // if (typeof cell[5] !== 'undefined') {
+    //     context.fillText(`index: ${cell[5]}`, point[0], point[1] + 12);
     // }
-
-    //////////////////////////////
 }
-Game.prototype.addListeners = function addListeners() {
-    this.canvas.addEventListener('click', function (e) {
-
-        if(game.waiting) {
-            return;
-        }
-
-        var rect = canvas.getBoundingClientRect();
-        var point = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top
-        };
-        // TODO: && selected not last movie of oponent
-        if(game.selected && game.getL(point, game.selected.m) < ((game.l/16) * 1)) {
-            game.history.push(JSON.parse(JSON.stringify(game.state)));
-
-            game.state[game.selected.first.x][game.selected.first.y].color = 2;
-            game.state[game.selected.second.x][game.selected.second.y].color = 1;
-
-            // TODO: remove elegal option
-            if(game.history.length > 1 && game.isEqual(game.state, game.history[game.history.length - 2])) { // !!!!!!!!!!!!!!!!! -2
-                alert('can\'t take back the last movie of your opponent');
-                game.state = game.history[game.history.length - 1];
-                game.history.pop();
-
-                return;
-            }
-
-            if(game.who == 1) {
-                game.who = 2;
-            } else {
-                game.who = 1;
-            }
-
-            game.selected = null;
-            game.options = new Array();
-
-            game.render();
-
-            // online
-            if(game.online) {
-                game.waiting = true;
-                socket.emit('move', game.state);
-            }
-
-            // robot
-            if(game.robot && game.who == 2) {
-                game.robotPlay();
-            }
-
-            return;
-        }
-
-        for (var optionsIndex = 0; optionsIndex < game.options.length; optionsIndex++) {
-            if(game.getL(point, game.options[optionsIndex].m) < ((game.l/16) * 1)) {
-                game.history.push(JSON.parse(JSON.stringify(game.state)));
-
-                game.state[game.selected.first.x][game.selected.first.y].color = 0;
-                game.state[game.selected.second.x][game.selected.second.y].color = 0;
-                game.state[game.options[optionsIndex].first.x][game.options[optionsIndex].first.y].color = 1;
-                game.state[game.options[optionsIndex].second.x][game.options[optionsIndex].second.y].color = 2;
-
-                // TODO: remove ilegal option
-                if(game.history.length > 1 && game.isEqual(game.state, game.history[game.history.length - 2])) { /////////// -2
-                    alert('can\'t take back the last movie of your opponent');
-                    game.state = game.history[game.history.length - 1];
-                    game.history.pop();
-
-                    return;
-                }
-
-                if(game.who == 1) {
-                    game.who = 2;
-                } else {
-                    game.who = 1;
-                }
-
-                game.selected = null;
-                game.options = new Array();
-
-                game.render();
-
-                // online
-                if(game.online) {
-                    game.waiting = true;
-                    socket.emit('move', game.state);
-                } 
-
-                // robot
-                if(game.robot) {
-                    game.robotPlay();
-                }
-
-                return;
-            }
-        }
-
-        for (var pairIndex = 0; pairIndex < game.pairs.length; pairIndex++) {
-            if(game.getL(point, game.pairs[pairIndex].m) < ((game.l/16) * 1)) {
-                game.selected = game.pairs[pairIndex];
-                game.options = game.getOptions(game.pairs[pairIndex]);
-                game.render();
-
-                return;
-            } 
-        }
-
-    }, false);
-
-    this.canvas.addEventListener('touchstart', function (e) {
-        var touch = e.touches[0];
-        // May be this make delay
-        var mouseEvent = new MouseEvent("mousedown", {
-            clientX: touch.clientX,
-            clientY: touch.clientY
-        });
-        // What is it?
-        game.canvas.dispatchEvent(mouseEvent);
-    }, false);
+function getPairs(game, size) { // getPairsWithPoints() Another option is to get point by pairs and cells (with points)
+    return game.pairs.map((pair) => {
+        const cells = [game.items[0][pair[0]], game.items[1][pair[1]]];
+        const points = [getPoint(cells[0], size), getPoint(cells[1], size)];
+        const point = getMidPoint(points[0], points[1]);
+        return [...pair, ...point];
+    });
 }
-Game.prototype.getOptions = function(pair) {
-
-    //
-    var state = this.state;
-    //
-    var options = new Array();
-
-    if(pair.first.x == pair.second.x) {
-        // they stand horizontaly
-
-        // try left
-        var right = pair.first.y > pair.second.y ? pair.first : pair.second;
-        var left = pair.first.y < pair.second.y ? pair.first : pair.second;
-        if(state[left.x][left.y - 1] !== undefined && state[left.x][left.y - 1].color == 0) {
-            var p = JSON.parse(JSON.stringify(pair)); // clone
-            p.first.y -= 1;
-            p.second.y -= 1;
-            p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-            //
-            options.push(p);
-        }
-        // try right
-        if(state[right.x][right.y + 1] !== undefined && state[right.x][right.y + 1].color == 0) {
-            var p = JSON.parse(JSON.stringify(pair)); // clone
-            p.first.y += 1;
-            p.second.y += 1;
-            p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-            //
-            options.push(p);
-        }
-        // try up left
-        if(right.x < 3) {
-            if(
-                state[right.x - 1] &&
-                state[right.x - 1][right.y - 1] !== undefined &&
-                state[left.x - 1][left.y - 1] !== undefined &&
-                state[right.x - 1][right.y - 1].color == 0 &&
-                state[left.x - 1][left.y - 1].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x -= 1;
-                p.first.y -= 1;
-                p.second.x -= 1;
-                p.second.y -= 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        } else if (right.x == 3) {
-            if(
-                state[right.x - 1][right.y - 1] !== undefined &&
-                state[left.x - 1][left.y - 1] !== undefined &&
-                state[right.x - 1][right.y - 1].color == 0 &&
-                state[left.x - 1][left.y - 1].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x -= 1;
-                p.first.y -= 1;
-                p.second.x -= 1;
-                p.second.y -= 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        } else {
-            if(
-                state[right.x - 1][right.y] !== undefined &&
-                state[left.x - 1][left.y] !== undefined &&
-                state[right.x - 1][right.y].color == 0 &&
-                state[left.x - 1][left.y].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x -= 1;
-                p.second.x -= 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        }
-        // try up right
-        if(right.x < 3) {
-            if(
-                state[right.x - 1] &&
-                state[right.x - 1][right.y] !== undefined &&
-                state[left.x - 1][left.y] !== undefined &&
-                state[right.x - 1][right.y].color == 0 &&
-                state[left.x - 1][left.y].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x -= 1;
-                p.second.x -= 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        } else if (right.x == 3) {
-            if(
-                state[right.x - 1][right.y] !== undefined &&
-                state[left.x - 1][left.y] !== undefined &&
-                state[right.x - 1][right.y].color == 0 &&
-                state[left.x - 1][left.y].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x -= 1;
-                p.second.x -= 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        } else {
-            if(
-                state[right.x - 1][right.y + 1] !== undefined &&
-                state[left.x - 1][left.y + 1] !== undefined &&
-                state[right.x - 1][right.y + 1].color == 0 &&
-                state[left.x - 1][left.y + 1].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x -= 1;
-                p.first.y += 1;
-                p.second.x -= 1;
-                p.second.y += 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        }
-        // try down right
-        if(right.x < 3) {
-            if(
-                state[right.x + 1][right.y + 1] !== undefined &&
-                state[left.x + 1][left.y + 1] !== undefined &&
-                state[right.x + 1][right.y + 1].color == 0 &&
-                state[left.x + 1][left.y + 1].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x += 1;
-                p.first.y += 1;
-                p.second.x += 1;
-                p.second.y += 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        } else if (right.x == 3) {
-            if(
-                state[right.x + 1][right.y] !== undefined &&
-                state[left.x + 1][left.y] !== undefined &&
-                state[right.x + 1][right.y].color == 0 &&
-                state[left.x + 1][left.y].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x += 1;
-                p.second.x += 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        } else {
-            if(
-                state[right.x + 1] &&
-                state[right.x + 1][right.y] !== undefined &&
-                state[left.x + 1][left.y] !== undefined &&
-                state[right.x + 1][right.y].color == 0 &&
-                state[left.x + 1][left.y].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x += 1;
-                p.second.x += 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        }
-        // try down left
-        if(right.x < 3) {
-            if(
-                state[right.x + 1][right.y] !== undefined &&
-                state[left.x + 1][left.y] !== undefined &&
-                state[right.x + 1][right.y].color == 0 &&
-                state[left.x + 1][left.y].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x += 1;
-                p.second.x += 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        } else if (right.x == 3) {
-            if(
-                state[right.x + 1][right.y - 1] !== undefined &&
-                state[left.x + 1][left.y - 1] !== undefined &&
-                state[right.x + 1][right.y - 1].color == 0 &&
-                state[left.x + 1][left.y - 1].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x += 1;
-                p.first.y -= 1;
-                p.second.x += 1;
-                p.second.y -= 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        } else {
-            if(
-                state[right.x + 1] &&
-                state[right.x + 1][right.y - 1] !== undefined &&
-                state[left.x + 1][left.y - 1] !== undefined &&
-                state[right.x + 1][right.y - 1].color == 0 &&
-                state[left.x + 1][left.y - 1].color == 0
-            ) {
-                var p = JSON.parse(JSON.stringify(pair)); // clone
-                p.first.x += 1;
-                p.first.y -= 1;
-                p.second.x += 1;
-                p.second.y -= 1;
-                p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                //
-                options.push(p);
-            }
-        }
-    } else {
-        var upper = pair.first.x < pair.second.x ? pair.first : pair.second;
-        var bottom = pair.first.x > pair.second.x ? pair.first : pair.second;
-        
-        // Here will be two situations, lets call it temporary E (east) and W (west)
-
-        if(upper.x < 3) {
-            if(upper.y == bottom.y) {
-                // E
-
-                // try up
-                if(
-                    state[upper.x - 1] !== undefined &&
-                    state[upper.x - 1][upper.y] !== undefined &&
-                    state[upper.x - 1][upper.y].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-                    p.first.x -= 1;
-                    p.second.x -= 1;
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    
-                    options.push(p);
-                }
-
-                // try down
-                if(bottom.x <= 2) {
-                    if(
-                        state[bottom.x + 1][bottom.y] !== undefined &&
-                        state[bottom.x + 1][bottom.y].color == 0
-                    ) {
-                        var p = JSON.parse(JSON.stringify(pair)); // clone
-                        p.first.x += 1;
-                        p.second.x += 1;
-                        p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                        
-                        options.push(p);
-                    }
-                } else {
-                    if(
-                        state[bottom.x + 1][bottom.y - 1] !== undefined &&
-                        state[bottom.x + 1][bottom.y - 1].color == 0
-                    ) {
-                        var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                        if(state[bottom.x][bottom.y].color == 1) {
-                            p.first.x += 1;
-                            p.first.y -= 1;
-                            p.second.x += 1;
-                        } else {
-                            p.first.x += 1;
-                            p.second.y -= 1;
-                            p.second.x += 1;
-                        }
-
-                        p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                        
-                        options.push(p); 
-                    }
-                }
-                // try right up
-                if(
-                    state[upper.x - 1] !== undefined &&
-                    state[upper.x - 1][upper.y - 1] !== undefined &&
-                    state[bottom.x - 1][bottom.y - 1] !== undefined &&
-                    state[upper.x - 1][upper.y - 1].color == 0 &&
-                    state[bottom.x - 1][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x -= 1;
-                    p.first.y -= 1;
-                    p.second.x -= 1;
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                        
-                    options.push(p); 
-                }
-                // try right down
-                if(
-                    state[upper.x][upper.y - 1] !== undefined &&
-                    state[bottom.x][bottom.y - 1] !== undefined &&
-                    state[upper.x][upper.y - 1].color == 0 &&
-                    state[bottom.x][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y -= 1;
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                        
-                    options.push(p);
-                }
-                // try left up
-                if(
-                    state[upper.x][upper.y + 1] !== undefined &&
-                    state[bottom.x][bottom.y + 1] !== undefined &&
-                    state[upper.x][upper.y + 1].color == 0 &&
-                    state[bottom.x][bottom.y + 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y += 1;
-                    p.second.y += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                        
-                    options.push(p);
-                }
-                // try left down
-                if(bottom.x <= 2) {
-                    if(
-                        state[upper.x + 1][upper.y + 1] !== undefined &&
-                        state[bottom.x + 1][bottom.y + 1] !== undefined &&
-                        state[upper.x + 1][upper.y + 1].color == 0 &&
-                        state[bottom.x + 1][bottom.y + 1].color == 0
-                    ) {
-                        var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                        p.first.y += 1;
-                        p.first.x += 1;
-                        p.second.y += 1;
-                        p.second.x += 1;
-
-                        p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                            
-                        options.push(p);
-                    }
-                } else {
-                    // bottom.x = 3
-                    if(
-                        state[upper.x + 1][upper.y + 1] !== undefined &&
-                        state[bottom.x + 1][bottom.y] !== undefined &&
-                        state[upper.x + 1][upper.y + 1].color == 0 &&
-                        state[bottom.x + 1][bottom.y].color == 0
-                    ) {
-                        var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                        if(state[upper.x][upper.y].color == 1) {
-                            p.first.y += 1;
-                            p.first.x += 1;
-                            p.second.x += 1;
-                        } else {
-                            p.first.x += 1;
-                            p.second.x += 1;
-                            p.second.y += 1;
-                        }
-
-                        p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                            
-                        options.push(p);
-                    }
-                }
-                
-            } else {
-                // W
-
-                // try up
-                if(
-                    state[upper.x - 1] !== undefined &&
-                    state[upper.x - 1][upper.y - 1] !== undefined &&
-                    state[upper.x - 1][upper.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y -= 1;
-                    p.first.x -= 1;
-                    p.second.y -= 1;
-                    p.second.x -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                        
-                    options.push(p);
-                }
-                // try down
-                if(bottom.x <= 2) {
-                    if(
-                        state[bottom.x + 1][bottom.y + 1] !== undefined &&
-                        state[bottom.x + 1][bottom.y + 1].color == 0
-                    ) {
-                        var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                        p.first.y += 1;
-                        p.first.x += 1;
-                        p.second.y += 1;
-                        p.second.x += 1;
-
-                        p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                            
-                        options.push(p);
-                    }
-                } else {
-                    // bottom.x = 3
-                    if(
-                        state[bottom.x + 1][bottom.y] !== undefined &&
-                        state[bottom.x + 1][bottom.y].color == 0
-                    ) {
-                        var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                        if(state[upper.x][upper.y].color == 1) {
-                            p.first.x += 1;
-                            p.first.y += 1;
-                            p.second.x += 1;
-                        } else {
-                            p.first.x += 1;
-                            p.second.x += 1;
-                            p.second.y += 1;
-                        }
-
-                        p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                            
-                        options.push(p);
-                    }
-                }
-                // try right up
-                if(
-                    state[upper.x - 1] !== undefined &&
-                    state[upper.x - 1][upper.y] !== undefined &&
-                    state[bottom.x - 1][bottom.y] !== undefined &&
-                    state[upper.x - 1][upper.y].color == 0 &&
-                    state[bottom.x - 1][bottom.y].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-                    p.first.x -= 1;
-                    p.second.x -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                        
-                    options.push(p);
-                }
-                // try right down
-                if(
-                    state[upper.x][upper.y + 1] !== undefined &&
-                    state[bottom.x][bottom.y + 1] !== undefined &&
-                    state[upper.x][upper.y + 1].color == 0 &&
-                    state[bottom.x][bottom.y + 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-                    p.first.y += 1;
-                    p.second.y += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                        
-                    options.push(p);
-                }
-                // try left up
-                if(
-                    state[upper.x][upper.y - 1] !== undefined &&
-                    state[bottom.x][bottom.y - 1] !== undefined &&
-                    state[upper.x][upper.y - 1].color == 0 &&
-                    state[bottom.x][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-                    p.first.y -= 1;
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                        
-                    options.push(p);
-                }
-
-                // try left down
-                if(bottom.x <= 2) {
-                    if(
-                        state[upper.x + 1][upper.y] !== undefined &&
-                        state[bottom.x + 1][bottom.y] !== undefined &&
-                        state[upper.x + 1][upper.y].color == 0 &&
-                        state[bottom.x + 1][bottom.y].color == 0
-                    ) {
-                        var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                        p.first.x += 1;
-                        p.second.x += 1;
-
-                        p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                            
-                        options.push(p);
-                    }
-                } else {
-                    // bottom.x = 3
-                    if(
-                        state[upper.x + 1][upper.y] !== undefined &&
-                        state[upper.x + 1][upper.y].color == 0 &&
-                        state[bottom.x + 1][bottom.y - 1] !== undefined &&
-                        state[bottom.x + 1][bottom.y - 1].color == 0
-                    ) {
-                        var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                        if(state[upper.x][upper.y].color == 1) {
-                            p.first.x += 1;
-                            p.second.x += 1;
-                            p.second.y -= 1;
-                        } else {
-                            p.first.x += 1;
-                            p.second.x += 1;
-                            p.first.y -= 1;
-                        }
-
-                        p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                            
-                        options.push(p);
-                    }
-                    
-                }
-            }
-        } else if(upper.x == 3) {
-            if(upper.y == bottom.y) {
-                // W
-
-                // try up
-                if(
-                    state[upper.x - 1][upper.y - 1] !== undefined &&
-                    state[upper.x - 1][upper.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    if(state[upper.x][upper.y].color == 1) {
-                        p.first.x -= 1;
-                        p.second.x -= 1;
-                        p.first.y -= 1;
-                    } else {
-                        p.first.x -= 1;
-                        p.second.x -= 1;
-                        p.second.y -= 1;
-                    }
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try down
-                if(
-                    state[bottom.x + 1][bottom.y] !== undefined &&
-                    state[bottom.x + 1][bottom.y].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x += 1
-                    p.second.x += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try right up
-                if(
-                    state[upper.x - 1][upper.y] !== undefined &&
-                    state[bottom.x - 1][bottom.y + 1] !== undefined &&
-                    state[upper.x - 1][upper.y].color == 0 &&
-                    state[bottom.x - 1][bottom.y + 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x -= 1
-                    p.second.x -= 1;
-                    if(state[upper.x][upper.y].color == 1) {
-                        p.second.y += 1;
-                    } else {
-                        p.first.y += 1;
-                    }
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try right down
-                if(
-                    state[upper.x][upper.y + 1] !== undefined &&
-                    state[bottom.x][bottom.y + 1] !== undefined &&
-                    state[upper.x][upper.y + 1].color == 0 &&
-                    state[bottom.x][bottom.y + 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y += 1
-                    p.second.y += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try left up
-                if(
-                    state[upper.x][upper.y - 1] !== undefined &&
-                    state[bottom.x][bottom.y - 1] !== undefined &&
-                    state[upper.x][upper.y - 1].color == 0 &&
-                    state[bottom.x][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y -= 1
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try left down
-                if(
-                    state[upper.x + 1][upper.y - 1] !== undefined &&
-                    state[bottom.x + 1][bottom.y - 1] !== undefined &&
-                    state[upper.x + 1][upper.y - 1].color == 0 &&
-                    state[bottom.x + 1][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x += 1
-                    p.second.x += 1;
-                    p.first.y -= 1;
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-            } else {
-                // E
-
-                // try up
-                if(
-                    state[upper.x - 1][upper.y] !== undefined &&
-                    state[upper.x - 1][upper.y].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    if(state[upper.x][upper.y].color == 1) {
-                        p.first.x -= 1;
-                        p.second.x -= 1;
-                        p.second.y += 1;
-                    } else {
-                        p.first.x -= 1;
-                        p.second.x -= 1;
-                        p.first.y += 1;
-                    }
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try down
-                if(
-                    state[bottom.x + 1][bottom.y - 1] !== undefined &&
-                    state[bottom.x + 1][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x += 1
-                    p.first.y -= 1
-                    p.second.x += 1;
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try right up
-                if(
-                    state[upper.x][upper.y + 1] !== undefined &&
-                    state[bottom.x][bottom.y + 1] !== undefined &&
-                    state[upper.x][upper.y + 1].color == 0 &&
-                    state[bottom.x][bottom.y + 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y += 1
-                    p.second.y += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try right down
-
-                if(
-                    state[upper.x + 1][upper.y] !== undefined &&
-                    state[bottom.x + 1][bottom.y] !== undefined &&
-                    state[upper.x + 1][upper.y].color == 0 &&
-                    state[bottom.x + 1][bottom.y].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x += 1
-                    p.second.x += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-
-                // try left up
-                if(
-                    state[upper.x - 1][upper.y - 1] !== undefined &&
-                    state[bottom.x - 1][bottom.y] !== undefined &&
-                    state[upper.x - 1][upper.y - 1].color == 0 &&
-                    state[bottom.x - 1][bottom.y].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x -= 1
-                    p.second.x -= 1;
-                    if(state[upper.x][upper.y].color == 1) {
-                        p.first.y -= 1;
-                    } else {
-                        p.second.y -= 1;
-                    }
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try left down
-                if(
-                    state[upper.x][upper.y - 1] !== undefined &&
-                    state[bottom.x][bottom.y - 1] !== undefined &&
-                    state[upper.x][upper.y - 1].color == 0 &&
-                    state[bottom.x][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y -= 1
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-            }
-        } else {
-            if(upper.y == bottom.y) {
-                // W
-
-                // try up
-                if(
-                    state[upper.x - 1][upper.y] !== undefined &&
-                    state[upper.x - 1][upper.y].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x -= 1
-                    p.second.x -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try down
-                if(
-                    state[bottom.x + 1] !== undefined &&
-                    state[bottom.x + 1][bottom.y] !== undefined &&
-                    state[bottom.x + 1][bottom.y].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x += 1
-                    p.second.x += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try right down
-                if(
-                    state[upper.x][upper.y + 1] !== undefined &&
-                    state[bottom.x][bottom.y + 1] !== undefined &&
-                    state[upper.x][upper.y + 1].color == 0 &&
-                    state[bottom.x][bottom.y + 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y += 1
-                    p.second.y += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try right up
-                if(
-                    state[upper.x - 1][upper.y + 1] !== undefined &&
-                    state[bottom.x - 1][bottom.y + 1] !== undefined &&
-                    state[upper.x - 1][upper.y + 1].color == 0 &&
-                    state[bottom.x - 1][bottom.y + 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x -= 1;
-                    p.second.x -= 1;
-                    p.first.y += 1;
-                    p.second.y += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try left up
-                if(
-                    state[upper.x][upper.y - 1] !== undefined &&
-                    state[bottom.x][bottom.y - 1] !== undefined &&
-                    state[upper.x][upper.y - 1].color == 0 &&
-                    state[bottom.x][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y -= 1
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try left down
-                if(
-                    state[bottom.x + 1] !== undefined &&
-                    state[upper.x + 1][upper.y - 1] !== undefined &&
-                    state[bottom.x + 1][bottom.y - 1] !== undefined &&
-                    state[upper.x + 1][upper.y - 1].color == 0 &&
-                    state[bottom.x + 1][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x += 1;
-                    p.second.x += 1;
-                    p.first.y -= 1;
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-            } else {
-                // E
-
-                // try up
-                if(
-                    state[upper.x - 1][upper.y + 1] !== undefined &&
-                    state[upper.x - 1][upper.y + 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x -= 1;
-                    p.second.x -= 1;
-                    p.first.y += 1;
-                    p.second.y += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try down
-                if(
-                    state[bottom.x + 1] !== undefined &&
-                    state[bottom.x + 1][bottom.y - 1] !== undefined &&
-                    state[bottom.x + 1][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x += 1;
-                    p.second.x += 1;
-                    p.first.y -= 1;
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try right up
-                if(
-                    state[upper.x][upper.y + 1] !== undefined &&
-                    state[bottom.x][bottom.y + 1] !== undefined &&
-                    state[upper.x][upper.y + 1].color == 0 &&
-                    state[bottom.x][bottom.y + 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y += 1
-                    p.second.y += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try right down
-                if(
-                    state[bottom.x + 1] !== undefined &&
-                    state[upper.x + 1][upper.y] !== undefined &&
-                    state[bottom.x + 1][bottom.y] !== undefined &&
-                    state[upper.x + 1][upper.y].color == 0 &&
-                    state[bottom.x + 1][bottom.y].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x += 1
-                    p.second.x += 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try left up
-                if(
-                    state[upper.x - 1][upper.y] !== undefined &&
-                    state[bottom.x - 1][bottom.y] !== undefined &&
-                    state[upper.x - 1][upper.y].color == 0 &&
-                    state[bottom.x - 1][bottom.y].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.x -= 1
-                    p.second.x -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-                // try left down
-                if(
-                    state[upper.x][upper.y - 1] !== undefined &&
-                    state[bottom.x][bottom.y - 1] !== undefined &&
-                    state[upper.x][upper.y - 1].color == 0 &&
-                    state[bottom.x][bottom.y - 1].color == 0
-                ) {
-                    var p = JSON.parse(JSON.stringify(pair)); // clone
-
-                    p.first.y -= 1
-                    p.second.y -= 1;
-
-                    p.m = this.getM(state[p.first.x][p.first.y], state[p.second.x][p.second.y]);
-                    options.push(p);
-                }
-            }
+function showPairs(pairs, context, clickRadius) {
+    for (const pair of pairs) {
+        showPair(pair, context, clickRadius);
+    }
+}
+function showPair(pair, context, clickRadius) {
+    const point = [pair[3], pair[4]];
+    // context.beginPath();
+    // context.arc(...point, clickRadius, 0, 2 * Math.PI);
+    // context.closePath();
+    // context.strokeStyle = 'purple'
+    // context.stroke();
+    // context.fillStyle = 'black';
+    // context.font = '10px sans';
+    // context.fillText(`${pair[0]}, ${pair[1]}, [${pair[2]}]`, ...point);
+}
+function showSelectedPair(state, context, size, cellRadius) {
+    if (state.selectedPairIndex != -1) {
+        const pair = state.pairs[state.selectedPairIndex];
+        const selectedCells = [
+            state.cells.find(cell => cell[4] == 0 && cell[5] == pair[0]),
+            state.cells.find(cell => cell[4] == 1 && cell[5] == pair[1])
+        ];
+        for (const cell of selectedCells) {
+            showSelectedCell(cell, context, size, cellRadius);
         }
     }
-
-    // TODO: Chech if options not include last movie
-
-    return options;
 }
-Game.prototype.findPairs = function() {
-    var pairs = [];
-    var oArrUp = [{ x: 1, y: 0},{ x: 1, y: 1},{ x: 0, y: 1},{ x: -1, y: 0},{ x: -1, y: -1},{ x: 0, y: -1}];
-    var oArrMiddle = [{ x: 1, y: -1},{ x: 1, y: 0},{ x: 0, y: 1},{ x: -1, y: 0},{ x: -1, y: -1},{ x: 0, y: -1}];
-    var oArrDown = [{ x: 1, y: -1},{ x: 1, y: 0},{ x: 0, y: 1},{ x: -1, y: 1},{ x: -1, y: 0},{ x: 0, y: -1}];
-
-    for (var x = 0; x < this.state.length; x++) {
-        for (var y = 0; y < this.state[x].length; y++) {
-            // find all with dublications
-
-            if(this.state[x][y].color != 0) {
-                for (var oArrIndex = 0; oArrIndex < oArrUp.length; oArrIndex++) {
-                    if(x < 3) {
-                        if(
-                            this.state[x + oArrUp[oArrIndex].x] !== undefined && 
-                            this.state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y] !== undefined && 
-                            this.state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y].color != 0 &&
-                            this.state[x][y].color != this.state[x + oArrUp[oArrIndex].x][y + oArrUp[oArrIndex].y].color
-                        ) {
-                            pairs.push({
-                                first: this.state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrUp[oArrIndex].x, y: y + oArrUp[oArrIndex].y},
-                                second: this.state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArrUp[oArrIndex].x, y: y + oArrUp[oArrIndex].y}
-                            });
-                        }
-                    } else if(x == 3) {
-                        if(
-                            this.state[x + oArrMiddle[oArrIndex].x] !== undefined && 
-                            this.state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y] !== undefined && 
-                            this.state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y].color != 0 &&
-                            this.state[x][y].color != this.state[x + oArrMiddle[oArrIndex].x][y + oArrMiddle[oArrIndex].y].color
-                        ) {
-                            pairs.push({
-                                first: this.state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrMiddle[oArrIndex].x, y: y + oArrMiddle[oArrIndex].y},
-                                second: this.state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArrMiddle[oArrIndex].x, y: y + oArrMiddle[oArrIndex].y}
-                            });
-                        }
-                    } else {
-                        if(
-                            this.state[x + oArrDown[oArrIndex].x] !== undefined && 
-                            this.state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y] !== undefined && 
-                            this.state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y].color != 0 &&
-                            this.state[x][y].color != this.state[x + oArrDown[oArrIndex].x][y + oArrDown[oArrIndex].y].color
-                        ) {
-                            pairs.push({
-                                first: this.state[x][y].color == 1 ? { x: x, y: y} : { x: x + oArrDown[oArrIndex].x, y: y + oArrDown[oArrIndex].y},
-                                second: this.state[x][y].color == 2 ? { x: x, y: y} : { x: x + oArrDown[oArrIndex].x, y: y + oArrDown[oArrIndex].y}
-                            });
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // remove dublicatons
-    var uniq = new Set();
-    pairs.forEach(e => uniq.add(JSON.stringify(e)));
-    pairs = Array.from(uniq).map(e => JSON.parse(e));
-
-    return pairs;
+function showSelectedCell(cell, context, size, cellRadius) {
+    const point = [cell[2], cell[3]];
+    context.beginPath();
+    context.arc(...point, cellRadius, 0, 2 * Math.PI);
+    context.closePath();
+    context.lineWidth = size / 36;
+    context.strokeStyle = 'purple';
+    context.stroke();
+    context.lineWidth = 1;
 }
-Game.prototype.isEqual = function(state1, state2) {
-    for (var x = 0; x < state1.length; x++) {
-        for (var y = 0; y < state1[x].length; y++) {
-            if(state1[x][y].color !== state2[x][y].color){
-                return false;
-            }
-            
-        }
+function getSelectedPairMoves(selectedPairIndex, pairs, cells, size) { // getSelectedPairMoveDirectionsWithPoints()
+    if (selectedPairIndex == -1) {
+        return [];
     }
-    return true;
+    return pairs[selectedPairIndex][2].map(directionIndex => {
+        if (directionIndex == swap) {
+            const point = [pairs[selectedPairIndex][3], pairs[selectedPairIndex][4]]
+            return [directionIndex, ...point];
+        }
+        const cell0 = cells.find(cell => cell[4] == 0 && cell[5] == pairs[selectedPairIndex][0]);
+        const cell1 = cells.find(cell => cell[4] == 1 && cell[5] == pairs[selectedPairIndex][1]);
+        const cell0NewPoint = getPoint(getNeighbor(cell0, directionIndex), size);
+        const cell1NewPoint = getPoint(getNeighbor(cell1, directionIndex), size);
+        const point = getMidPoint(cell0NewPoint, cell1NewPoint);
+        return [directionIndex, ...point];
+    });
 }
-Game.prototype.isWin = function() {
-    var lines = [];
-
-    // looking for 4 in a row
-
-    var allLines = [
-        [{ x: 0, y: 0 },{ x: 1, y: 0 },{ x: 2, y: 0 },{ x: 3, y: 0 }],
-        [{ x: 0, y: 1 },{ x: 1, y: 1 },{ x: 2, y: 1 },{ x: 3, y: 1 }],
-        [{ x: 0, y: 2 },{ x: 1, y: 2 },{ x: 2, y: 2 },{ x: 3, y: 2 }],
-        [{ x: 0, y: 3 },{ x: 1, y: 3 },{ x: 2, y: 3 },{ x: 3, y: 3 }],
-
-        [{ x: 1, y: 1 },{ x: 2, y: 1 },{ x: 3, y: 1 },{ x: 4, y: 0 }],
-        [{ x: 1, y: 2 },{ x: 2, y: 2 },{ x: 3, y: 2 },{ x: 4, y: 1 }],
-        [{ x: 1, y: 3 },{ x: 2, y: 3 },{ x: 3, y: 3 },{ x: 4, y: 2 }],
-        [{ x: 1, y: 4 },{ x: 2, y: 4 },{ x: 3, y: 4 },{ x: 4, y: 3 }],
-
-        [{ x: 2, y: 2 },{ x: 3, y: 2 },{ x: 4, y: 1 },{ x: 5, y: 0 }],
-        [{ x: 2, y: 3 },{ x: 3, y: 3 },{ x: 4, y: 2 },{ x: 5, y: 1 }],
-        [{ x: 2, y: 4 },{ x: 3, y: 4 },{ x: 4, y: 3 },{ x: 5, y: 2 }],
-        [{ x: 2, y: 5 },{ x: 3, y: 5 },{ x: 4, y: 4 },{ x: 5, y: 3 }],
-
-        [{ x: 3, y: 3 },{ x: 4, y: 2 },{ x: 5, y: 1 },{ x: 6, y: 0 }],
-        [{ x: 3, y: 4 },{ x: 4, y: 3 },{ x: 5, y: 2 },{ x: 6, y: 1 }],
-        [{ x: 3, y: 5 },{ x: 4, y: 4 },{ x: 5, y: 3 },{ x: 6, y: 2 }],
-        [{ x: 3, y: 6 },{ x: 4, y: 5 },{ x: 5, y: 4 },{ x: 6, y: 3 }],
-
-        [{ x: 0, y: 0 },{ x: 1, y: 1 },{ x: 2, y: 2 },{ x: 3, y: 3 }],
-        [{ x: 0, y: 1 },{ x: 1, y: 2 },{ x: 2, y: 3 },{ x: 3, y: 4 }],
-        [{ x: 0, y: 2 },{ x: 1, y: 3 },{ x: 2, y: 4 },{ x: 3, y: 5 }],
-        [{ x: 0, y: 3 },{ x: 1, y: 4 },{ x: 2, y: 5 },{ x: 3, y: 6 }],
-
-        [{ x: 1, y: 0 },{ x: 2, y: 1 },{ x: 3, y: 2 },{ x: 4, y: 2 }],
-        [{ x: 1, y: 1 },{ x: 2, y: 2 },{ x: 3, y: 3 },{ x: 4, y: 3 }],
-        [{ x: 1, y: 2 },{ x: 2, y: 3 },{ x: 3, y: 4 },{ x: 4, y: 4 }],
-        [{ x: 1, y: 3 },{ x: 2, y: 4 },{ x: 3, y: 5 },{ x: 4, y: 5 }],
-
-        [{ x: 2, y: 0 },{ x: 3, y: 1 },{ x: 4, y: 1 },{ x: 5, y: 1 }],
-        [{ x: 2, y: 1 },{ x: 3, y: 2 },{ x: 4, y: 2 },{ x: 5, y: 2 }],
-        [{ x: 2, y: 2 },{ x: 3, y: 3 },{ x: 4, y: 3 },{ x: 5, y: 3 }],
-        [{ x: 2, y: 3 },{ x: 3, y: 4 },{ x: 4, y: 4 },{ x: 5, y: 4 }],
-
-        [{ x: 3, y: 0 },{ x: 4, y: 0 },{ x: 5, y: 0 },{ x: 6, y: 0 }],
-        [{ x: 3, y: 1 },{ x: 4, y: 1 },{ x: 5, y: 1 },{ x: 6, y: 1 }],
-        [{ x: 3, y: 2 },{ x: 4, y: 2 },{ x: 5, y: 2 },{ x: 6, y: 2 }],
-        [{ x: 3, y: 3 },{ x: 4, y: 3 },{ x: 5, y: 3 },{ x: 6, y: 3 }],
-
-        [{ x: 0, y: 0 },{ x: 0, y: 1 },{ x: 0, y: 2 },{ x: 0, y: 3 }],
-        [{ x: 1, y: 0 },{ x: 1, y: 1 },{ x: 1, y: 2 },{ x: 1, y: 3 }],
-        [{ x: 2, y: 0 },{ x: 2, y: 1 },{ x: 2, y: 2 },{ x: 2, y: 3 }],
-        [{ x: 3, y: 0 },{ x: 3, y: 1 },{ x: 3, y: 2 },{ x: 3, y: 3 }],
-        [{ x: 4, y: 0 },{ x: 4, y: 1 },{ x: 4, y: 2 },{ x: 4, y: 3 }],
-        [{ x: 5, y: 0 },{ x: 5, y: 1 },{ x: 5, y: 2 },{ x: 5, y: 3 }],
-        [{ x: 6, y: 0 },{ x: 6, y: 1 },{ x: 6, y: 2 },{ x: 6, y: 3 }],
-
-        [{ x: 1, y: 1 },{ x: 1, y: 2 },{ x: 1, y: 3 },{ x: 1, y: 4 }],
-        [{ x: 2, y: 1 },{ x: 2, y: 2 },{ x: 2, y: 3 },{ x: 2, y: 4 }],
-        [{ x: 3, y: 1 },{ x: 3, y: 2 },{ x: 3, y: 3 },{ x: 3, y: 4 }],
-        [{ x: 4, y: 1 },{ x: 4, y: 2 },{ x: 4, y: 3 },{ x: 4, y: 4 }],
-        [{ x: 5, y: 1 },{ x: 5, y: 2 },{ x: 5, y: 3 },{ x: 5, y: 4 }],
-
-        [{ x: 2, y: 2 },{ x: 2, y: 3 },{ x: 2, y: 4 },{ x: 2, y: 5 }],
-        [{ x: 3, y: 2 },{ x: 3, y: 3 },{ x: 3, y: 4 },{ x: 3, y: 5 }],
-        [{ x: 4, y: 2 },{ x: 4, y: 3 },{ x: 4, y: 4 },{ x: 4, y: 5 }],
-
-        [{ x: 3, y: 3 },{ x: 3, y: 4 },{ x: 3, y: 5 },{ x: 3, y: 6 }]
-    ]
-
-    for (var index = 0; index < allLines.length; index++) {
-        var element = allLines[index];
-        if(
-            this.state[allLines[index][0].x][allLines[index][0].y].color != 0 &&
-            this.state[allLines[index][1].x][allLines[index][1].y].color != 0 &&
-            this.state[allLines[index][2].x][allLines[index][2].y].color != 0 &&
-            this.state[allLines[index][3].x][allLines[index][3].y].color != 0 &&
-            this.state[allLines[index][0].x][allLines[index][0].y].color == this.state[allLines[index][1].x][allLines[index][1].y].color &&
-            this.state[allLines[index][1].x][allLines[index][1].y].color == this.state[allLines[index][2].x][allLines[index][2].y].color &&
-            this.state[allLines[index][2].x][allLines[index][2].y].color == this.state[allLines[index][3].x][allLines[index][3].y].color
-        ) {
-            lines.push(allLines[index]);
-        }
+function showSelectedPairMoves(moves, context, size, clickRadius) {
+    for (const move of moves) {
+        showSelectedPairMove(move, context, size, clickRadius);
     }
-
-    if(lines.length != 0) {
-        return lines;
+}
+function showSelectedPairMove(move, context, size, clickRadius) {
+    const point = [move[1], move[2]];
+    context.beginPath();
+    context.arc(...point, size / 144, 0, 2 * Math.PI);
+    context.closePath();
+    context.fillStyle = 'black';
+    context.fill();
+    // context.beginPath();
+    // context.arc(...point, clickRadius, 0, 2 * Math.PI);
+    // context.closePath();
+    // context.strokeStyle = 'green';
+    // context.stroke();
+}
+async function showCurrentPlayer(state, context, size, indicator) { // !
+    if (
+        state.selectedPairIndex == -1 &&
+        indicator.style.backgroundColor != colors[state.currentPlayer] &&
+        state.winner == -1
+    ) {
+        hideIndicator(indicator);
+        await delay(500);
+        showIndicator(indicator, colors[state.currentPlayer]);
     }
-
-    // for (var index = 0; index < allLines.length; index++) {
-    //     var element = allLines[index];
-    //     for (var i = 0; i < element.length; i++) {
-    //         var d = element[i];
-
-    //         context.beginPath();
-    //         context.arc(state[d.x][d.y].xPx, state[d.x][d.y].yPx, (l / 16) * 0.5, 0, 2 * Math.PI, false);
-    //         context.strokeStyle = 'green';
-    //         context.lineWidth = index;
-    //         context.fillStyle = 'green';
-    //         if(index >= 16 && index < 32){
-    //             context.strokeStyle = 'red';
-    //             context.fillStyle = 'orange';
-    //         } else if (index >= 32) {
-    //             context.strokeStyle = 'pink';
-    //             context.fillStyle = 'white';
-    //         }
-    //         context.fill();
-    //         context.stroke();
-
-            
-    //     }
-
-    //     console.log('.');
+}
+function showWinner(winner, context, size) {
+    if (winner != -1) {
+        const midPoint = [size / 2, size / 2];
+        const name = colors?.[winner]?.charAt(0)?.toUpperCase() + colors?.[winner]?.slice(1);
+        const message = winner == 2 ? `Draw!` : `${name} player win!`;
+        context.fillStyle = 'white';
+        context.globalAlpha = 0.8;
+        context.fillRect(0, 0, size, size);
+        context.globalAlpha = 1.0;
+        context.fillStyle = 'black';
+        context.font = `bold 1em sans`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(message, ...midPoint);
+    }
+}
+function showUndoButton(undoButton, state) {
+    undoButton.classList.remove('show');
+    if (state.undoButtonVisibility) {
+        undoButton.classList.add('show');
+    }
+}
+function showReplayLastMoveButton(replayLastMoveButton, state) {
+    replayLastMoveButton.classList.remove('show');
+    if (state.replayLastMoveButtonVisibility) {
+        replayLastMoveButton.classList.add('show');
+    }
+}
+async function show(state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
+    context.clearRect(0, 0, size, size);
+    showCells(state.cells, context, cellRadius, state.playerToHighlight);
+    showPairs(state.pairs, context, clickRadius);
+    showSelectedPair(state, context, size, cellRadius);
+    showSelectedPairMoves(state.moves, context, size, clickRadius);
+    await showCurrentPlayer(state, context, size, indicator);
+    showWinner(state.winner, context, size);
+    showUndoButton(undoButton, state);
+    showReplayLastMoveButton(replayLastMoveButton, state);
+}
+function showSpinner(spinner, message) {
+    spinner.innerHTML = message ?? '';
+    spinner.classList.add('show');
+}
+function hideSpinner(spinner) {
+    spinner.innerHTML = '';
+    spinner.classList.remove('show');
+}
+function attachMessage(spinner, message) {
+    spinner.innerHTML += message;
+}
+function showIndicator(indicator, color) {
+    indicator.style.backgroundColor = color;
+    indicator.classList.add('show');
+}
+function hideIndicator(indicator) {
+    indicator.style.backgroundColor = 'inherit';
+    indicator.classList.remove('show');
+}
+async function undoClick(that) {
+    switch (that.type) {
+        case types.hotSeat:
+            await undoHotSeat(that);
+            break;
+        case types.withRobot:
+            await undoRobot(that);
+            break;
+        case types.online:
+            break;
+        default:
+            break;
+    }
+}
+async function undoHotSeat(that) {
+    that.lock = true;
+    await undo(that);
+    that.lock = false;
+}
+async function undoRobot(that) {
+    that.lock = true;
+    const undoOnce = that.game.getCurrentPlayer() != that.player;
+    await undo(that);
+    if (!undoOnce) {
+        await delay(500);
+        await undo(that);
+    }
+    that.lock = false;
+}
+async function undo(that) {
+    const prevMove = that.game.getPrevMove();
+    // if (lastMove) {
+    const selectedPairIndex = that.state.pairs.findIndex(pair => pair[0] == prevMove[0] && pair[1] == prevMove[1]); // dublication
+    that.state = new State(that.game, that.size, selectedPairIndex, that.type, that.player, false);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    await delay(500)
+    that.game.undo();
+    that.state = new State(that.game, that.size, -1, that.type, that.player, false);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     // }
-
-    return false;
 }
-Game.prototype.getL = function(point1, point2) {
-    var xs = 0;
-    var ys = 0;
-
-    xs = point2.x - point1.x;
-    xs = xs * xs;
-
-    ys = point2.y - point1.y;
-    ys = ys * ys;
-
-    return Math.sqrt( xs + ys );
+function replayLastMoveClick(that) {
+    replayLastMove(that);
 }
-Game.prototype.getM = function (first, second) {
-    return {
-        x: (first.xPx + second.xPx) / 2,
-        y: (first.yPx + second.yPx) / 2
-    };
+async function replayLastMove(that) {
+    const lastMove = that.game.history?.[that.game.history.length - 1];
+    let _game = new Game(that.game);
+    _game.undo();
+    const selectedPairIndex = _game.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
+    let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player, that.type == types.hotSeat ? false : true);
+    await show(_state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    await delay(1000);
+    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
 }
-Game.prototype.restart = function () {
-    if(this.robot) {
-        this.playWithRobot();
-        return;
+
+class Paradox {
+    constructor(container, indicator, undoButton, replayLastMoveButton, spinner) {
+        this.container = container;
+        this.indicator = indicator;
+        this.undoButton = undoButton;
+        this.spinner = spinner;
+        this.replayLastMoveButton = replayLastMoveButton;
+        this.size = getSize(this.container);
+        this.clickRadius = this.size / 16; // wrap to settings
+        this.cellRadius = this.size / 18; // wrap to settings
+        this.canvas = createCanvas(this.size);
+        this.context = this.canvas.getContext('2d');
+        this.depth = 2;
+
+        this.canvas.addEventListener('click', (event) => {
+            canvasClick(event, this);
+        }, false);
+        this.undoButton.addEventListener('click', () => {
+            if (this.lock) return;
+            undoClick(this);
+        }, false);
+        this.replayLastMoveButton.addEventListener('click', () => {
+            if (this.lock) return;
+            replayLastMoveClick(this);
+        }, false);
+
+        this.container.innerHTML = '';
+        this.container.prepend(this.canvas);
     }
-    this.state = new State();
-
-    this.selected = null;
-    this.options = new Array();
-    this.history = new Array();
-    this.who = 1;
-
-    this.render();
-}
-Game.prototype.back = function () {
-    if(this.history.length != 0) {
-        this.state = this.history[this.history.length - 1];
-        this.history.pop();
-        if(this.who == 1) {
-            this.who = 2;
-        } else {
-            this.who = 1;
+    async playHotSeat() {
+        this.type = types.hotSeat;
+        this.game = new Game();
+        this.state = new State(this.game, this.size, -1, this.type, null, false);
+        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+    }
+    async playWithRobot(player) {
+        this.type = types.withRobot;
+        this.player = player;
+        this.game = new Game();
+        this.state = new State(this.game, this.size, -1, this.type, this.player, false);
+        if (this.player != 0) {
+            await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+            // this.spinner.classList.add('show');
+            showSpinner(this.spinner);
+            await delay(500);
+            await robotPlay(this);
+        }
+        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+    }
+    async playOnline(player, socket) {
+        this.type = types.online;
+        this.player = player;
+        this.socket = socket;
+        this.game = new Game();
+        this.state = new State(this.game, this.size, -1, types.online, this.player, false);
+        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+        if (this.player != 0) {
+            showSpinner(this.spinner, 'wait for the partner');
         }
     }
-    
-    this.render();
-}
-Game.prototype.stop = function() {
-    this.online = false;
-    this.waiting = true;
-}
-Game.prototype.robotPlay = function() {
-    this.waiting = true;
-
-    this.history.push(this.state);
-    this.state = game.goodMove();
-
-    this.waiting = false;
-
-    if(this.who == 1) {
-        this.who = 2;
-    } else {
-        this.who = 1;
+    move(move) { // async
+        hideSpinner(this.spinner);
+        // if move legal and partners turn
+        this.game.move(move);
+        this.state = new State(this.game, this.size, -1, types.online, this.player, false);
+        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton); // await
+        // else ...
     }
-
-    game.render();
+    stop() {
+        this.type = null;
+        this.socket = null;
+        this.player = null;
+        this.game = null;
+        this.state = null;
+        this.indicator.style.backgroundColor = 'inherit';
+        this.context.clearRect(0, 0, this.size, this.size);
+    }
+    resize(size) {
+        this.size = size;
+        this.canvas.width = size;
+        this.canvas.height = size;
+        this.context = this.canvas.getContext('2d');
+        this.clickRadius = this.size / 16; // wrap to settings
+        this.cellRadius = this.size / 18; // wrap to settings
+        if (this.game) {
+            this.state = new State(this.game, this.size, this?.state?.selectedPairIndex ?? -1, this.type, this?.player ?? null, false);
+            show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+        }
+    }
 }
-Game.prototype.goodMove = function() {
-    var newState = JSON.parse(JSON.stringify(this.state));
-
-    // BUG WITH LAST MOVE
-
-    var pairs = this.findPairs();
-    newState[pairs[0].first.x][pairs[0].first.y].color = 2;
-    newState[pairs[0].second.x][pairs[0].second.y].color = 1;
-
-    return newState;
+class State {
+    constructor(game, size, selectedPairIndex, type, player, highlightPlayerCells) {
+        this.selectedPairIndex = selectedPairIndex; // -1|0...5
+        this.cells = getCells(game, size); // [[cell[0], cell[1], x, y (optonal), player, itemIndex], ...]
+        this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...]
+        this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells, size); // [[directionIndex, x, y], ...]
+        this.undoButtonVisibility = (type == types.hotSeat && game.history.length > 0) ||
+            (type == types.withRobot && game.history.length > player + 1);
+        this.replayLastMoveButtonVisibility = game.history.length > 0;
+        this.currentPlayer = game.getCurrentPlayer();
+        this.winner = game.winner; //
+        this.playerToHighlight = highlightPlayerCells ? player : null;
+    }
 }
-function State() {
-    return [[{ x: 0, y: 0, color: 1 }, { x: 0, y: 1, color: 2 }, { x: 0, y: 2, color: 1 }, { x: 0, y: 3, color: 2 }],
-            [{ x: 1, y: 0, color: 2 }, { x: 1, y: 1, color: 0 }, { x: 1, y: 2, color: 0 }, { x: 1, y: 3, color: 0 }, { x: 1, y: 4, color: 1 }],
-            [{ x: 2, y: 0, color: 1 }, { x: 2, y: 1, color: 0 }, { x: 2, y: 2, color: 0 }, { x: 2, y: 3, color: 1 }, { x: 2, y: 4, color: 0 }, { x: 2, y: 5, color: 2 }],
-            [{ x: 3, y: 0, color: 2 }, { x: 3, y: 1, color: 0 }, { x: 3, y: 2, color: 0 }, { x: 3, y: 3, color: 0 }, { x: 3, y: 4, color: 0 }, { x: 3, y: 5, color: 0 }, { x: 3, y: 6, color: 1 }],
-            [{ x: 4, y: 0, color: 1 }, { x: 4, y: 1, color: 0 }, { x: 4, y: 2, color: 2 }, { x: 4, y: 3, color: 0 }, { x: 4, y: 4, color: 0 }, { x: 4, y: 5, color: 2 }],
-            [{ x: 5, y: 0, color: 2 }, { x: 5, y: 1, color: 0 }, { x: 5, y: 2, color: 0 }, { x: 5, y: 3, color: 0 }, { x: 5, y: 4, color: 1 }],
-            [{ x: 6, y: 0, color: 1 }, { x: 6, y: 1, color: 2 }, { x: 6, y: 2, color: 1 }, { x: 6, y: 3, color: 2 }]];
-}
+
+export { Paradox, showSpinner, hideSpinner, attachMessage };

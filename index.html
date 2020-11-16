@@ -2,153 +2,49 @@
 <html lang="en">
 
 <head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"> 
     <title>Paradox</title>
-
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link href="css/app.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+    <link rel="stylesheet" href="css/main.css">
 </head>
 
 <body>
-
-    <!-- Navigation -->
-    <a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle"><i class="fa fa-bars"></i></a>
-    <nav id="sidebar-wrapper">
-        <ul class="sidebar-nav">
-            <a id="menu-close" href="#" class="btn btn-light btn-lg pull-right toggle"><i class="fa fa-times"></i></a>
-            <li class="sidebar-brand">
-                <a href="#top" onclick=$("#menu-close").click();>Paradox</a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" id="offline">Play Offline</a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" id="online" style="display: none;">Play Online</a>
-            </li>
-            <li>
-                <a href="javascript:void(0);" id="robot">Play with Robot</a>
-            </li>
-        </ul>
-    </nav>
-
-    <!-- Header -->
-    <header id="top" class="header">
-        <div class="text-vertical-center">
-            <div id="status">
-                <h3 id="message">Hello</h3>
-            </div> 
-            <canvas id="paradox"></canvas>
+    <button type="button" id="menu-button">☰</button>
+    <button type="button" id="undo-button">⎌</button>
+    <button type="button" id="replay-last-move-button">?</button>
+    <button type="button" id="settings-button">⚙</button>
+    <section id="menu">
+        <div>
+            <button type="button" id="play-hotseat-button" class="menu-option">Play HotSeat</button>
+            <button type="button" id="play-with-robot-button" class="menu-option">Play with Robot</button>
+            <button type="button" id="play-online" class="menu-option">Play Online</button>
         </div>
-    </header>
-
-    <!-- Call to Action -->
-    <aside class="call-to-action" id="buttons" style="display: none;">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <a href="javascript:void(0);" class="btn btn-lg btn-dark" id="back">Back</a>
-                    <a href="javascript:void(0);" class="btn btn-lg btn-dark" id="restart">Restart</a>
-                </div>
+    </section>
+    <section id="settings">
+        <div>
+            <div class="settings-option">
+                <label>Robot color:</label>
+                <label id="robot-color-label">second color</label>
+                <label class="switch">
+                    <input type="checkbox" id="robot-player-checkbox" />
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="settings-option">
+                <label>Robot strength:</label>
+                <select id="robot-strength-select">
+                    <option value="1">0ne</option>
+                    <option value="2">Two</option>
+                    <option value="3" disabled>Three</option>
+                  </select>
             </div>
         </div>
-    </aside>
-
-    <!-- Footer -->
-    <!-- <footer>  -->
-        <a id="to-top" href="#top" class="btn btn-dark btn-lg"><i class="fa fa-chevron-up fa-fw fa-1x"></i></a>
-    <!-- </footer> -->
-
-    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script>
-        // Closes the sidebar menu
-        $("#menu-close").click(function(e) {
-            e.preventDefault();
-            $("#sidebar-wrapper").toggleClass("active");
-        });
-        // Opens the sidebar menu
-        $("#menu-toggle").click(function(e) {
-            e.preventDefault();
-            $("#sidebar-wrapper").toggleClass("active");
-        });
-        // Scrolls to the selected menu item on the page
-        $(function() {
-            $('a[href*=#]:not([href=#],[data-toggle],[data-target],[data-slide])').click(function() {
-                if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') || location.hostname == this.hostname) {
-                    var target = $(this.hash);
-                    target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-                    if (target.length) {
-                        $('html,body').animate({
-                            scrollTop: target.offset().top
-                        }, 1000);
-                        return false;
-                    }
-                }
-            });
-        });
-        //#to-top button appears after scrolling
-        var fixed = false;
-        $(document).scroll(function() {
-            if ($(this).scrollTop() > 250) {
-                if (!fixed) {
-                    fixed = true;
-                    // $('#to-top').css({position:'fixed', display:'block'});
-                    $('#to-top').show("slow", function() {
-                        $('#to-top').css({
-                            position: 'fixed',
-                            display: 'block'
-                        });
-                    });
-                }
-            } else {
-                if (fixed) {
-                    fixed = false;
-                    $('#to-top').hide("slow", function() {
-                        $('#to-top').css({
-                            display: 'none'
-                        });
-                    });
-                }
-            }
-        });
-    </script>
-
-    <!-- Socket.io -->
-    <!-- TODO: It must work offline, so socket.io.js must be local and check that it works offline -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
-
-    <!-- Paradox -->
-    <script src="js/paradox.js"></script>
-
-    <!-- App -->
-    <script src="js/app.js"></script>
-
+    </section>
+    <div id="spinner"></div>
+    <div id="indicator"></div>
+    <div id="container"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 
 </html>
