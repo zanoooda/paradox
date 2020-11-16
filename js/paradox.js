@@ -1,3 +1,5 @@
+// resize fire twice
+
 // TODO: Show message
 
 // Points can be calculated only once
@@ -6,9 +8,9 @@
 import { Game, cells, swap, getNeighbor, getExtendedCell } from './game.js';
 import { findMove as findRobotMove } from './robot.js';
 
-const colors = ['red', 'blue'];
-const types = { hotSeat: 0, withRobot: 1, online: 2 };
-const sqrt3 = Math.sqrt(3);
+const colors = ['red', 'blue'],
+    types = { hotSeat: 0, withRobot: 1, online: 2 },
+    sqrt3 = Math.sqrt(3);
 
 function getPoint(cell, size) {
     const _cell = getExtendedCell([cell[0], cell[1]]);
@@ -71,7 +73,7 @@ function canvasClick(event, that) {
             continueWithRobot(event, that);
             break;
         case types.online:
-            // ...
+            continueOnline(event, that);
             break;
         default:
             break;
@@ -127,7 +129,7 @@ async function continueWithRobot(event, that) {
             if (that.state.winner != -1) {
                 return;
             }
-            that.spinner.classList.add('show');
+            showSpinner(that.spinner);
             await delay(500);
             await robotPlay(that);
         }
@@ -137,10 +139,37 @@ async function continueWithRobot(event, that) {
         await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     }
 }
+async function continueOnline(event, that) {
+    if (that.game.getCurrentPlayer() == that.player) {
+        const clickPoint = getClickPoint(event, that.canvas);
+        let clickedMoveDirection = getClickedMoveDirection(clickPoint, that.state, that.clickRadius);
+        const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
+        clickedMoveDirection = fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
+        if (clickedMoveDirection != null) {
+            const selectedPair = [
+                that.state.pairs[that.state.selectedPairIndex][0],
+                that.state.pairs[that.state.selectedPairIndex][1]
+            ];
+            that.game.move(selectedPair, clickedMoveDirection);
+            that.state = new State(that.game, that.size, -1, that.type, that.player, false);
+            await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+            if (that.state.winner == -1) {
+                showSpinner(that.spinner, 'wait for the partner');
+            }
+            that.socket.emit('move', [...selectedPair, clickedMoveDirection]);
+        }
+        else if (clickedPairIndex != -1) {
+            that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.player, false);
+        }
+        await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+
+
+    }
+}
 async function robotPlay(that) {
     that.lock = true;
     const robotMove = findRobotMove(that.game, that.depth);
-    that.spinner.classList.remove('show');
+    hideSpinner(that.spinner);
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
     that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.player, false);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
@@ -284,10 +313,9 @@ async function showCurrentPlayer(state, context, size, indicator) { // !
         indicator.style.backgroundColor != colors[state.currentPlayer] &&
         state.winner == -1
     ) {
-        indicator.classList.remove('show');
+        hideIndicator(indicator);
         await delay(500);
-        indicator.style.backgroundColor = colors[state.currentPlayer];
-        indicator.classList.add('show');
+        showIndicator(indicator, colors[state.currentPlayer]);
     }
 }
 function showWinner(winner, context, size) {
@@ -328,6 +356,25 @@ async function show(state, context, size, cellRadius, clickRadius, indicator, un
     showWinner(state.winner, context, size);
     showUndoButton(undoButton, state);
     showReplayLastMoveButton(replayLastMoveButton, state);
+}
+function showSpinner(spinner, message) {
+    spinner.innerHTML = message ?? '';
+    spinner.classList.add('show');
+}
+function hideSpinner(spinner) {
+    spinner.innerHTML = '';
+    spinner.classList.remove('show');
+}
+function attachMessage(spinner, message) {
+    spinner.innerHTML += message;
+}
+function showIndicator(indicator, color) {
+    indicator.style.backgroundColor = color;
+    indicator.classList.add('show');
+}
+function hideIndicator(indicator) {
+    indicator.style.backgroundColor = 'inherit';
+    indicator.classList.remove('show');
 }
 async function undoClick(that) {
     switch (that.type) {
@@ -378,7 +425,7 @@ async function replayLastMove(that) {
     let _game = new Game(that.game);
     _game.undo();
     const selectedPairIndex = _game.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
-    let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player, that.type == types.withRobot ? true : false);
+    let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player, that.type == types.hotSeat ? false : true);
     await show(_state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     await delay(1000);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
@@ -421,19 +468,45 @@ class Paradox {
     }
     async playWithRobot(player) {
         this.type = types.withRobot;
-        this.game = new Game();
         this.player = player;
+        this.game = new Game();
         this.state = new State(this.game, this.size, -1, this.type, this.player, false);
         if (this.player != 0) {
             await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
-            this.spinner.classList.add('show');
+            // this.spinner.classList.add('show');
+            showSpinner(this.spinner);
             await delay(500);
             await robotPlay(this);
         }
         await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
     }
-    playOnline() {
-        // ...
+    async playOnline(player, socket) {
+        this.type = types.online;
+        this.player = player;
+        this.socket = socket;
+        this.game = new Game();
+        this.state = new State(this.game, this.size, -1, types.online, this.player, false);
+        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+        if (this.player != 0) {
+            showSpinner(this.spinner, 'wait for the partner');
+        }
+    }
+    move(move) { // async
+        hideSpinner(this.spinner);
+        // if move legal and partners turn
+        this.game.move(move);
+        this.state = new State(this.game, this.size, -1, types.online, this.player, false);
+        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton); // await
+        // else ...
+    }
+    stop() {
+        this.type = null;
+        this.socket = null;
+        this.player = null;
+        this.game = null;
+        this.state = null;
+        this.indicator.style.backgroundColor = 'inherit';
+        this.context.clearRect(0, 0, this.size, this.size);
     }
     resize(size) {
         this.size = size;
@@ -443,7 +516,7 @@ class Paradox {
         this.clickRadius = this.size / 16; // wrap to settings
         this.cellRadius = this.size / 18; // wrap to settings
         if (this.game) {
-            this.state = new State(this.game, this.size, this.state.selectedPairIndex, this.type, this?.player??null, false);
+            this.state = new State(this.game, this.size, this?.state?.selectedPairIndex ?? -1, this.type, this?.player ?? null, false);
             show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
         }
     }
@@ -463,4 +536,4 @@ class State {
     }
 }
 
-export default Paradox;
+export { Paradox, showSpinner, hideSpinner, attachMessage };

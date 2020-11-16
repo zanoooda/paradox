@@ -1,4 +1,7 @@
-import Paradox from './paradox.js';
+import { Paradox, showSpinner, hideSpinner, attachMessage } from './paradox.js';
+
+const server = 'https://paradox-server.herokuapp.com'; //'http://localhost:3000'
+var socket;
 
 let container = document.getElementById('container');
 let indicator = document.getElementById('indicator');
@@ -14,7 +17,6 @@ let settings = document.getElementById('settings');
 let robotPlayerCheckbox = document.getElementById("robot-player-checkbox");
 let robotColorLabel = document.getElementById("robot-color-label");
 let robotStrengthSelect = document.getElementById("robot-strength-select");
-
 let spinner = document.getElementById("spinner");
 
 let colors = ['red', 'blue'];
@@ -25,19 +27,58 @@ let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton
 menu.classList.add('show');
 
 menuButton.addEventListener('click', () => {
+    playOnlineButton.innerHTML = (socket?.connected ?? false) ? 'Disconnect' : 'Play Online';
     settings.classList.remove('show');
     menu.classList.toggle('show');
 });
 playHotSeatButton.addEventListener('click', () => {
+    socket?.disconnect();
+    hideSpinner(spinner);
     menu.classList.remove('show');
     paradox.playHotSeat();
 });
 playWithRobotButton.addEventListener('click', () => {
+    socket?.disconnect();
+    hideSpinner(spinner);
     menu.classList.remove('show');
     paradox.playWithRobot(humanPlayer);
 });
 playOnlineButton.addEventListener('click', () => {
-    // ...
+    hideSpinner(spinner);
+    if (socket?.connected) {
+        socket.disconnect();
+        playOnlineButton.innerHTML = "Play Online";
+    }
+    else {
+        playOnlineButton.innerHTML = "Connecting...";
+        socket = io.connect(server);
+        socket.on('connect', () => {
+            console.log('socket connected');
+            playOnlineButton.innerHTML = "Disconnect";
+            menu.classList.remove('show');
+            paradox.stop();
+            showSpinner(spinner, `Looking for a partner online. `);
+        });
+        socket.on('counter', (n) => { // online-users-counter
+            console.log(n - 1 + ' users online');
+            attachMessage(spinner, `${n - 1} users online.`);
+        });
+        socket.on('partner-found', (player) => {
+            console.log('partner-found. you play ', player);
+            hideSpinner(spinner);
+            paradox.playOnline(player, socket);
+        });
+        socket.on('disconnect', () => {
+            console.log('socket disconnected');
+            playOnlineButton.innerHTML = "Play Online";
+            paradox.stop();
+            showSpinner(spinner, 'disconnected');
+        });
+        socket.on('move', (move) => {
+            console.log('move');
+            paradox.move(move);
+        });
+    }
 });
 settingsButton.addEventListener('click', () => {
     menu.classList.remove('show');
