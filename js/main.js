@@ -25,7 +25,7 @@ let humanPlayer = 0;
 let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton, spinner);
 
 paradox.playWithRobot(humanPlayer);
-
+FBInstant.setLoadingProgress(100);
 FBInstant.startGameAsync().then(function () {
     game.start();
 });
