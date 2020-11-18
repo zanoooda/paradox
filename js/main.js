@@ -27,9 +27,9 @@ let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton
 FBInstant.initializeAsync().then(function () {
     FBInstant.setLoadingProgress(50);
     FBInstant.setLoadingProgress(100);
-});
-FBInstant.startGameAsync().then(function () {
-    paradox.playWithRobot(humanPlayer);
+    FBInstant.startGameAsync().then(function () {
+        paradox.playWithRobot(humanPlayer);
+    });
 });
 
 menuButton.addEventListener('click', () => {
