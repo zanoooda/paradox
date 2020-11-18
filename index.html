@@ -9,6 +9,8 @@
 </head>
 
 <body>
+    <script src="https://connect.facebook.net/en_US/fbinstant.6.3.js"></script>
+
     <button type="button" id="menu-button">☰</button>
     <button type="button" id="undo-button">⎌</button>
     <button type="button" id="replay-last-move-button">?</button>
@@ -17,7 +19,7 @@
         <div>
             <button type="button" id="play-hotseat-button" class="menu-option">Play HotSeat</button>
             <button type="button" id="play-with-robot-button" class="menu-option">Play with Robot</button>
-            <button type="button" id="play-online" class="menu-option">Play Online</button>
+            <button type="button" id="play-online" class="menu-option disabled">Play with Friend</button>
         </div>
     </section>
     <section id="settings">
@@ -43,7 +45,6 @@
     <div id="spinner"></div>
     <div id="indicator"></div>
     <div id="container"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"></script>
     <script type="module" src="js/main.js"></script>
 </body>
 

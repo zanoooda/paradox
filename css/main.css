@@ -176,3 +176,6 @@ input:checked + .slider:before {
     justify-content: center;
     align-items: center;
 }
+.disabled {
+    color: lightgray;
+}

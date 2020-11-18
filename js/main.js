@@ -24,10 +24,11 @@ let colors = ['red', 'blue'];
 let humanPlayer = 0;
 let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton, spinner);
 
-menu.classList.add('show');
+// menu.classList.add('show');
+paradox.playWithRobot(humanPlayer);
 
 menuButton.addEventListener('click', () => {
-    playOnlineButton.innerHTML = (socket?.connected ?? false) ? 'Disconnect' : 'Play Online';
+    playOnlineButton.innerHTML = (socket?.connected ?? false) ? 'Disconnect' : 'Play with Friend';
     settings.classList.remove('show');
     menu.classList.toggle('show');
 });
@@ -44,6 +45,7 @@ playWithRobotButton.addEventListener('click', () => {
     paradox.playWithRobot(humanPlayer);
 });
 playOnlineButton.addEventListener('click', () => {
+    return;
     hideSpinner(spinner);
     if (socket?.connected) {
         socket.disconnect();
