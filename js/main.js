@@ -24,11 +24,11 @@ let colors = ['red', 'blue'];
 let humanPlayer = 0;
 let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton, spinner);
 
-FBInstant.startGameAsync()
-    .then(function () {
+paradox.playWithRobot(humanPlayer);
 
-        paradox.playWithRobot(humanPlayer);
-    });
+FBInstant.startGameAsync().then(function () {
+    game.start();
+});
 
 menuButton.addEventListener('click', () => {
     playOnlineButton.innerHTML = (socket?.connected ?? false) ? 'Disconnect' : 'Play with Friend';
