@@ -24,13 +24,12 @@ let colors = ['red', 'blue'];
 let humanPlayer = 0;
 let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton, spinner);
 
-paradox.playWithRobot(humanPlayer);
 FBInstant.initializeAsync().then(function () {
     FBInstant.setLoadingProgress(50);
     FBInstant.setLoadingProgress(100);
 });
 FBInstant.startGameAsync().then(function () {
-    game.start();
+    paradox.playWithRobot(humanPlayer);
 });
 
 menuButton.addEventListener('click', () => {
