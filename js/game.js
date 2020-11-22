@@ -256,4 +256,4 @@ class Game {
     }
 }
 
-export { Game, cells, swap, getNeighbor, getExtendedCell }
+export { Game, cells, swap, getNeighbor, getExtendedCell, inverseDirectionsIndexes }

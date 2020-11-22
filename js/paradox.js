@@ -5,7 +5,7 @@
 // Points can be calculated only once
 // New state can be crated by old one; and move (state.updateState(move))
 
-import { Game, cells, swap, getNeighbor, getExtendedCell } from './game.js';
+import { Game, cells, swap, getNeighbor, getExtendedCell, inverseDirectionsIndexes } from './game.js';
 import { findMove as findRobotMove } from './robot.js';
 
 const colors = ['red', 'blue'],
@@ -104,6 +104,7 @@ async function continueHotSeat(event, that) {
             that.state.pairs[that.state.selectedPairIndex][0],
             that.state.pairs[that.state.selectedPairIndex][1]
         ];
+        await animateMove(that.state, clickedMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
         that.game.move(selectedPair, clickedMoveDirection);
         that.state = new State(that.game, that.size, -1, that.type, null, false);
     }
@@ -123,6 +124,7 @@ async function continueWithRobot(event, that) {
                 that.state.pairs[that.state.selectedPairIndex][0],
                 that.state.pairs[that.state.selectedPairIndex][1]
             ];
+            await animateMove(that.state, clickedMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
             that.game.move(selectedPair, clickedMoveDirection);
             that.state = new State(that.game, that.size, -1, that.type, that.player, false);
             await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
@@ -150,6 +152,7 @@ async function continueOnline(event, that) {
                 that.state.pairs[that.state.selectedPairIndex][0],
                 that.state.pairs[that.state.selectedPairIndex][1]
             ];
+            // animate
             that.game.move(selectedPair, clickedMoveDirection);
             that.state = new State(that.game, that.size, -1, that.type, that.player, false);
             await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
@@ -173,7 +176,8 @@ async function robotPlay(that) {
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
     that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.player, false);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
-    await delay(1000);
+    await delay(500);
+    await animateMove(that.state, robotMove[2], that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
     that.state = new State(that.game, that.size, -1, that.type, that.player, false);
     that.lock = false;
@@ -252,15 +256,18 @@ function showPair(pair, context, clickRadius) {
 }
 function showSelectedPair(state, context, size, cellRadius) {
     if (state.selectedPairIndex != -1) {
-        const pair = state.pairs[state.selectedPairIndex];
-        const selectedCells = [
-            state.cells.find(cell => cell[4] == 0 && cell[5] == pair[0]),
-            state.cells.find(cell => cell[4] == 1 && cell[5] == pair[1])
-        ];
+        const selectedCells = getSelectedCells(state);
         for (const cell of selectedCells) {
             showSelectedCell(cell, context, size, cellRadius);
         }
     }
+}
+function getSelectedCells(state) {
+    const pair = state.pairs[state.selectedPairIndex];
+    return [
+        state.cells.find(cell => cell[4] == 0 && cell[5] == pair[0]),
+        state.cells.find(cell => cell[4] == 1 && cell[5] == pair[1])
+    ];
 }
 function showSelectedCell(cell, context, size, cellRadius) {
     const point = [cell[2], cell[3]];
@@ -357,6 +364,52 @@ async function show(state, context, size, cellRadius, clickRadius, indicator, un
     showUndoButton(undoButton, state);
     showReplayLastMoveButton(replayLastMoveButton, state);
 }
+async function animateMove(state, clickedMoveDirection, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
+    let selectedCells = getSelectedCells(state);
+    selectedCells = [[...selectedCells[0]], [...selectedCells[1]]];
+    const cell0Start = selectedCells[0];
+    const cell1Start = selectedCells[1];
+    let cell0End;
+    let cell1End;
+    if (clickedMoveDirection == -1) {
+        cell0End = cell1Start;
+        cell1End = cell0Start;
+    }
+    else {
+        cell0End = getNeighbor(cell0Start.slice(0, 2), clickedMoveDirection);
+        cell0End = state.cells.find(cell => cell[0] == cell0End[0] && cell[1] == cell0End[1]);
+        cell1End = getNeighbor(cell1Start.slice(0, 2), clickedMoveDirection);
+        cell1End = state.cells.find(cell => cell[0] == cell1End[0] && cell[1] == cell1End[1]);
+    }
+    const cell0StartPoint = cell0Start.slice(2, 4);
+    const cell1StartPoint = cell1Start.slice(2, 4);
+    const cell0EndPoint = cell0End.slice(2, 4);
+    const cell1EndPoint = cell1End.slice(2, 4);
+    let _selectedCells = getSelectedCells(state);
+    _selectedCells[0].pop();
+    _selectedCells[0].pop();
+    _selectedCells[1].pop();
+    _selectedCells[1].pop();
+    const framesCount = 25;
+    for (let index = 0; index < framesCount; index++) {
+        selectedCells = incrementSelectedCellsPoints(selectedCells, cell0StartPoint, cell0EndPoint, cell1StartPoint, cell1EndPoint, framesCount);
+        await showFrame(selectedCells, state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton);
+        await delay(1);
+    }
+}
+async function showFrame(selectedCells, state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
+    context.clearRect(0, 0, size, size);
+    showCells(state.cells, context, cellRadius, state.playerToHighlight);
+    showCell(selectedCells[0], context, cellRadius);
+    showCell(selectedCells[1], context, cellRadius); 
+}
+function incrementSelectedCellsPoints(selectedCells, cell0StartPoint, cell0EndPoint, cell1StartPoint, cell1EndPoint, framesCount) {
+    selectedCells[0][2] += (cell0EndPoint[0] - cell0StartPoint[0]) / framesCount;
+    selectedCells[0][3] += (cell0EndPoint[1] - cell0StartPoint[1]) / framesCount;
+    selectedCells[1][2] += (cell1EndPoint[0] - cell1StartPoint[0]) / framesCount;
+    selectedCells[1][3] += (cell1EndPoint[1] - cell1StartPoint[1]) / framesCount;
+    return selectedCells;
+}
 function showSpinner(spinner, message) {
     spinner.innerHTML = message ?? '';
     spinner.classList.add('show');
@@ -411,7 +464,9 @@ async function undo(that) {
     const selectedPairIndex = that.state.pairs.findIndex(pair => pair[0] == prevMove[0] && pair[1] == prevMove[1]); // dublication
     that.state = new State(that.game, that.size, selectedPairIndex, that.type, that.player, false);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
-    await delay(500)
+    await delay(500);
+    const prevMoveDirection = that.game.getPrevMove()[2] == -1 ? -1 : inverseDirectionsIndexes[that.game.getPrevMove()[2]];
+    await animateMove(that.state, prevMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     that.game.undo();
     that.state = new State(that.game, that.size, -1, that.type, that.player, false);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
@@ -427,7 +482,9 @@ async function replayLastMove(that) {
     const selectedPairIndex = _game.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
     let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player, that.type == types.hotSeat ? false : true);
     await show(_state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
-    await delay(1000);
+    await delay(500);
+    const prevMoveDirection = that.game.getPrevMove()[2] == -1 ? -1 : that.game.getPrevMove()[2];
+    await animateMove(_state, prevMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
 }
 
