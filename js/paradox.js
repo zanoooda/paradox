@@ -579,6 +579,7 @@ class Paradox {
     move(move) { // async
         hideSpinner(this.spinner);
         // if move legal and partners turn
+        tap.play();
         this.game.move(move);
         this.state = new State(this.game, this.size, -1, types.online, this.player, false);
         show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton); // await
