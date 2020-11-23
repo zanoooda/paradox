@@ -10,7 +10,9 @@ import { findMove as findRobotMove } from './robot.js';
 
 const colors = ['red', 'blue'],
     types = { hotSeat: 0, withRobot: 1, online: 2 },
-    sqrt3 = Math.sqrt(3);
+    sqrt3 = Math.sqrt(3),
+    tap = new Audio("/assets/tap.mp3");
+tap.volume = 0.5;
 
 function getPoint(cell, size) {
     const _cell = getExtendedCell([cell[0], cell[1]]);
@@ -100,6 +102,7 @@ async function continueHotSeat(event, that) {
     const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
     clickedMoveDirection = fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
     if (clickedMoveDirection != null) {
+        tap.play();
         const selectedPair = [
             that.state.pairs[that.state.selectedPairIndex][0],
             that.state.pairs[that.state.selectedPairIndex][1]
@@ -109,6 +112,7 @@ async function continueHotSeat(event, that) {
         that.state = new State(that.game, that.size, -1, that.type, null, false);
     }
     else if (clickedPairIndex != -1) {
+        tap.play();
         that.state = new State(that.game, that.size, clickedPairIndex, that.type, null, false);
     }
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
@@ -120,6 +124,7 @@ async function continueWithRobot(event, that) {
         const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
         clickedMoveDirection = fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
         if (clickedMoveDirection != null) {
+            tap.play();
             const selectedPair = [
                 that.state.pairs[that.state.selectedPairIndex][0],
                 that.state.pairs[that.state.selectedPairIndex][1]
@@ -136,6 +141,7 @@ async function continueWithRobot(event, that) {
             await robotPlay(that);
         }
         else if (clickedPairIndex != -1) {
+            tap.play();
             that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.player, false);
         }
         await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
@@ -148,6 +154,7 @@ async function continueOnline(event, that) {
         const clickedPairIndex = getClickedPairIndex(clickPoint, that.state.pairs, that.clickRadius);
         clickedMoveDirection = fixOverlaps(clickPoint, clickedMoveDirection, clickedPairIndex, that);
         if (clickedMoveDirection != null) {
+            tap.play();
             const selectedPair = [
                 that.state.pairs[that.state.selectedPairIndex][0],
                 that.state.pairs[that.state.selectedPairIndex][1]
@@ -162,6 +169,7 @@ async function continueOnline(event, that) {
             that.socket.emit('move', [...selectedPair, clickedMoveDirection]);
         }
         else if (clickedPairIndex != -1) {
+            tap.play();
             that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.player, false);
         }
         await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
@@ -176,7 +184,9 @@ async function robotPlay(that) {
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
     that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.player, false);
     await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    tap.play();
     await delay(500);
+    tap.play();
     await animateMove(that.state, robotMove[2], that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
     that.state = new State(that.game, that.size, -1, that.type, that.player, false);
