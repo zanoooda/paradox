@@ -2,6 +2,8 @@
 
 // TODO: Show message
 
+// TODO: Lock animation
+
 // Points can be calculated only once
 // New state can be crated by old one; and move (state.updateState(move))
 
