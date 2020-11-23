@@ -19,7 +19,7 @@ let robotColorLabel = document.getElementById("robot-color-label");
 let robotStrengthSelect = document.getElementById("robot-strength-select");
 let spinner = document.getElementById("spinner");
 
-let colors = ['red', 'blue'];
+let colors = ['black', 'white'];
 
 let humanPlayer = 0;
 let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton, spinner);
@@ -84,12 +84,10 @@ settingsButton.addEventListener('click', () => {
     menu.classList.remove('show');
     settings.classList.toggle('show');
 });
-robotColorLabel.style.color = colors[humanPlayer == 1 ? 0 : 1];
 robotColorLabel.innerHTML = colors[humanPlayer == 1 ? 0 : 1];
 robotPlayerCheckbox.addEventListener('change', (event) => {
     humanPlayer = event.target.checked ? 1 : 0;
     let robotPlayer = humanPlayer == 1 ? 0 : 1;
-    robotColorLabel.style.color = colors[robotPlayer];
     robotColorLabel.innerHTML = colors[robotPlayer];
 });
 robotStrengthSelect.value = paradox.depth;

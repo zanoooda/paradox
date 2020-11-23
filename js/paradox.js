@@ -10,15 +10,17 @@
 import { Game, cells, swap, getNeighbor, getExtendedCell, inverseDirectionsIndexes } from './game.js';
 import { findMove as findRobotMove } from './robot.js';
 
-const colors = ['red', 'blue'],
+const colors = ['black', 'white'],
     types = { hotSeat: 0, withRobot: 1, online: 2 },
     sqrt3 = Math.sqrt(3),
-    tap = new Audio("/assets/tap.mp3");
+    tap = new Audio("/assets/tap.mp3"),
+    backgroundImage = document.createElement('img');
 tap.volume = 0.5;
+backgroundImage.src = '/assets/background-image.jpg';
 
 function getPoint(cell, size) {
     const _cell = getExtendedCell([cell[0], cell[1]]);
-    const distance = size / 12;
+    const distance = size / 14;
     const x = (size / 2) + (distance * sqrt3 * (cell[0] + _cell[2] / 2));
     const y = (size / 2) + (distance * 3 / 2 * _cell[2]);
     return [x, y];
@@ -197,6 +199,18 @@ async function robotPlay(that) {
 function delay(ms) {
     return new Promise(res => setTimeout(res, ms));
 }
+function showBoard(context, size) {
+    var pattern = context.createPattern(backgroundImage, "repeat");
+    context.fillStyle = pattern;
+    context.beginPath();
+    let _size = size / 2;
+    context.moveTo(_size + _size * Math.cos(0), _size + _size * Math.sin(0));
+    for (let side = 0; side < 7; side++) {
+        context.lineTo(_size + _size * Math.cos(side * 2 * Math.PI / 6), _size + _size * Math.sin(side * 2 * Math.PI / 6));
+    }
+    context.fillStyle = pattern;
+    context.fill();
+}
 function getCells(game, size) { // getCellsWithItemsAndPoints()
     return cells.map(cell => {
         const point = getPoint([cell[0], cell[1]], size);
@@ -287,7 +301,7 @@ function showSelectedCell(cell, context, size, cellRadius) {
     context.arc(...point, cellRadius, 0, 2 * Math.PI);
     context.closePath();
     context.lineWidth = size / 36;
-    context.strokeStyle = 'purple';
+    context.strokeStyle = '#663300';
     context.stroke();
     context.lineWidth = 1;
 }
@@ -367,6 +381,7 @@ function showReplayLastMoveButton(replayLastMoveButton, state) {
 }
 async function show(state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
     context.clearRect(0, 0, size, size);
+    showBoard(context, size);
     showCells(state.cells, context, cellRadius, state.playerToHighlight);
     showPairs(state.pairs, context, clickRadius);
     showSelectedPair(state, context, size, cellRadius);
@@ -411,9 +426,10 @@ async function animateMove(state, clickedMoveDirection, context, size, cellRadiu
 }
 async function showFrame(selectedCells, state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
     context.clearRect(0, 0, size, size);
+    showBoard(context, size);
     showCells(state.cells, context, cellRadius, state.playerToHighlight);
     showCell(selectedCells[0], context, cellRadius);
-    showCell(selectedCells[1], context, cellRadius); 
+    showCell(selectedCells[1], context, cellRadius);
 }
 function incrementSelectedCellsPoints(selectedCells, cell0StartPoint, cell0EndPoint, cell1StartPoint, cell1EndPoint, framesCount) {
     selectedCells[0][2] += (cell0EndPoint[0] - cell0StartPoint[0]) / framesCount;

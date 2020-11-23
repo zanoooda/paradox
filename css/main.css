@@ -123,7 +123,7 @@ html, body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: blue;
+    background-color: lightgray;
     transition: .4s;
 }
 .slider:before {
@@ -137,10 +137,10 @@ html, body {
     transition: .4s;
 }
 input:checked + .slider {
-    background-color: red;
+    background-color: black;
 }
 input:focus + .slider {
-    box-shadow: 0 0 1px purple;
+    box-shadow: 0 0 1px gray;
 }
 input:checked + .slider:before {
     transform: translateX(1em);
