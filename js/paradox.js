@@ -338,7 +338,7 @@ function showSelectedPairMove(move, context, size, clickRadius) {
     // context.strokeStyle = 'green';
     // context.stroke();
 }
-async function showCurrentPlayer(state, context, size, indicator) { // !
+async function showCurrentPlayer(state, context, size, indicator) { // Rename
     // if (
     //     state.selectedPairIndex == -1 &&
     //     indicator.style.backgroundColor != colors[state.currentPlayer] &&
@@ -358,31 +358,14 @@ function getMessage(type, player, currentPlayer, winner) {
         if (winner == 2) {
             return `draw!`;
         }
-        else {
-            switch (type) {
-                case types.hotSeat:
-                    return `${colors[winner]} win!`;
-                    break;
-                case types.withRobot:
-                    if (winner != player) {
-                        return `robot win!`;
-                    }
-                    else {
-                        return `You win!`;
-                    }
-                    break;
-                case types.online:
-                    if (winner != player) {
-                        return `Partner win!`;
-                    }
-                    else {
-                        return `You win!`;
-                    }
-                    break;
-                default:
-                    return `default win ().o`;
-                    break;
-            }
+        else if (type == types.hotSeat) {
+            return `${colors[winner]} win!`;
+        }
+        else if (type == types.withRobot) {
+            return `${winner == player ? 'You' : 'robot'} win!`
+        }
+        else if (type == types.online) {
+            return `${winner == player ? 'You' : 'Partner'} win!`
         }
     }
 }
