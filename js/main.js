@@ -58,7 +58,7 @@ playOnlineButton.addEventListener('click', () => {
             playOnlineButton.innerHTML = "Disconnect";
             menu.classList.remove('show');
             paradox.stop();
-            showSpinner(spinner, `Looking for a partner online. `);
+            showSpinner(spinner, `Looking for a partner online. `, 0);
         });
         socket.on('counter', (n) => { // online-users-counter
             console.log(n - 1 + ' users online');
@@ -73,7 +73,7 @@ playOnlineButton.addEventListener('click', () => {
             console.log('socket disconnected');
             playOnlineButton.innerHTML = "Play Online";
             paradox.stop();
-            showSpinner(spinner, 'disconnected');
+            showSpinner(spinner, 'disconnected', 0);
         });
         socket.on('move', (move) => {
             console.log('move');

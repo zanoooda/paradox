@@ -1,7 +1,5 @@
 // resize fire twice
 
-// TODO: Show message
-
 // TODO: Lock animation
 
 // Points can be calculated only once
@@ -168,7 +166,7 @@ async function continueOnline(event, that) {
             that.state = new State(that.game, that.size, -1, that.type, that.player, false);
             await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
             if (that.state.winner == -1) {
-                showSpinner(that.spinner, 'wait for the partner');
+                showSpinner(that.spinner, 'wait for the partner', 0);
             }
             that.socket.emit('move', [...selectedPair, clickedMoveDirection]);
         }
@@ -203,10 +201,10 @@ function showBoard(context, size) {
     var pattern = context.createPattern(backgroundImage, "repeat");
     context.fillStyle = pattern;
     context.beginPath();
-    let _size = size / 2;
-    context.moveTo(_size + _size * Math.cos(0), _size + _size * Math.sin(0));
+    let _size = (size / 2);
+    context.moveTo(_size + (_size - 5) * Math.cos(0), _size + (_size - 5) * Math.sin(0));
     for (let side = 0; side < 7; side++) {
-        context.lineTo(_size + _size * Math.cos(side * 2 * Math.PI / 6), _size + _size * Math.sin(side * 2 * Math.PI / 6));
+        context.lineTo(_size + (_size - 5) * Math.cos(side * 2 * Math.PI / 6), _size + (_size - 5) * Math.sin(side * 2 * Math.PI / 6));
     }
     context.fillStyle = pattern;
     context.fill();
@@ -341,34 +339,67 @@ function showSelectedPairMove(move, context, size, clickRadius) {
     // context.stroke();
 }
 async function showCurrentPlayer(state, context, size, indicator) { // !
-    if (
-        state.selectedPairIndex == -1 &&
-        indicator.style.backgroundColor != colors[state.currentPlayer] &&
-        state.winner == -1
-    ) {
+    // if (
+    //     state.selectedPairIndex == -1 &&
+    //     indicator.style.backgroundColor != colors[state.currentPlayer] &&
+    //     state.winner == -1
+    // ) {
         message.innerHTML = state.message;
         // showIndicator(indicator, colors[state.currentPlayer]);
         // await delay(500);
         // hideIndicator(indicator);
-    }
+    // }
 }
-function getMessage(type, player, currentPlayer) {
-    return `${colors[currentPlayer]} play`;
+function getMessage(type, player, currentPlayer, winner) {
+    if (winner == -1) {
+        return `${colors[currentPlayer]} play`;
+    }
+    else {
+        if (winner == 2) {
+            return `draw!`;
+        }
+        else {
+            switch (type) {
+                case types.hotSeat:
+                    return `${colors[winner]} win!`;
+                    break;
+                case types.withRobot:
+                    if (winner != player) {
+                        return `robot win!`;
+                    }
+                    else {
+                        return `You win!`;
+                    }
+                    break;
+                case types.online:
+                    if (winner != player) {
+                        return `Partner win!`;
+                    }
+                    else {
+                        return `You win!`;
+                    }
+                    break;
+                default:
+                    return `default win ().o`;
+                    break;
+            }
+        }
+    }
 }
 function showWinner(winner, context, size) {
     if (winner != -1) {
-        const midPoint = [size / 2, size / 2];
-        const name = colors?.[winner]?.charAt(0)?.toUpperCase() + colors?.[winner]?.slice(1);
-        const message = winner == 2 ? `Draw!` : `${name} player win!`;
+        // const midPoint = [size / 2, size / 2];
+        // const name = colors?.[winner]?.charAt(0)?.toUpperCase() + colors?.[winner]?.slice(1);
+        // const message = winner == 2 ? `Draw!` : `${name} player win!`;
         context.fillStyle = 'white';
-        context.globalAlpha = 0.8;
+        context.globalAlpha = 0.5;
         context.fillRect(0, 0, size, size);
         context.globalAlpha = 1.0;
-        context.fillStyle = 'black';
-        context.font = `bold 1em sans`;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillText(message, ...midPoint);
+        // context.fillStyle = 'black';
+        // context.font = `bold 1em sans`;
+        // context.textAlign = 'center';
+        // context.textBaseline = 'middle';
+        // context.fillText(message, ...midPoint);
     }
 }
 function showUndoButton(undoButton, state) {
@@ -444,9 +475,10 @@ function incrementSelectedCellsPoints(selectedCells, cell0StartPoint, cell0EndPo
     selectedCells[1][3] += (cell1EndPoint[1] - cell1StartPoint[1]) / framesCount;
     return selectedCells;
 }
-function showSpinner(spinner, message) {
+function showSpinner(spinner, message, zIndex = 2) {
     spinner.innerHTML = message ?? '';
     spinner.classList.add('show');
+    spinner.style.zIndex = zIndex;
 }
 function hideSpinner(spinner) {
     spinner.innerHTML = '';
@@ -532,7 +564,7 @@ class Paradox {
         this.replayLastMoveButton = replayLastMoveButton;
         this.size = getSize(this.container);
         this.clickRadius = this.size / 16; // wrap to settings
-        this.cellRadius = this.size / 18; // wrap to settings
+        this.cellRadius = this.size / 20; // wrap to settings
         this.canvas = createCanvas(this.size);
         this.context = this.canvas.getContext('2d');
         this.depth = 2;
@@ -599,6 +631,7 @@ class Paradox {
         this.game = null;
         this.state = null;
         this.indicator.style.backgroundColor = 'inherit';
+        this.message.innerHTML = '';
         this.context.clearRect(0, 0, this.size, this.size);
     }
     resize(size) {
@@ -626,7 +659,7 @@ class State {
         this.currentPlayer = game.getCurrentPlayer();
         this.winner = game.winner; //
         this.playerToHighlight = highlightPlayerCells ? player : null;
-        this.message = getMessage(type, player, this.currentPlayer);
+        this.message = getMessage(type, player, this.currentPlayer, game.winner);
     }
 }
 
