@@ -4,6 +4,7 @@ const server = 'https://paradox-server.herokuapp.com'; //'http://localhost:3000'
 var socket;
 
 let container = document.getElementById('container');
+let message = document.getElementById('message');
 let indicator = document.getElementById('indicator');
 let menu = document.getElementById('menu');
 let menuButton = document.getElementById('menu-button');
@@ -22,7 +23,7 @@ let spinner = document.getElementById("spinner");
 let colors = ['black', 'white'];
 
 let humanPlayer = 0;
-let paradox = new Paradox(container, indicator, undoButton, replayLastMoveButton, spinner);
+let paradox = new Paradox(container, indicator, message, undoButton, replayLastMoveButton, spinner);
 
 menu.classList.add('show');
 

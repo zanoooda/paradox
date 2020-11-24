@@ -140,7 +140,7 @@ async function continueWithRobot(event, that) {
             if (that.state.winner != -1) {
                 return;
             }
-            showSpinner(that.spinner);
+            showSpinner(that.spinner, 'wait for the robot');
             await delay(500);
             await robotPlay(that);
         }
@@ -346,10 +346,14 @@ async function showCurrentPlayer(state, context, size, indicator) { // !
         indicator.style.backgroundColor != colors[state.currentPlayer] &&
         state.winner == -1
     ) {
-        hideIndicator(indicator);
-        await delay(500);
-        showIndicator(indicator, colors[state.currentPlayer]);
+        message.innerHTML = state.message;
+        // showIndicator(indicator, colors[state.currentPlayer]);
+        // await delay(500);
+        // hideIndicator(indicator);
     }
+}
+function getMessage(type, player, currentPlayer) {
+    return `${colors[currentPlayer]} play`;
 }
 function showWinner(winner, context, size) {
     if (winner != -1) {
@@ -392,6 +396,7 @@ async function show(state, context, size, cellRadius, clickRadius, indicator, un
     showReplayLastMoveButton(replayLastMoveButton, state);
 }
 async function animateMove(state, clickedMoveDirection, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
+    // that.lock = true;
     let selectedCells = getSelectedCells(state);
     selectedCells = [[...selectedCells[0]], [...selectedCells[1]]];
     const cell0Start = selectedCells[0];
@@ -423,6 +428,7 @@ async function animateMove(state, clickedMoveDirection, context, size, cellRadiu
         await showFrame(selectedCells, state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton);
         await delay(1);
     }
+    // that.lock = false;
 }
 async function showFrame(selectedCells, state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
     context.clearRect(0, 0, size, size);
@@ -508,7 +514,7 @@ async function replayLastMove(that) {
     let _game = new Game(that.game);
     _game.undo();
     const selectedPairIndex = _game.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
-    let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player, that.type == types.hotSeat ? false : true);
+    let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player, false);
     await show(_state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
     await delay(500);
     const prevMoveDirection = that.game.getPrevMove()[2] == -1 ? -1 : that.game.getPrevMove()[2];
@@ -517,9 +523,10 @@ async function replayLastMove(that) {
 }
 
 class Paradox {
-    constructor(container, indicator, undoButton, replayLastMoveButton, spinner) {
+    constructor(container, indicator, message, undoButton, replayLastMoveButton, spinner) {
         this.container = container;
         this.indicator = indicator;
+        this.message = message;
         this.undoButton = undoButton;
         this.spinner = spinner;
         this.replayLastMoveButton = replayLastMoveButton;
@@ -559,7 +566,7 @@ class Paradox {
         if (this.player != 0) {
             await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
             // this.spinner.classList.add('show');
-            showSpinner(this.spinner);
+            showSpinner(this.spinner, 'wait for the robot');
             await delay(500);
             await robotPlay(this);
         }
@@ -619,6 +626,7 @@ class State {
         this.currentPlayer = game.getCurrentPlayer();
         this.winner = game.winner; //
         this.playerToHighlight = highlightPlayerCells ? player : null;
+        this.message = getMessage(type, player, this.currentPlayer);
     }
 }
 
