@@ -41,7 +41,7 @@ html, body {
     justify-content: center;
     align-items: center;
     background-color: rgba(255, 255, 255, 0.5);
-    font-size: 2em;
+    font: 2em sans;
 }
 .menu-option {
     display: block;
@@ -181,7 +181,7 @@ input:checked + .slider:before {
     text-align: center;
 }
 #message {
-    font-size: 2em;
+    font: 2em sans;
     color: black;
     padding: .1em 1em;
     background-color: rgba(255, 255, 255, 0.5);
