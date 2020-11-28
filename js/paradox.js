@@ -12,7 +12,7 @@ const colors = ['black', 'white'],
     types = { hotSeat: 0, withRobot: 1, online: 2 },
     sqrt3 = Math.sqrt(3),
     tap = new Audio("/assets/tap.mp3"),
-    backgroundImage = document.createElement('img');
+    backgroundImage = new Image();
 tap.volume = 0.5;
 backgroundImage.src = '/assets/background-image.jpg';
 
@@ -620,6 +620,12 @@ class Paradox {
             this.state = new State(this.game, this.size, this?.state?.selectedPairIndex ?? -1, this.type, this?.player ?? null, false);
             show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.undoButton, this.replayLastMoveButton);
         }
+    }
+    async loadAssets() {
+        await new Promise((resolve, reject) => {
+            backgroundImage.onload = resolve;
+            backgroundImage.onerror = reject;
+        });
     }
 }
 class State {
