@@ -109,7 +109,7 @@ async function continueHotSeat(event, that) {
             that.state.pairs[that.state.selectedPairIndex][0],
             that.state.pairs[that.state.selectedPairIndex][1]
         ];
-        await animateMove(that.state, clickedMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+        await animateMove(that.state, clickedMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
         that.game.move(selectedPair, clickedMoveDirection);
         that.state = new State(that.game, that.size, -1, that.type, null, false);
     }
@@ -117,7 +117,7 @@ async function continueHotSeat(event, that) {
         tap.play();
         that.state = new State(that.game, that.size, clickedPairIndex, that.type, null, false);
     }
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
 }
 async function continueWithRobot(event, that) {
     if (that.game.getCurrentPlayer() == that.player) {
@@ -131,14 +131,14 @@ async function continueWithRobot(event, that) {
                 that.state.pairs[that.state.selectedPairIndex][0],
                 that.state.pairs[that.state.selectedPairIndex][1]
             ];
-            await animateMove(that.state, clickedMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+            await animateMove(that.state, clickedMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
             that.game.move(selectedPair, clickedMoveDirection);
             that.state = new State(that.game, that.size, -1, that.type, that.player, false);
-            await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+            show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
             if (that.state.winner != -1) {
                 return;
             }
-            showSpinner(that.spinner, 'wait for the robot');
+            showSpinner(that.spinner, 'Wait for the robot');
             await delay(500);
             await robotPlay(that);
         }
@@ -146,7 +146,7 @@ async function continueWithRobot(event, that) {
             tap.play();
             that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.player, false);
         }
-        await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+        show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
     }
 }
 async function continueOnline(event, that) {
@@ -161,12 +161,12 @@ async function continueOnline(event, that) {
                 that.state.pairs[that.state.selectedPairIndex][0],
                 that.state.pairs[that.state.selectedPairIndex][1]
             ];
-            // animate
+            await animateMove(that.state, clickedMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
             that.game.move(selectedPair, clickedMoveDirection);
             that.state = new State(that.game, that.size, -1, that.type, that.player, false);
-            await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+            show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
             if (that.state.winner == -1) {
-                showSpinner(that.spinner, 'wait for the partner', 0);
+                showSpinner(that.spinner, 'Wait for the partner', 0);
             }
             that.socket.emit('move', [...selectedPair, clickedMoveDirection]);
         }
@@ -174,7 +174,7 @@ async function continueOnline(event, that) {
             tap.play();
             that.state = new State(that.game, that.size, clickedPairIndex, that.type, that.player, false);
         }
-        await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+        show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
 
 
     }
@@ -185,11 +185,11 @@ async function robotPlay(that) {
     hideSpinner(that.spinner);
     const robotMovePairIndex = that.state.pairs.findIndex(pair => pair[0] == robotMove[0] && pair[1] == robotMove[1]); // dublication
     that.state = new State(that.game, that.size, robotMovePairIndex, that.type, that.player, false);
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
     tap.play();
     await delay(500);
     tap.play();
-    await animateMove(that.state, robotMove[2], that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    await animateMove(that.state, robotMove[2], that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
     that.game.move([robotMove[0], robotMove[1]], robotMove[2]);
     that.state = new State(that.game, that.size, -1, that.type, that.player, false);
     that.lock = false;
@@ -338,36 +338,34 @@ function showSelectedPairMove(move, context, size, clickRadius) {
     // context.strokeStyle = 'green';
     // context.stroke();
 }
-async function showCurrentPlayer(state, context, size, indicator) { // Rename
-    // if (
-    //     state.selectedPairIndex == -1 &&
-    //     indicator.style.backgroundColor != colors[state.currentPlayer] &&
-    //     state.winner == -1
-    // ) {
-        message.innerHTML = state.message;
-        // showIndicator(indicator, colors[state.currentPlayer]);
-        // await delay(500);
-        // hideIndicator(indicator);
-    // }
+function showMessage(state) {
+    message.innerHTML = state.message;
 }
 function getMessage(type, player, currentPlayer, winner) {
+    let message = '';
     if (winner == -1) {
-        return `${colors[currentPlayer]} play`;
+        message = `${colors[currentPlayer]} plays`;
     }
     else {
         if (winner == 2) {
-            return `draw!`;
+            message = `draw!`;
         }
         else if (type == types.hotSeat) {
-            return `${colors[winner]} win!`;
+            message = `${colors[winner]} wins!`;
         }
         else if (type == types.withRobot) {
-            return `${winner == player ? 'You' : 'robot'} win!`
+            message = `${winner == player ? 'You' : 'robot'} wins!`
         }
         else if (type == types.online) {
-            return `${winner == player ? 'You' : 'Partner'} win!`
+            message = `${winner == player ? 'You' : 'Partner'} wins!`
         }
     }
+    message = beautify(message);
+    return message;
+}
+function beautify(text) {
+    text = text.charAt(0).toUpperCase() + text.slice(1);
+    return text;
 }
 function showWinner(winner, context, size) {
     if (winner != -1) {
@@ -397,19 +395,19 @@ function showReplayLastMoveButton(replayLastMoveButton, state) {
         replayLastMoveButton.classList.add('show');
     }
 }
-async function show(state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
+function show(state, context, size, cellRadius, clickRadius, undoButton, replayLastMoveButton) {
     context.clearRect(0, 0, size, size);
     showBoard(context, size);
     showCells(state.cells, context, cellRadius, state.playerToHighlight);
     showPairs(state.pairs, context, clickRadius);
     showSelectedPair(state, context, size, cellRadius);
     showSelectedPairMoves(state.moves, context, size, clickRadius);
-    await showCurrentPlayer(state, context, size, indicator);
+    showMessage(state);
     showWinner(state.winner, context, size);
     showUndoButton(undoButton, state);
     showReplayLastMoveButton(replayLastMoveButton, state);
 }
-async function animateMove(state, clickedMoveDirection, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
+async function animateMove(state, clickedMoveDirection, context, size, cellRadius, clickRadius, undoButton, replayLastMoveButton) {
     // that.lock = true;
     let selectedCells = getSelectedCells(state);
     selectedCells = [[...selectedCells[0]], [...selectedCells[1]]];
@@ -439,12 +437,12 @@ async function animateMove(state, clickedMoveDirection, context, size, cellRadiu
     const framesCount = 25;
     for (let index = 0; index < framesCount; index++) {
         selectedCells = incrementSelectedCellsPoints(selectedCells, cell0StartPoint, cell0EndPoint, cell1StartPoint, cell1EndPoint, framesCount);
-        await showFrame(selectedCells, state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton);
+        showFrame(selectedCells, state, context, size, cellRadius, clickRadius, undoButton, replayLastMoveButton);
         await delay(1);
     }
     // that.lock = false;
 }
-async function showFrame(selectedCells, state, context, size, cellRadius, clickRadius, indicator, undoButton, replayLastMoveButton) {
+function showFrame(selectedCells, state, context, size, cellRadius, clickRadius, undoButton, replayLastMoveButton) {
     context.clearRect(0, 0, size, size);
     showBoard(context, size);
     showCells(state.cells, context, cellRadius, state.playerToHighlight);
@@ -469,14 +467,6 @@ function hideSpinner(spinner) {
 }
 function attachMessage(spinner, message) {
     spinner.innerHTML += message;
-}
-function showIndicator(indicator, color) {
-    indicator.style.backgroundColor = color;
-    indicator.classList.add('show');
-}
-function hideIndicator(indicator) {
-    indicator.style.backgroundColor = 'inherit';
-    indicator.classList.remove('show');
 }
 async function undoClick(that) {
     switch (that.type) {
@@ -512,13 +502,13 @@ async function undo(that) {
     // if (lastMove) {
     const selectedPairIndex = that.state.pairs.findIndex(pair => pair[0] == prevMove[0] && pair[1] == prevMove[1]); // dublication
     that.state = new State(that.game, that.size, selectedPairIndex, that.type, that.player, false);
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
     await delay(500);
     const prevMoveDirection = that.game.getPrevMove()[2] == -1 ? -1 : inverseDirectionsIndexes[that.game.getPrevMove()[2]];
-    await animateMove(that.state, prevMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    await animateMove(that.state, prevMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
     that.game.undo();
     that.state = new State(that.game, that.size, -1, that.type, that.player, false);
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
     // }
 }
 function replayLastMoveClick(that) {
@@ -530,17 +520,16 @@ async function replayLastMove(that) {
     _game.undo();
     const selectedPairIndex = _game.pairs.findIndex(pair => pair[0] == lastMove[0] && pair[1] == lastMove[1]); // dublication
     let _state = new State(_game, that.size, selectedPairIndex, that.type, that.player, false);
-    await show(_state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    show(_state, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
     await delay(500);
     const prevMoveDirection = that.game.getPrevMove()[2] == -1 ? -1 : that.game.getPrevMove()[2];
-    await animateMove(_state, prevMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
-    await show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.indicator, that.undoButton, that.replayLastMoveButton);
+    await animateMove(_state, prevMoveDirection, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
+    show(that.state, that.context, that.size, that.cellRadius, that.clickRadius, that.undoButton, that.replayLastMoveButton);
 }
 
 class Paradox {
-    constructor(container, indicator, message, undoButton, replayLastMoveButton, spinner) {
+    constructor(container, message, undoButton, replayLastMoveButton, spinner) {
         this.container = container;
-        this.indicator = indicator;
         this.message = message;
         this.undoButton = undoButton;
         this.spinner = spinner;
@@ -567,11 +556,11 @@ class Paradox {
         this.container.innerHTML = '';
         this.container.prepend(this.canvas);
     }
-    async playHotSeat() {
+    playHotSeat() {
         this.type = types.hotSeat;
         this.game = new Game();
         this.state = new State(this.game, this.size, -1, this.type, null, false);
-        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.undoButton, this.replayLastMoveButton);
     }
     async playWithRobot(player) {
         this.type = types.withRobot;
@@ -579,32 +568,36 @@ class Paradox {
         this.game = new Game();
         this.state = new State(this.game, this.size, -1, this.type, this.player, false);
         if (this.player != 0) {
-            await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+            show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.undoButton, this.replayLastMoveButton);
             // this.spinner.classList.add('show');
-            showSpinner(this.spinner, 'wait for the robot');
+            showSpinner(this.spinner, 'Wait for the robot');
             await delay(500);
             await robotPlay(this);
         }
-        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.undoButton, this.replayLastMoveButton);
     }
-    async playOnline(player, socket) {
+    playOnline(player, socket) {
         this.type = types.online;
         this.player = player;
         this.socket = socket;
         this.game = new Game();
         this.state = new State(this.game, this.size, -1, types.online, this.player, false);
-        await show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.undoButton, this.replayLastMoveButton);
         if (this.player != 0) {
-            showSpinner(this.spinner, 'wait for the partner');
+            showSpinner(this.spinner, 'Wait for the partner', 0);
         }
     }
-    move(move) { // async
+    async move(move) {
         hideSpinner(this.spinner);
         // if move legal and partners turn
         tap.play();
+        this.state.selectedPairIndex = this.state.pairs.findIndex(pair => pair[0] == move[0] && pair[1] == move[1]);
+        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.undoButton, this.replayLastMoveButton);
+        await delay(500);
+        await animateMove(this.state, move[2], this.context, this.size, this.cellRadius, this.clickRadius, this.undoButton, this.replayLastMoveButton);
         this.game.move(move);
         this.state = new State(this.game, this.size, -1, types.online, this.player, false);
-        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton); // await
+        show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.undoButton, this.replayLastMoveButton);
         // else ...
     }
     stop() {
@@ -613,7 +606,6 @@ class Paradox {
         this.player = null;
         this.game = null;
         this.state = null;
-        this.indicator.style.backgroundColor = 'inherit';
         this.message.innerHTML = '';
         this.context.clearRect(0, 0, this.size, this.size);
     }
@@ -626,13 +618,13 @@ class Paradox {
         this.cellRadius = this.size / 18; // wrap to settings
         if (this.game) {
             this.state = new State(this.game, this.size, this?.state?.selectedPairIndex ?? -1, this.type, this?.player ?? null, false);
-            show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.indicator, this.undoButton, this.replayLastMoveButton);
+            show(this.state, this.context, this.size, this.cellRadius, this.clickRadius, this.undoButton, this.replayLastMoveButton);
         }
     }
 }
 class State {
     constructor(game, size, selectedPairIndex, type, player, highlightPlayerCells) {
-        this.selectedPairIndex = selectedPairIndex; // -1|0...5
+        this.selectedPairIndex = selectedPairIndex; // -1|0...
         this.cells = getCells(game, size); // [[cell[0], cell[1], x, y (optonal), player, itemIndex], ...]
         this.pairs = getPairs(game, size); // [[player0ItemIndex, player1ItemIndex, [...legalMoveDirections], x, y], ...]
         this.moves = getSelectedPairMoves(this.selectedPairIndex, this.pairs, this.cells, size); // [[directionIndex, x, y], ...]
