@@ -58,29 +58,24 @@ let paradox = new Paradox(container, message, undoButton, replayLastMoveButton, 
             playOnlineButton.innerHTML = "Connecting...";
             socket = io.connect(server);
             socket.on('connect', () => {
-                console.log('socket connected');
                 playOnlineButton.innerHTML = "Disconnect";
                 menu.classList.remove('show');
                 paradox.stop();
                 showSpinner(spinner, `Looking for a partner online. `, 0);
             });
             socket.on('counter', (n) => { // online-users-counter
-                console.log(n - 1 + ' users online');
                 attachMessage(spinner, `${n - 1} users online.`);
             });
             socket.on('partner-found', (player) => {
-                console.log('partner-found. you play ', player);
                 hideSpinner(spinner);
                 paradox.playOnline(player, socket);
             });
             socket.on('disconnect', () => {
-                console.log('socket disconnected');
                 playOnlineButton.innerHTML = "Play Online";
                 paradox.stop();
                 showSpinner(spinner, 'disconnected', 0);
             });
             socket.on('move', (move) => {
-                console.log('move');
                 paradox.move(move);
             });
         }
