@@ -26,7 +26,11 @@ let paradox = new Paradox(container, message, undoButton, replayLastMoveButton, 
 
 (async ()  => {
     showSpinner(spinner, 'Loading assets');
-    await paradox.loadAssets();
+    try {
+        await paradox.loadAssets();
+    } catch (error) {
+        console.log(error);
+    }
     hideSpinner(spinner);
 
     menu.classList.add('show');
