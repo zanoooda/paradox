@@ -350,7 +350,7 @@ function getMessage(type, player, currentPlayer, winner) {
         if (winner == 2) {
             message = `draw!`;
         }
-        else if (type == types.hotSeat) {/assets/background-image.jpg
+        else if (type == types.hotSeat) {
             message = `${colors[winner]} wins!`;
         }
         else if (type == types.withRobot) {
