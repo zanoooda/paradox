@@ -30,6 +30,8 @@ let paradox = new Paradox(container, message, undoButton, replayLastMoveButton, 
         await paradox.loadAssets();
     } catch (error) {
         console.log(error);
+        showSpinner(spinner, error?.message);
+        return;
     }
     hideSpinner(spinner);
 
