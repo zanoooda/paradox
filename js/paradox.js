@@ -11,10 +11,10 @@ import { findMove as findRobotMove } from './robot.js';
 const colors = ['black', 'white'],
     types = { hotSeat: 0, withRobot: 1, online: 2 },
     sqrt3 = Math.sqrt(3),
-    tap = new Audio("paradox/assets/tap.mp3"),
+    tap = new Audio("/assets/tap.mp3"),
     backgroundImage = new Image();
 tap.volume = 0.5;
-backgroundImage.src = 'paradox/assets/background-image.jpg';
+backgroundImage.src = '/assets/background-image.jpg';
 
 function getPoint(cell, size) {
     const _cell = getExtendedCell([cell[0], cell[1]]);
