@@ -1,6 +1,6 @@
 import { Paradox, showSpinner, hideSpinner, attachMessage } from './paradox.js';
 
-const server = 'https://paradox-server-production.up.railway.app/'; //'http://localhost:3000'
+const server = 'https://paradox-server.onrender.com/'; //'http://localhost:3000'
 var socket;
 
 let container = document.getElementById('container');
